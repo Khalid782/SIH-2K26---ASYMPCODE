@@ -1,0 +1,8 @@
+{
+  "name": "Remix PRISM",
+  "description": "Real-Time Disaster Intelligence Platform - Hyderabad Flood Response Emergency Operations Dashboard",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
