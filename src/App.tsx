@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { SummaryCards } from './components/SummaryCards';
 import { FilterBar } from './components/FilterBar';
@@ -10,7 +10,7 @@ import { AITriageConsole } from './components/AITriageConsole';
 import { INITIAL_INCIDENTS, BASELINE_STATS } from './data/mockData';
 import { FilterState, Incident, Severity, VerificationStatus } from './types';
 import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
-
+import { supabase } from './supabaseClient';
 export function App() {
   const [incidents, setIncidents] = useState<Incident[]>(INITIAL_INCIDENTS);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
@@ -26,7 +26,35 @@ export function App() {
     status: 'All',
     timeWindow: 'all',
   });
+useEffect(() => {
+    // Fetch initial incidents from Supabase
+    const fetchIncidents = async () => {
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .order('created_at', { ascending: false });
 
+      if (error) {
+        console.error('Error fetching incidents:', error);
+      } else if (data && data.length > 0) {
+        setIncidents(data as Incident[]);
+      }
+    };
+
+    fetchIncidents();
+
+    // Sync real-time updates across all connected devices
+    const channel = supabase
+      .channel('realtime_incidents')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'incidents' }, (payload) => {
+        setIncidents((prev) => [payload.new as Incident, ...prev]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
   // Handle Manual Refresh Sync
   const handleRefresh = () => {
     setIsRefreshing(true);
