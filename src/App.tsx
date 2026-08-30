@@ -7,10 +7,11 @@ import { IncomingReports } from './components/IncomingReports';
 import { IncidentDetailModal } from './components/IncidentDetailModal';
 import { SidebarNav } from './components/SidebarNav';
 import { AITriageConsole } from './components/AITriageConsole';
-import { INITIAL_INCIDENTS, BASELINE_STATS } from './data/mockData';
-import { FilterState, Incident, Severity, VerificationStatus } from './types';
-import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
+import { INITIAL_INCIDENTS } from './data/mockData';
+import { FilterState, Incident, VerificationStatus } from './types';
+import { CheckCircle, X } from 'lucide-react';
 import { supabase } from './supabaseClient';
+
 export function App() {
   const [incidents, setIncidents] = useState<Incident[]>(INITIAL_INCIDENTS);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
@@ -26,7 +27,8 @@ export function App() {
     status: 'All',
     timeWindow: 'all',
   });
-useEffect(() => {
+
+  useEffect(() => {
     // Fetch initial incidents from Supabase
     const fetchIncidents = async () => {
       const { data, error } = await supabase
@@ -43,24 +45,45 @@ useEffect(() => {
 
     fetchIncidents();
 
-    // Sync real-time updates across all connected devices
+    // Sync real-time updates across all connected devices (INSERT and UPDATE events)
     const channel = supabase
       .channel('realtime_incidents')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'incidents' }, (payload) => {
-        setIncidents((prev) => [payload.new as Incident, ...prev]);
-      })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'incidents' },
+        (payload) => {
+          setIncidents((prev) => [payload.new as Incident, ...prev]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'incidents' },
+        (payload) => {
+          const updated = payload.new as Incident;
+          setIncidents((prev) =>
+            prev.map((inc) => (inc.id === updated.id ? updated : inc))
+          );
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
   // Handle Manual Refresh Sync
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
-      setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+      setLastUpdated(
+        new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+      );
       showNotification('Feed synchronized with Hyderabad Emergency Operations Center.');
     }, 600);
   };
@@ -89,15 +112,25 @@ useEffect(() => {
     showNotification('Incident added to Situation Room');
   };
 
-  // Operator action updates incident mock state
-  const handleUpdateStatus = (incidentId: string, newStatus: VerificationStatus) => {
+  // Operator action updates incident state locally AND in Supabase
+  const handleUpdateStatus = async (incidentId: string, newStatus: VerificationStatus) => {
+    // Optimistic UI update
     setIncidents((prev) =>
       prev.map((inc) => (inc.id === incidentId ? { ...inc, status: newStatus } : inc))
     );
 
-    // Update currently inspected incident as well
     if (selectedIncident && selectedIncident.id === incidentId) {
       setSelectedIncident((prev) => (prev ? { ...prev, status: newStatus } : null));
+    }
+
+    // Persist status change to Supabase
+    const { error } = await supabase
+      .from('incidents')
+      .update({ status: newStatus })
+      .eq('id', incidentId);
+
+    if (error) {
+      console.error('Error updating incident status in Supabase:', error);
     }
 
     showNotification(`Incident ${incidentId} updated to: ${newStatus}`);
@@ -106,29 +139,25 @@ useEffect(() => {
   // Filtered incidents logic
   const filteredIncidents = useMemo(() => {
     return incidents.filter((incident) => {
-      // Search filter (keyword or location)
       if (filters.search.trim()) {
         const query = filters.search.toLowerCase();
-        const matchesLocation = incident.location.toLowerCase().includes(query);
-        const matchesReport = incident.originalReport.toLowerCase().includes(query);
-        const matchesType = incident.disasterType.toLowerCase().includes(query);
+        const matchesLocation = incident.location?.toLowerCase().includes(query);
+        const matchesReport = incident.originalReport?.toLowerCase().includes(query);
+        const matchesType = incident.disasterType?.toLowerCase().includes(query);
         const matchesLandmark = incident.landmark?.toLowerCase().includes(query) || false;
         if (!matchesLocation && !matchesReport && !matchesType && !matchesLandmark) {
           return false;
         }
       }
 
-      // Severity filter
       if (filters.severity !== 'All' && incident.severity !== filters.severity) {
         return false;
       }
 
-      // Disaster Type filter
       if (filters.disasterType !== 'All' && incident.disasterType !== filters.disasterType) {
         return false;
       }
 
-      // Verification Status filter
       if (filters.status !== 'All' && incident.status !== filters.status) {
         return false;
       }
@@ -145,7 +174,6 @@ useEffect(() => {
     const verified = incidents.filter((i) => i.status === 'Verified').length;
     const actioned = incidents.filter((i) => i.status === 'Actioned').length;
 
-    // Use baseline proportion adjustment to preserve 47 total if desired
     return {
       total: incidents.length,
       critical,
@@ -217,7 +245,7 @@ useEffect(() => {
 
               {/* Map + Incoming Reports Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-                {/* Main Disaster Map (Largest element on page: 8 cols on large screens) */}
+                {/* Main Disaster Map */}
                 <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
@@ -237,7 +265,7 @@ useEffect(() => {
                   />
                 </div>
 
-                {/* Incoming Reports Scrollable Feed (4 cols on large screens) */}
+                {/* Incoming Reports Scrollable Feed */}
                 <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
