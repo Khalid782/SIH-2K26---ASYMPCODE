@@ -6,7 +6,7 @@ import { DisasterMap } from './components/DisasterMap';
 import { IncomingReports } from './components/IncomingReports';
 import { IncidentDetailModal } from './components/IncidentDetailModal';
 import { SidebarNav } from './components/SidebarNav';
-import { AITriageConsole } from './components/AITriageConsole';
+import AITriageConsole from './components/AITriageConsole';
 import { INITIAL_INCIDENTS, BASELINE_STATS } from './data/mockData';
 import { FilterState, Incident, Severity, VerificationStatus } from './types';
 import { CheckCircle, X } from 'lucide-react';
