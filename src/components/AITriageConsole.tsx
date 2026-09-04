@@ -222,8 +222,8 @@ export default function AITriageConsole({
       primaryLocation: analysisResult.primaryLocation || analysisResult.location,
       secondaryLocations: analysisResult.secondaryLocations || [],
       landmark: `${(analysisResult.primaryLocation || analysisResult.location).split(',')[0]} Emergency Sector`,
-      coordinates: analysisResult.coordinates,
-      disasterType: analysisResult.disasterType,
+      coordinates: [analysisResult.coordinates.lat, analysisResult.coordinates.lng],
+      disasterType: analysisResult.disasterType as Incident['disasterType'],
       severity: analysisResult.severity,
       aiConfidence: analysisResult.aiConfidence,
       confidence: analysisResult.confidence || analysisResult.aiConfidence,
@@ -232,7 +232,8 @@ export default function AITriageConsole({
       hazards: analysisResult.hazards ? [...analysisResult.hazards] : [],
       responseNeeded: analysisResult.responseNeeded ? [...analysisResult.responseNeeded] : [],
       recommendedPriority: analysisResult.recommendedPriority,
-      engineUsed: analysisResult.engineUsed,
+      engineUsed:
+        analysisResult.engineUsed === 'Rule-Based Fallback' ? 'Rule-Based Fallback' : 'Gemini AI',
       source: 'Citizen WhatsApp',
       timeAgo: 'Just now',
       timestamp: formattedTimestamp,
@@ -241,7 +242,8 @@ export default function AITriageConsole({
       verificationStatus: 'Pending',
       entitiesExtracted: {
         urgency: urgencyLevel,
-        peopleTrapped: analysisResult.extractedEntities.peopleTrapped,
+        peopleTrapped:
+          parseInt(analysisResult.extractedEntities.peopleTrapped, 10) || undefined,
         waterLevel:
           analysisResult.extractedEntities.waterLevel ||
           (analysisResult.severity === 'Critical' ? '3.5 ft (Rapidly Rising)' : '2.0 ft'),
@@ -249,11 +251,13 @@ export default function AITriageConsole({
       },
     };
 
-    // Save newly created incident directly into Supabase
-    const { error } = await supabase.from('incidents').insert([newIncident]);
+    // Save newly created incident into Supabase (when configured)
+    if (supabase) {
+      const { error } = await supabase.from('incidents').insert([newIncident]);
 
-    if (error) {
-      console.error('Error inserting incident into Supabase:', error);
+      if (error) {
+        console.error('Error inserting incident into Supabase:', error);
+      }
     }
 
     onCreateIncident(newIncident);
@@ -277,18 +281,18 @@ export default function AITriageConsole({
     <div className="max-w-4xl mx-auto w-full space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="w-2.5 h-2.5 rounded-sm bg-indigo-600"></span>
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+        <span className="w-2.5 h-2.5 rounded-sm bg-sky-500"></span>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-sky-950 dark:text-sky-100">
           AI Triage Console
         </h2>
-        <span className="text-[11px] text-slate-500 font-mono ml-auto">
+        <span className="text-[11px] text-sky-600/80 font-mono ml-auto">
           Severity Engine &bull; NER Parser &bull; Gemini 2.5 Flash
         </span>
       </div>
 
       {/* Input Card */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
-        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+      <div className="bg-white/95 dark:bg-sky-900/90 border border-sky-100/90 dark:border-sky-800 rounded-xl p-4 space-y-3 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80">
           Raw Citizen Report
         </label>
         <textarea
@@ -297,13 +301,13 @@ export default function AITriageConsole({
           placeholder='e.g. "pani ghar mein aa gaya, 2 log trapped hai near Gandhi Nagar bridge, please help urgent"'
           rows={4}
           disabled={isAnalyzing}
-          className="w-full text-sm text-slate-800 border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none disabled:bg-slate-50"
+          className="w-full text-sm text-sky-950 dark:text-sky-100 border border-sky-200 dark:border-sky-700 rounded-lg p-3 bg-sky-50/40 dark:bg-sky-800/50 placeholder:text-sky-400/70 dark:placeholder:text-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400/30 focus:border-sky-400 resize-none disabled:bg-sky-50 dark:disabled:bg-sky-900"
         />
         <div className="flex items-center gap-2">
           <button
             onClick={handleAnalyze}
             disabled={!reportText.trim() || isAnalyzing}
-            className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center gap-2 bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-sky-700 shadow-[0_4px_12px_-6px_rgba(2,132,199,0.6)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {isAnalyzing ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -315,7 +319,7 @@ export default function AITriageConsole({
           {(reportText || analysisResult) && !isAnalyzing && (
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 px-2 py-2"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 hover:text-sky-900 px-2 py-2"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Clear
@@ -332,12 +336,12 @@ export default function AITriageConsole({
 
       {/* Analysis Result */}
       {analysisResult && (
-        <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-4">
+        <div className="bg-white/95 border border-sky-100/90 rounded-xl p-4 space-y-4 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
           {!analysisResult.isRelevant ? (
-            <div className="flex items-start gap-2 bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-md p-3">
+            <div className="flex items-start gap-2 bg-sky-50/70 border border-sky-100 text-sky-700 text-sm rounded-lg p-3">
               <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-slate-800">Not classified as a distress report</p>
+                <p className="font-semibold text-sky-950 dark:text-sky-100">Not classified as a distress report</p>
                 <p className="text-xs text-slate-500 mt-0.5">
                   The engine flagged this as noise, spam, or unrelated chatter. No incident will be
                   created.
@@ -352,19 +356,19 @@ export default function AITriageConsole({
                 >
                   {analysisResult.severity}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-lg bg-sky-100 text-sky-800 border border-sky-200">
                   {analysisResult.disasterType}
                 </span>
-                <span className="text-[11px] text-slate-500 ml-auto">
+                <span className="text-[11px] text-sky-600/80 ml-auto">
                   AI Confidence: <strong>{analysisResult.aiConfidence}%</strong>
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-slate-800 font-medium">{analysisResult.primaryLocation}</p>
+                    <p className="text-sky-950 dark:text-sky-100 font-medium">{analysisResult.primaryLocation}</p>
                     <p className="text-[11px] text-slate-500">
                       Location confidence: {analysisResult.locationConfidence}%
                       {analysisResult.coordinates &&
@@ -373,9 +377,9 @@ export default function AITriageConsole({
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Radio className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                  <Radio className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-slate-800 font-medium">
+                    <p className="text-sky-950 dark:text-sky-100 font-medium">
                       {analysisResult.recommendedPriority}
                     </p>
                     <p className="text-[11px] text-slate-500">Recommended response priority</p>
@@ -385,14 +389,14 @@ export default function AITriageConsole({
 
               {analysisResult.detectedSignals.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80 mb-1.5">
                     Detected Signals
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {analysisResult.detectedSignals.map((signal, i) => (
                       <span
                         key={i}
-                        className="text-[11px] bg-slate-100 text-slate-600 px-2 py-1 rounded"
+                        className="text-[11px] bg-sky-100/80 text-sky-800 px-2 py-1 rounded-lg"
                       >
                         {signal}
                       </span>
@@ -403,14 +407,14 @@ export default function AITriageConsole({
 
               {analysisResult.responseNeeded.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80 mb-1.5">
                     Response Resources Needed
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {analysisResult.responseNeeded.map((resource, i) => (
                       <span
                         key={i}
-                        className="text-[11px] bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100"
+                        className="text-[11px] bg-sky-50 text-sky-800 px-2 py-1 rounded-lg border border-sky-200"
                       >
                         {resource}
                       </span>
@@ -422,7 +426,7 @@ export default function AITriageConsole({
               {!createdIncidentId ? (
                 <button
                   onClick={handleCreateIncident}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-red-600 text-white text-xs font-semibold px-4 py-2.5 rounded-md hover:bg-red-700 transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-sky-600 text-white text-xs font-semibold px-4 py-2.5 rounded-lg hover:bg-sky-700 shadow-[0_6px_16px_-8px_rgba(2,132,199,0.6)] transition-colors"
                 >
                   Create Incident in Situation Room
                   <ArrowRight className="w-3.5 h-3.5" />

@@ -1,9 +1,210 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (toggle .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   * {
-    border-color: var(--color-slate-200, #e2e8f0);
+    border-color: var(--color-sky-100, #e0f2fe);
   }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: #f7fcfe;
+    background-image: linear-gradient(180deg, #ffffff 0%, #f2f9fd 40%, #e8f5fb 100%);
+    background-attachment: fixed;
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  .dark body,
+  .dark #root {
+    background-color: #0c1a2d;
+    background-image: linear-gradient(180deg, #0f2640 0%, #0c1a2d 40%, #091624 100%);
+    color: #e2e8f0;
+  }
+
+  ::selection {
+    background: var(--color-sky-200, #bae6fd);
+    color: var(--color-sky-950, #082f49);
+  }
+
+  .dark ::selection {
+    background: var(--color-sky-700, #0369a1);
+    color: #f0fdfa;
+  }
+}
+
+/* Smooth anchor scrolling for the landing page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Landing page helpers */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 5.5s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2.6s ease-in-out infinite;
+}
+
+/* Dashboard dynamism: count pop, new-incident slide-in, modal entrance */
+@keyframes count-pop {
+  0% {
+    transform: scale(1.3);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-count-pop {
+  animation: count-pop 0.35s ease-out;
+}
+
+@keyframes new-incident-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-new-incident {
+  animation: new-incident-in 0.45s ease-out;
+}
+
+/* Radar sweep for zone risk monitor */
+@keyframes radar-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+
+/* Concentric ring pulse */
+/* Expanding wave rings from zone dots */
+@keyframes wave-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0.7;
+    border-width: 2px;
+  }
+  70% {
+    opacity: 0.25;
+    border-width: 1px;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.5);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+.animate-wave-ring {
+  animation: wave-ring 3s ease-out infinite;
+}
+
+@keyframes ring-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+.animate-ring-pulse {
+  animation: ring-pulse 4s ease-out infinite;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-modal-in {
+  animation: modal-in 0.22s ease-out;
+}
+
+/* Slim, powder-blue scrollbars */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #bae6fd;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #7dd3fc;
+}
+
+/* Leaflet base map chrome on light theme */
+.leaflet-container {
+  background: #e0f2fe;
+  font-family: inherit;
+  /* Trap Leaflet's internal z-indexes (panes 200-700) inside the map
+     container so map text/markers can never overlay app modals. */
+  isolation: isolate;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 10px 28px -14px rgba(2, 132, 199, 0.45);
 }
 
 /* Leaflet Custom Marker & Map Styling */

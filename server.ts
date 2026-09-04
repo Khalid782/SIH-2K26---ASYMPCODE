@@ -37,7 +37,7 @@ function getGenAI(): GoogleGenAI | null {
   return genAIClient;
 }
 
-const SYSTEM_INSTRUCTION = `You are the PRISM AI Disaster Triage Engine for the Hyderabad Emergency Operations Center.
+const SYSTEM_INSTRUCTION = `You are the CRISISBEACON AI Disaster Triage Engine for the Hyderabad Emergency Operations Center.
 Your role is to analyze unstructured, informal, multilingual, code-mixed (Hinglish/English), social media, or citizen WhatsApp disaster reports and return structured operational disaster intelligence.
 
 Guidelines:
@@ -158,7 +158,7 @@ const triageResponseSchema = {
 
 // Health check route
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', service: 'PRISM Hybrid Disaster Triage' });
+  res.json({ status: 'ok', service: 'CRISISBEACON Hybrid Disaster Triage' });
 });
 
 // Gemini AI Triage Endpoint
@@ -266,7 +266,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`PRISM Emergency Operations Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`CRISISBEACON Emergency Operations Server listening on http://0.0.0.0:${PORT}`);
   });
 }
 

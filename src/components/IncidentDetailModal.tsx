@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Incident, VerificationStatus } from '../types';
 import { 
   X, 
@@ -61,39 +62,39 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
 
   const sevStyle = getSeverityStyle(incident.severity);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+  return createPortal(
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-sky-950/95 backdrop-blur-xl">
       <div 
-        className="bg-white w-full max-w-2xl rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-white w-full max-w-2xl rounded-2xl shadow-[0_30px_80px_-30px_rgba(2,132,199,0.55)] border border-sky-200/80 overflow-hidden flex flex-col max-h-[90vh] animate-modal-in"
         role="dialog"
         aria-modal="true"
       >
         {/* Modal Top Header */}
-        <div className="px-5 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div className="px-5 py-4 bg-gradient-to-r from-sky-50 via-white to-sky-100/80 text-sky-950 flex items-center justify-between border-b border-sky-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-md bg-slate-800 border border-slate-700 text-red-400">
+            <div className="p-2 rounded-xl bg-white border border-sky-200 text-sky-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_4px_10px_-5px_rgba(2,132,199,0.35)]">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-slate-400">
+                <span className="font-mono text-xs font-semibold text-sky-500">
                   {incident.id}
                 </span>
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${sevStyle.badge}`}>
                   {incident.severity}
                 </span>
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-sky-100/80 text-sky-800 border border-sky-200">
                   {incident.status}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-white tracking-tight mt-0.5">
+              <h3 className="text-base font-bold text-sky-950 tracking-tight mt-0.5">
                 Incident Operations Details
               </h3>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+            className="p-1.5 rounded-lg text-sky-500 hover:text-sky-900 hover:bg-sky-100 transition cursor-pointer"
             title="Close modal (Esc)"
           >
             <X className="w-5 h-5" />
@@ -101,118 +102,118 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
         </div>
 
         {/* Modal Body Content (Scrollable) */}
-        <div className="p-5 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
+        <div className="p-5 overflow-y-auto space-y-4 text-xs text-sky-900/80 leading-relaxed">
           
           {/* Section 1: Original Ingested Report */}
-          <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+          <div className="p-3.5 rounded-xl bg-sky-50/60 border border-sky-100">
             <div className="flex items-center justify-between text-slate-500 font-semibold mb-1.5">
-              <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-slate-800 font-bold">
+              <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-sky-950 font-bold">
                 <FileText className="w-3.5 h-3.5 text-slate-700" />
                 Original Report
               </span>
-              <span className="font-mono text-[11px] text-slate-500 flex items-center gap-1">
+              <span className="font-mono text-[11px] text-sky-600/80 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {incident.timeAgo}
               </span>
             </div>
-            <p className="text-sm font-medium text-slate-900 bg-white p-3 rounded border border-slate-200 shadow-xs">
+            <p className="text-sm font-medium text-sky-950 bg-white p-3 rounded-lg border border-sky-100 shadow-[0_1px_2px_rgba(2,132,199,0.08)]">
               "{incident.originalReport}"
             </p>
           </div>
 
           {/* Section 2: Structured Incident Intelligence Grid */}
-          <div className="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+          <div className="border border-sky-100 rounded-xl p-3.5 bg-sky-50/40">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-sky-800 mb-3 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-sky-500" />
               Incident Intelligence & AI Extraction
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Extracted Location */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-sky-400" />
                   Extracted Location
                 </div>
-                <div className="font-bold text-slate-900 text-xs mt-1">
+                <div className="font-bold text-sky-950 text-xs mt-1">
                   {incident.location}
                 </div>
                 {incident.landmark && (
-                  <div className="text-[11px] text-slate-500 mt-0.5">
+                  <div className="text-[11px] text-sky-600/70 mt-0.5">
                     {incident.landmark}
                   </div>
                 )}
               </div>
 
               {/* Disaster Type */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <Activity className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <Activity className="w-3 h-3 text-sky-400" />
                   Disaster Type
                 </div>
-                <div className="font-bold text-slate-900 text-xs mt-1">
+                <div className="font-bold text-sky-950 text-xs mt-1">
                   {incident.disasterType}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   Emergency Category
                 </div>
               </div>
 
               {/* Severity */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3 text-sky-400" />
                   Severity
                 </div>
                 <div className={`font-bold text-xs mt-1 ${sevStyle.text}`}>
                   {incident.severity}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   Urgency: {incident.entitiesExtracted.urgency}
                 </div>
               </div>
 
               {/* AI Confidence */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-indigo-500" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-sky-500" />
                   AI Confidence
                 </div>
-                <div className="font-bold text-indigo-700 text-xs mt-1 flex items-center gap-1.5">
+                <div className="font-bold text-sky-700 text-xs mt-1 flex items-center gap-1.5">
                   <span>{incident.aiConfidence}%</span>
-                  <div className="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-16 bg-sky-100 rounded-full h-1.5 overflow-hidden">
                     <div 
-                      className="bg-indigo-600 h-full rounded-full" 
+                      className="bg-sky-500 h-full rounded-full" 
                       style={{ width: `${incident.aiConfidence}%` }} 
                     />
                   </div>
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   Automated Extraction Score
                 </div>
               </div>
 
               {/* Source */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <Radio className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <Radio className="w-3 h-3 text-sky-400" />
                   Source
                 </div>
-                <div className="font-bold text-slate-900 text-xs mt-1">
+                <div className="font-bold text-sky-950 text-xs mt-1">
                   {incident.source}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   Ingestion Channel
                 </div>
               </div>
 
               {/* Reported Time */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-sky-400" />
                   Reported Time
                 </div>
-                <div className="font-bold text-slate-900 text-xs mt-1">
+                <div className="font-bold text-sky-950 text-xs mt-1">
                   {incident.timeAgo}
                 </div>
                 <div className="text-[11px] text-slate-500 font-mono mt-0.5">
@@ -221,29 +222,29 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
               </div>
 
               {/* Verification Status */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-sky-400" />
                   Verification Status
                 </div>
-                <div className="font-bold text-slate-900 text-xs mt-1">
+                <div className="font-bold text-sky-950 text-xs mt-1">
                   {incident.status}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   Operator Workflow State
                 </div>
               </div>
 
               {/* Latitude / Longitude */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
-                <div className="text-[10px] uppercase font-bold text-slate-500 flex items-center gap-1">
-                  <Compass className="w-3 h-3 text-slate-400" />
+              <div className="bg-white p-3 rounded-lg border border-sky-100/90 shadow-[0_1px_3px_rgba(2,132,199,0.08)]">
+                <div className="text-[10px] uppercase font-bold text-sky-600/80 flex items-center gap-1">
+                  <Compass className="w-3 h-3 text-sky-400" />
                   Latitude / Longitude
                 </div>
-                <div className="font-mono font-bold text-slate-900 text-xs mt-1">
+                <div className="font-mono font-bold text-sky-950 text-xs mt-1">
                   {incident.coordinates[0].toFixed(4)}, {incident.coordinates[1].toFixed(4)}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
+                <div className="text-[11px] text-sky-600/70 mt-0.5">
                   WGS84 Coordinates
                 </div>
               </div>
@@ -251,15 +252,15 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
 
               {/* Extra Extracted Context (if available) */}
             {(incident.entitiesExtracted.peopleTrapped || incident.entitiesExtracted.waterLevel || incident.assignedTeam || incident.detectedSignals || incident.recommendedPriority || incident.hazards || incident.responseNeeded || incident.secondaryLocations || incident.engineUsed) && (
-              <div className="mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+              <div className="mt-3 pt-3 border-t border-sky-100 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
                 {incident.engineUsed && (
-                  <div className="sm:col-span-2 flex items-center justify-between bg-slate-100 p-2 rounded border border-slate-200">
+                  <div className="sm:col-span-2 flex items-center justify-between bg-sky-50 p-2 rounded-lg border border-sky-100">
                     <span className="text-slate-600 font-medium">Triage Engine:</span>
-                    <span className="font-bold text-indigo-700">{incident.engineUsed}</span>
+                    <span className="font-bold text-sky-700">{incident.engineUsed}</span>
                   </div>
                 )}
                 {incident.secondaryLocations && incident.secondaryLocations.length > 0 && (
-                  <div className="sm:col-span-2 bg-slate-100/80 p-2 rounded border border-slate-200 text-slate-700">
+                  <div className="sm:col-span-2 bg-sky-50/70 p-2 rounded-lg border border-sky-100 text-sky-900/80">
                     <span className="font-bold text-slate-800">Secondary / Access Routes: </span>
                     <span>{incident.secondaryLocations.join(', ')}</span>
                   </div>
@@ -279,13 +280,13 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
                   </div>
                 )}
                 {incident.responseNeeded && incident.responseNeeded.length > 0 && (
-                  <div className="sm:col-span-2 bg-indigo-50/70 p-2 rounded border border-indigo-200">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-900 block mb-1">
+                  <div className="sm:col-span-2 bg-sky-50/80 p-2 rounded-lg border border-sky-200">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-sky-900 block mb-1">
                       Response Units Needed:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {incident.responseNeeded.map((resp, idx) => (
-                        <span key={idx} className="bg-white text-indigo-800 px-2 py-0.5 rounded text-[11px] font-semibold border border-indigo-200">
+                        <span key={idx} className="bg-white text-sky-800 px-2 py-0.5 rounded text-[11px] font-semibold border border-sky-200">
                           {resp}
                         </span>
                       ))}
@@ -293,13 +294,13 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
                   </div>
                 )}
                 {incident.detectedSignals && incident.detectedSignals.length > 0 && (
-                  <div className="sm:col-span-2 bg-slate-100/70 p-2.5 rounded border border-slate-200">
+                  <div className="sm:col-span-2 bg-sky-50/60 p-2.5 rounded-lg border border-sky-100">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block mb-1.5">
                       Detected Crisis Signals:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {incident.detectedSignals.map((sig, idx) => (
-                        <span key={idx} className="bg-white text-slate-800 px-2 py-0.5 rounded text-[11px] font-medium border border-slate-300">
+                        <span key={idx} className="bg-white text-sky-900 px-2 py-0.5 rounded text-[11px] font-medium border border-sky-200">
                           {sig}
                         </span>
                       ))}
@@ -307,8 +308,8 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
                   </div>
                 )}
                 {incident.recommendedPriority && (
-                  <div className="flex items-center gap-1.5 text-indigo-900 font-semibold bg-indigo-50 p-2 rounded border border-indigo-200">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <div className="flex items-center gap-1.5 text-sky-900 font-semibold bg-sky-50 p-2 rounded-lg border border-sky-200">
+                    <Sparkles className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                     <span>Recommended Priority: {incident.recommendedPriority}</span>
                   </div>
                 )}
@@ -319,13 +320,13 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
                   </div>
                 )}
                 {incident.entitiesExtracted.waterLevel && (
-                  <div className="flex items-center gap-1.5 text-blue-800 font-semibold bg-blue-50 p-2 rounded border border-blue-200">
+                  <div className="flex items-center gap-1.5 text-sky-800 font-semibold bg-sky-50 p-2 rounded-lg border border-sky-200">
                     <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                     <span>Estimated Water Level: {incident.entitiesExtracted.waterLevel}</span>
                   </div>
                 )}
                 {incident.assignedTeam && (
-                  <div className="sm:col-span-2 flex items-center justify-between text-slate-800 bg-white p-2 rounded border border-slate-200">
+                  <div className="sm:col-span-2 flex items-center justify-between text-sky-950 bg-white p-2 rounded-lg border border-sky-100">
                     <span className="text-slate-500 font-medium">Assigned Unit:</span>
                     <strong className="text-slate-900">{incident.assignedTeam}</strong>
                   </div>
@@ -336,8 +337,8 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
         </div>
 
         {/* Modal Footer: Operator Action Buttons */}
-        <div className="p-4 bg-slate-100 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-xs text-slate-700 font-semibold w-full sm:w-auto">
+        <div className="p-4 bg-gradient-to-r from-white to-sky-50/80 border-t border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-xs text-sky-800 font-semibold w-full sm:w-auto">
             Operator Actions:
           </div>
 
@@ -362,8 +363,8 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
               onClick={() => onUpdateStatus(incident.id, 'Actioned')}
               className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-md font-semibold text-xs transition cursor-pointer ${
                 incident.status === 'Actioned'
-                  ? 'bg-blue-800 text-white ring-2 ring-blue-500 shadow-sm'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs'
+                  ? 'bg-sky-700 text-white ring-2 ring-sky-400 shadow-sm'
+                  : 'bg-sky-600 hover:bg-sky-700 text-white shadow-xs'
               }`}
             >
               <CheckCheck className="w-3.5 h-3.5" />
@@ -377,7 +378,7 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
               className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-md font-semibold text-xs transition cursor-pointer ${
                 incident.status === 'False Alarm'
                   ? 'bg-slate-700 text-white ring-2 ring-slate-400 shadow-sm'
-                  : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-300 shadow-xs'
+                  : 'bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 shadow-xs'
               }`}
             >
               <AlertOctagon className="w-3.5 h-3.5 text-slate-500" />
@@ -390,17 +391,18 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
               onClick={() => onUpdateStatus(incident.id, 'Duplicate')}
               className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-md font-semibold text-xs transition cursor-pointer ${
                 incident.status === 'Duplicate'
-                  ? 'bg-purple-800 text-white ring-2 ring-purple-400 shadow-sm'
-                  : 'bg-white hover:bg-purple-50 text-purple-700 border border-purple-200 shadow-xs'
+                  ? 'bg-slate-600 text-white ring-2 ring-slate-300 shadow-sm'
+                  : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 shadow-xs'
               }`}
             >
-              <Copy className="w-3.5 h-3.5 text-purple-600" />
+              <Copy className="w-3.5 h-3.5 text-slate-500" />
               Duplicate
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

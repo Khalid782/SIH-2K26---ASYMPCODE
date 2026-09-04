@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vite/
+isolate/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
