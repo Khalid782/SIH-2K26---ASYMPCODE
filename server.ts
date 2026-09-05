@@ -76,7 +76,17 @@ Guidelines:
 - recommendedPriority: "Immediate Response" (critical life threat requiring instant dispatch), "High Priority" (urgent attention required), "Monitor" (routine/low risk).
 
 7. HINGLISH & CODE-MIXED TRANSLATION:
-- Understand words like "pani" (water), "atke hue / phanse hue" (stuck/trapped), "bachao / madad" (help/rescue), "bijli / current / tarein" (electricity/wires), "gir gaya / toot gaya" (collapsed/broken), "ghar" (house), "chhat" (roof), "rasta / sadak" (road), "pul" (bridge/flyover).`;
+- Understand words like "pani" (water), "atke hue / phanse hue" (stuck/trapped), "bachao / madad" (help/rescue), "bijli / current / tarein" (electricity/wires), "gir gaya / toot gaya" (collapsed/broken), "ghar" (house), "chhat" (roof), "rasta / sadak" (road), "pul" (bridge/flyover).
+
+8. CLEANED REPORT (CRITICAL):
+- Produce a "cleanedReport": rewrite the raw citizen message into calm, clear, professional English.
+- Fix typos and grammar, translate Hinglish/code-mixed phrases, remove panic repetition and filler, and keep the exact facts (who, what, where, how many, how urgent).
+- Write 2-4 complete sentences suitable for dispatchers and on-screen operators to read instantly.
+
+9. COORDINATES:
+- Provide approximate lat/lng coordinates for primaryLocation within Hyderabad, Telangana.
+- Known reference points: Tolichowki [17.3986, 78.4069], Mehdipatnam [17.3916, 78.4411], Gachibowli [17.4401, 78.3489], Madhapur/Durgam Cheruvu [17.4483, 78.3915], Charminar [17.3616, 78.4747], Secunderabad [17.4399, 78.4983], Banjara Hills [17.4156, 78.4350], Kukatpally [17.4938, 78.3995], LB Nagar [17.3457, 78.5522], city center [17.4065, 78.4482].
+- Use the closest known point for the named area; otherwise give your best estimate within Hyderabad (lat 17.30-17.55, lng 78.30-78.60).`;
 
 const triageResponseSchema = {
   type: Type.OBJECT,
@@ -140,6 +150,19 @@ const triageResponseSchema = {
       type: Type.STRING,
       description: 'Mentioned flood water depth (e.g. "5 ft", "chest height") or null if not mentioned.',
     },
+    cleanedReport: {
+      type: Type.STRING,
+      description: 'The raw citizen report rewritten into calm, clear, professional English (typos fixed, Hinglish translated, facts preserved). 2-4 sentences.',
+    },
+    coordinates: {
+      type: Type.OBJECT,
+      properties: {
+        lat: { type: Type.NUMBER, description: 'Approximate latitude of primaryLocation in Hyderabad.' },
+        lng: { type: Type.NUMBER, description: 'Approximate longitude of primaryLocation in Hyderabad.' },
+      },
+      required: ['lat', 'lng'],
+      description: 'Approximate lat/lng of the primary location within Hyderabad.',
+    },
   },
   required: [
     'isRelevant',
@@ -153,6 +176,8 @@ const triageResponseSchema = {
     'detectedSignals',
     'hazards',
     'recommendedPriority',
+    'cleanedReport',
+    'coordinates',
   ],
 };
 

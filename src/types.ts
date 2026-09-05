@@ -43,6 +43,7 @@ export interface Incident {
   timeAgo: string;
   timestamp: string;
   originalReport: string;
+  cleanedReport?: string;
   status: VerificationStatus;
   verificationStatus?: VerificationStatus;
   entitiesExtracted: {

@@ -180,7 +180,13 @@ export function App() {
   // Create Incident from AI Triage Console
   const handleCreateIncidentFromTriage = (newIncident: Incident) => {
     setIncidents((prev) => [newIncident, ...prev]);
-    showNotification('Incident added to Situation Room');
+    setHighlightId(newIncident.id);
+    setTimeout(() => {
+      setHighlightId((cur) => (cur === newIncident.id ? null : cur));
+    }, 5000);
+    showNotification(
+      `Gemini triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} marked on map & added to feed`
+    );
   };
 
   // Operator action updates incident state locally AND in Supabase

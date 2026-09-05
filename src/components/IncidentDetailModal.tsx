@@ -18,7 +18,8 @@ import {
   Layers,
   Activity,
   AlertTriangle,
-  Info
+  Info,
+  Zap
 } from 'lucide-react';
 
 interface IncidentDetailModalProps {
@@ -120,6 +121,24 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
               "{incident.originalReport}"
             </p>
           </div>
+
+          {/* Section 1b: Gemini-Cleaned Report (when available) */}
+          {incident.cleanedReport && (
+            <div className="p-3.5 rounded-xl bg-gradient-to-br from-emerald-50/80 to-sky-50/60 border border-emerald-100">
+              <div className="flex items-center justify-between text-slate-500 font-semibold mb-1.5">
+                <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-emerald-900 font-bold">
+                  <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                  Cleaned by Gemini
+                </span>
+                <span className="text-[11px] text-emerald-700/70">
+                  Readable version for dispatchers
+                </span>
+              </div>
+              <p className="text-sm font-medium text-emerald-950 bg-white p-3 rounded-lg border border-emerald-100 shadow-[0_1px_2px_rgba(16,185,129,0.1)]">
+                {incident.cleanedReport}
+              </p>
+            </div>
+          )}
 
           {/* Section 2: Structured Incident Intelligence Grid */}
           <div className="border border-sky-100 rounded-xl p-3.5 bg-sky-50/40">
