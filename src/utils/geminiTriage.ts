@@ -1,32 +1,13 @@
-import { GoogleGenAI, Type } from '@google/genai';
-
 // ---------------------------------------------------------------------------
 // Shared Gemini triage logic for CRISISBEACON.
 // Used by:
 //   - server.ts           (Express dev/production server)
 //   - api/triage.ts       (Vercel serverless function)
+//
+// Calls the Gemini REST API directly with plain fetch (Node 18+), which is the
+// most reliable path inside serverless runtimes — no SDK bundling issues.
 // The API key is always read server-side from process.env.GEMINI_API_KEY.
 // ---------------------------------------------------------------------------
-
-let genAIClient: GoogleGenAI | null = null;
-
-export function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return null;
-  }
-  if (!genAIClient) {
-    genAIClient = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        },
-      },
-    });
-  }
-  return genAIClient;
-}
 
 export const SYSTEM_INSTRUCTION = `You are the CRISISBEACON AI Disaster Triage Engine for the Hyderabad Emergency Operations Center.
 Your role is to analyze unstructured, informal, multilingual, code-mixed (Hinglish/English), social media, or citizen WhatsApp disaster reports and return structured operational disaster intelligence.
@@ -79,77 +60,78 @@ Guidelines:
 - Known reference points: Tolichowki [17.3986, 78.4069], Mehdipatnam [17.3916, 78.4411], Gachibowli [17.4401, 78.3489], Madhapur/Durgam Cheruvu [17.4483, 78.3915], Charminar [17.3616, 78.4747], Secunderabad [17.4399, 78.4983], Banjara Hills [17.4156, 78.4350], Kukatpally [17.4938, 78.3995], LB Nagar [17.3457, 78.5522], city center [17.4065, 78.4482].
 - Use the closest known point for the named area; otherwise give your best estimate within Hyderabad (lat 17.30-17.55, lng 78.30-78.60).`;
 
+// OpenAPI-style schema (uppercase type names as required by the Gemini REST API).
 export const triageResponseSchema = {
-  type: Type.OBJECT,
+  type: 'OBJECT',
   properties: {
     isRelevant: {
-      type: Type.BOOLEAN,
+      type: 'BOOLEAN',
       description: 'True if this is a genuine disaster, emergency, crisis, or flood incident report.',
     },
     primaryLocation: {
-      type: Type.STRING,
+      type: 'STRING',
       description: 'The specific primary location/landmark where the disaster or trapped victims are located in Hyderabad.',
     },
     secondaryLocations: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
+      type: 'ARRAY',
+      items: { type: 'STRING' },
       description: 'Access routes, referenced neighborhoods, or nearby origin points mentioned.',
     },
     disasterType: {
-      type: Type.STRING,
+      type: 'STRING',
       enum: ['Flood', 'Medical Emergency', 'Infrastructure Damage', 'Rescue Required'],
       description: 'The underlying root disaster category.',
     },
     responseNeeded: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
+      type: 'ARRAY',
+      items: { type: 'STRING' },
       description: 'Tactical emergency response capabilities required (e.g. Rescue, Evacuation, Medical, Power Cut, Road Clearing).',
     },
     severity: {
-      type: Type.STRING,
+      type: 'STRING',
       enum: ['Critical', 'High', 'Low'],
       description: 'Crisis severity level.',
     },
     confidence: {
-      type: Type.INTEGER,
+      type: 'INTEGER',
       description: 'Overall analysis confidence score from 0 to 100.',
     },
     locationConfidence: {
-      type: Type.INTEGER,
+      type: 'INTEGER',
       description: 'Spatial location extraction confidence from 0 to 100.',
     },
     detectedSignals: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
+      type: 'ARRAY',
+      items: { type: 'STRING' },
       description: 'Key crisis signals detected from the text narrative.',
     },
     hazards: {
-      type: Type.ARRAY,
-      items: { type: Type.STRING },
+      type: 'ARRAY',
+      items: { type: 'STRING' },
       description: 'Specific immediate physical hazards present (e.g. electrical wires touching water, trapped children, blocked road).',
     },
     recommendedPriority: {
-      type: Type.STRING,
+      type: 'STRING',
       enum: ['Immediate Response', 'High Priority', 'Monitor'],
       description: 'Operational priority recommendation.',
     },
     peopleAffected: {
-      type: Type.INTEGER,
+      type: 'INTEGER',
       description: 'Estimated number of people trapped, injured, or directly affected if mentioned, otherwise 0 or null.',
     },
     waterLevel: {
-      type: Type.STRING,
+      type: 'STRING',
       description: 'Mentioned flood water depth (e.g. "5 ft", "chest height") or null if not mentioned.',
     },
     cleanedReport: {
-      type: Type.STRING,
+      type: 'STRING',
       description: 'The raw citizen report rewritten into calm, clear, professional English (typos fixed, Hinglish translated, facts preserved). 2-4 sentences.',
     },
     coordinates: {
-      type: Type.OBJECT,
+      type: 'OBJECT',
       properties: {
-        lat: { type: Type.NUMBER, description: 'Approximate latitude of primaryLocation in Hyderabad.' },
-        lng: { type: Type.NUMBER, description: 'Approximate longitude of primaryLocation in Hyderabad.' },
+        lat: { type: 'NUMBER', description: 'Approximate latitude of primaryLocation in Hyderabad.' },
+        lng: { type: 'NUMBER', description: 'Approximate longitude of primaryLocation in Hyderabad.' },
       },
       required: ['lat', 'lng'],
       description: 'Approximate lat/lng of the primary location within Hyderabad.',
@@ -181,65 +163,83 @@ export interface GeminiTriageOutcome {
 
 const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-3.7-flash', 'gemini-2.5-pro'];
 
+const GEMINI_URL = (model: string) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+async function callGeminiModel(model: string, apiKey: string, text: string): Promise<string | null> {
+  const response = await fetch(GEMINI_URL(model) + `?key=${encodeURIComponent(apiKey)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+      contents: [
+        {
+          parts: [
+            {
+              text: `Analyze this raw incoming disaster report and extract structured operational intelligence:\n\n"""\n${text}\n"""`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+        responseSchema: triageResponseSchema,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => '');
+    throw new Error(`Gemini ${model} returned HTTP ${response.status}: ${errText.slice(0, 200)}`);
+  }
+
+  const data = await response.json();
+  const part = data?.candidates?.[0]?.content?.parts?.find(
+    (p: any) => typeof p?.text === 'string'
+  );
+  return part?.text ?? null;
+}
+
 /**
  * Runs Gemini triage over a raw report, trying candidate models in order.
  * Returns { success: false, error } when the API key is missing or every
  * model fails (the caller signals the client-side fallback in that case).
  */
 export async function runGeminiTriage(text: string): Promise<GeminiTriageOutcome> {
-  const ai = getGeminiClient();
-  if (!ai) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
     return {
       success: false,
       error: 'Gemini API is not configured on server (GEMINI_API_KEY missing)',
     };
   }
 
+  const trimmed = text.trim();
   let lastError: any = null;
-  let parsedData: any = null;
-  let usedModel: string = CANDIDATE_MODELS[0];
 
   for (const modelName of CANDIDATE_MODELS) {
     try {
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: [
-          {
-            text: `Analyze this raw incoming disaster report and extract structured operational intelligence:\n\n"""\n${text.trim()}\n"""`,
-          },
-        ],
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          responseMimeType: 'application/json',
-          responseSchema: triageResponseSchema,
-          temperature: 0.1,
-        },
-      });
-
-      const outputText = response.text;
-      if (outputText) {
-        parsedData = JSON.parse(outputText);
-        usedModel = modelName;
-        break;
+      const outputText = await callGeminiModel(modelName, apiKey, trimmed);
+      if (!outputText) {
+        lastError = new Error('Empty response from model');
+        continue;
       }
+      // Strip any accidental markdown fences, then parse.
+      const cleaned = outputText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      const parsedData = JSON.parse(cleaned);
+      return { success: true, parsedData, usedModel: modelName };
     } catch (err: any) {
       lastError = err;
       console.warn(
-        `Model ${modelName} encountered temporary error (${err?.message || err}). Attempting next candidate...`
+        `Model ${modelName} encountered error (${err?.message || err}). Attempting next candidate...`
       );
     }
   }
 
-  if (!parsedData) {
-    console.warn(
-      'All Gemini candidate models failed or unavailable. Signaling client fallback.',
-      lastError?.message || lastError
-    );
-    return {
-      success: false,
-      error: lastError?.message || 'Gemini service temporarily unavailable',
-    };
-  }
-
-  return { success: true, parsedData, usedModel };
+  console.warn('All Gemini candidate models failed or unavailable. Signaling client fallback.', lastError?.message || lastError);
+  return {
+    success: false,
+    error: lastError?.message || 'Gemini service temporarily unavailable',
+  };
 }
