@@ -32,7 +32,6 @@ interface AnalysisResult {
   recommendedPriority: 'Immediate Response' | 'High Priority' | 'Monitor';
   engineUsed: 'Gemini AI' | 'Rule-Based Fallback';
   cleanedReport?: string;
-  /** Lightly-normalized raw text used when the Gemini rewrite is unavailable. */
   fallbackClean?: string;
   extractedEntities: {
     peopleTrapped: string;
@@ -45,14 +44,11 @@ interface AITriageConsoleProps {
   onNavigateToSituationRoom: () => void;
 }
 
-/**
- * Maps the server's /api/triage response (Gemini) into the console's
- * AnalysisResult shape.
- */
 function mapGeminiResult(data: any): AnalysisResult {
-  const coords = data.coordinates && typeof data.coordinates.lat === 'number'
-    ? { lat: data.coordinates.lat, lng: data.coordinates.lng }
-    : { lat: 17.4065, lng: 78.4482 };
+  const coords =
+    data.coordinates && typeof data.coordinates.lat === 'number'
+      ? { lat: data.coordinates.lat, lng: data.coordinates.lng }
+      : { lat: 17.4065, lng: 78.4482 };
 
   return {
     isRelevant: !!data.isRelevant,
@@ -78,9 +74,6 @@ function mapGeminiResult(data: any): AnalysisResult {
   };
 }
 
-/**
- * Maps the offline rule-based engine result (used when Gemini is unavailable).
- */
 function mapRuleBasedResult(text: string): AnalysisResult {
   const r: TriageAnalysisResult = analyzeDisasterReport(text);
   const fallbackClean = text
@@ -105,15 +98,13 @@ function mapRuleBasedResult(text: string): AnalysisResult {
     recommendedPriority: r.recommendedPriority,
     engineUsed: 'Rule-Based Fallback',
     cleanedReport: undefined,
+    fallbackClean,
     extractedEntities: {
       peopleTrapped: r.extractedEntities.peopleTrapped
         ? String(r.extractedEntities.peopleTrapped)
         : '',
       waterLevel: r.extractedEntities.waterLevel || '',
     },
-    // Keep the lightly-normalized raw text so dispatchers still get readable copy
-    // even when the Gemini rewrite is unavailable.
-    ...(fallbackClean ? { fallbackClean } : {}),
   };
 }
 
@@ -130,7 +121,7 @@ export default function AITriageConsole({
   const buildIncident = (result: AnalysisResult, rawText: string): Incident => {
     const newId = `INC-2026-${Math.floor(100 + Math.random() * 900)}`;
     const now = new Date();
-    const formattedTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} IST`;
+    const ts = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} IST`;
 
     const urgencyLevel =
       result.recommendedPriority === 'Immediate Response'
@@ -144,7 +135,7 @@ export default function AITriageConsole({
       result.extractedEntities.waterLevel ||
       (result.severity === 'Critical' ? '3.5 ft (Rapidly Rising)' : '2.0 ft');
 
-    const newIncident: Incident = {
+    return {
       id: newId,
       location: result.primaryLocation || result.location,
       extractedLocation: result.primaryLocation || result.location,
@@ -164,7 +155,7 @@ export default function AITriageConsole({
       engineUsed: result.engineUsed === 'Rule-Based Fallback' ? 'Rule-Based Fallback' : 'Gemini AI',
       source: 'Citizen WhatsApp',
       timeAgo: 'Just now',
-      timestamp: formattedTimestamp,
+      timestamp: ts,
       originalReport: rawText.trim(),
       cleanedReport: result.cleanedReport,
       status: 'Pending',
@@ -176,8 +167,6 @@ export default function AITriageConsole({
         affectedArea: result.primaryLocation || result.location,
       },
     };
-
-    return newIncident;
   };
 
   const handleAnalyze = async () => {
@@ -190,46 +179,55 @@ export default function AITriageConsole({
 
     try {
       let result: AnalysisResult;
-      let serverFallback = false;
 
-      // 1) Ask the server to run Gemini (API key stays server-side, never exposed).
-      const res = await fetch('/api/triage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: reportText.trim() }),
-      });
+      // 1) Call the server-side Gemini triage endpoint.
+      //    Client-side 45s timeout so the UI never hangs.
+      const clientController = new AbortController();
+      const clientTimeout = setTimeout(() => clientController.abort(), 45_000);
+
+      let res: Response;
+      try {
+        res = await fetch('/api/triage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: reportText.trim() }),
+          signal: clientController.signal,
+        });
+      } finally {
+        clearTimeout(clientTimeout);
+      }
 
       const payload = await res.json().catch(() => null);
 
       if (payload && payload.success && payload.data) {
         result = mapGeminiResult(payload.data);
       } else if (payload && payload.fallback) {
-        // 2) Gemini not configured / temporarily unavailable -> rule-based fallback.
-        serverFallback = true;
         result = mapRuleBasedResult(reportText.trim());
+
+        // Show the server-side fallback reason as a warning, not a hard error.
+        setAnalysisError(
+          payload.error ||
+            'Gemini unavailable — showing rule-based fallback. Add GEMINI_API_KEY to enable AI rewriting.'
+        );
       } else if (!payload) {
-        // 3) The response wasn't JSON at all — the /api/triage route is likely
-        //    not deployed on this host (e.g. static hosting without the
-        //    serverless function).
         throw new Error(
-          'Triage endpoint did not return a JSON response (HTTP ' +
+          'Triage endpoint did not return JSON (HTTP ' +
             res.status +
-            '). On Vercel, make sure the api/triage serverless function is included in the deployment and GEMINI_API_KEY is set in your project environment variables.'
+            '). Ensure api/triage is deployed and GEMINI_API_KEY is set.'
         );
       } else {
         throw new Error(payload?.error || 'Triage service returned an unexpected response.');
       }
 
+      // 2) Show the analysis result.
       setAnalysisResult(result);
 
-      // 3) Automatically mark the incident on the map (severity-colored marker)
-      //    and push it into the intelligence feed.
+      // 3) If relevant, auto-create the incident on the map + intelligence feed.
       if (result.isRelevant) {
         const newIncident = buildIncident(result, reportText);
         onCreateIncident(newIncident);
         setCreatedIncidentId(newIncident.id);
 
-        // Persist to Supabase when configured.
         if (supabase) {
           const { error } = await supabase.from('incidents').insert([newIncident]);
           if (error) {
@@ -237,19 +235,15 @@ export default function AITriageConsole({
           }
         }
       }
-
-      if (serverFallback) {
-        setAnalysisError(
-          'Gemini is not configured on the server (GEMINI_API_KEY missing). Showing rule-based fallback analysis — add the key to enable AI rewriting.'
-        );
-      }
-    } catch (err) {
-      console.error('Error analyzing report:', err);
-      setAnalysisError(
-        err instanceof Error
-          ? err.message
-          : 'Analysis failed. Check the server connection and try again.'
-      );
+    } catch (err: any) {
+      // Surface abort errors as a clear timeout message.
+      const msg =
+        err?.name === 'AbortError'
+          ? 'Triage request timed out after 45s. The model may be overloaded — try again.'
+          : err instanceof Error
+            ? err.message
+            : 'Analysis failed. Check the server connection and try again.';
+      setAnalysisError(msg);
     } finally {
       setIsAnalyzing(false);
     }
@@ -270,7 +264,6 @@ export default function AITriageConsole({
 
   return (
     <div className="max-w-4xl mx-auto w-full space-y-4">
-      {/* Header */}
       <div className="flex items-center gap-2">
         <span className="w-2.5 h-2.5 rounded-sm bg-sky-500"></span>
         <h2 className="text-xs font-bold uppercase tracking-wider text-sky-950 dark:text-sky-100">
@@ -281,7 +274,6 @@ export default function AITriageConsole({
         </span>
       </div>
 
-      {/* Input Card */}
       <div className="bg-white/95 dark:bg-sky-900/90 border border-sky-100/90 dark:border-sky-800 rounded-xl p-4 space-y-3 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
         <label className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80">
           Raw Citizen Report
@@ -325,14 +317,15 @@ export default function AITriageConsole({
         )}
       </div>
 
-      {/* Analysis Result */}
       {analysisResult && (
         <div className="bg-white/95 dark:bg-sky-900/90 border border-sky-100/90 dark:border-sky-800 rounded-xl p-4 space-y-4 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
           {!analysisResult.isRelevant ? (
             <div className="flex items-start gap-2 bg-sky-50/70 border border-sky-100 text-sky-700 text-sm rounded-lg p-3">
               <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-sky-950 dark:text-sky-100">Not classified as a distress report</p>
+                <p className="font-semibold text-sky-950 dark:text-sky-100">
+                  Not classified as a distress report
+                </p>
                 <p className="text-xs text-slate-500 mt-0.5">
                   The engine flagged this as noise, spam, or unrelated chatter. No incident will be
                   created.
@@ -365,8 +358,7 @@ export default function AITriageConsole({
                 </span>
               </div>
 
-              {/* Gemini cleaned rewrite of the panicky raw text */}
-              {(analysisResult.cleanedReport || analysisResult.engineUsed === 'Rule-Based Fallback') && (
+              {(analysisResult.cleanedReport || analysisResult.fallbackClean) && (
                 <div className="bg-gradient-to-br from-sky-50/80 to-white dark:from-sky-800/40 dark:to-sky-900/60 border border-sky-100 dark:border-sky-700 rounded-lg p-3">
                   <div className="flex items-center gap-1.5 mb-1.5">
                     <FileText className="w-3.5 h-3.5 text-sky-500" />
@@ -389,7 +381,9 @@ export default function AITriageConsole({
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sky-950 dark:text-sky-100 font-medium">{analysisResult.primaryLocation}</p>
+                    <p className="text-sky-950 dark:text-sky-100 font-medium">
+                      {analysisResult.primaryLocation}
+                    </p>
                     <p className="text-[11px] text-slate-500 dark:text-sky-400">
                       Location confidence: {analysisResult.locationConfidence}%
                       {analysisResult.coordinates &&
@@ -403,7 +397,9 @@ export default function AITriageConsole({
                     <p className="text-sky-950 dark:text-sky-100 font-medium">
                       {analysisResult.recommendedPriority}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-sky-400">Recommended response priority</p>
+                    <p className="text-[11px] text-slate-500 dark:text-sky-400">
+                      Recommended response priority
+                    </p>
                   </div>
                 </div>
               </div>
@@ -444,7 +440,7 @@ export default function AITriageConsole({
                 </div>
               )}
 
-              {createdIncidentId ? (
+              {createdIncidentId && (
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-md p-3">
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
                     <ShieldCheck className="w-4 h-4 shrink-0" />
@@ -461,7 +457,7 @@ export default function AITriageConsole({
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              ) : null}
+              )}
             </>
           )}
         </div>

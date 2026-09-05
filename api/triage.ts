@@ -3,7 +3,8 @@
 //
 // Self-contained on purpose: no imports from src/ and no Node-20-only APIs,
 // so it runs on Vercel's default Node 18 runtime without bundling surprises.
-// (Note: Response.json() static was added in Node 20 — avoid it here.)
+// Uses AbortController timeouts so a slow or unresponsive Gemini API call
+// cannot hang the function (and the client) forever.
 // ---------------------------------------------------------------------------
 
 const SYSTEM_INSTRUCTION = `You are the CRISISBEACON AI Disaster Triage Engine for the Hyderabad Emergency Operations Center.
@@ -57,7 +58,6 @@ Guidelines:
 - Known reference points: Tolichowki [17.3986, 78.4069], Mehdipatnam [17.3916, 78.4411], Gachibowli [17.4401, 78.3489], Madhapur/Durgam Cheruvu [17.4483, 78.3915], Charminar [17.3616, 78.4747], Secunderabad [17.4399, 78.4983], Banjara Hills [17.4156, 78.4350], Kukatpally [17.4938, 78.3995], LB Nagar [17.3457, 78.5522], city center [17.4065, 78.4482].
 - Use the closest known point for the named area; otherwise give your best estimate within Hyderabad (lat 17.30-17.55, lng 78.30-78.60).`;
 
-// OpenAPI-style schema (uppercase type names as required by the Gemini REST API).
 const triageResponseSchema = {
   type: 'OBJECT',
   properties: {
@@ -153,6 +153,7 @@ const triageResponseSchema = {
 
 const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-3.7-flash', 'gemini-2.5-pro'];
 
+// Node 18 safe — avoids Response.json() which requires Node 20+.
 function jsonResponse(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -160,43 +161,55 @@ function jsonResponse(body: unknown, status: number): Response {
   });
 }
 
+// AbortController timeout so a hanging Google API call can't stall
+// the function (and the waiting browser) forever.
+const GEMINI_TIMEOUT_MS = 25_000;
+
 async function callGeminiModel(model: string, apiKey: string, text: string): Promise<string | null> {
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent` +
-    `?key=${encodeURIComponent(apiKey)}`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-      contents: [
-        {
-          parts: [
-            {
-              text: `Analyze this raw incoming disaster report and extract structured operational intelligence:\n\n"""\n${text}\n"""`,
-            },
-          ],
+  try {
+    const url =
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent` +
+      `?key=${encodeURIComponent(apiKey)}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+        contents: [
+          {
+            parts: [
+              {
+                text: `Analyze this raw incoming disaster report and extract structured operational intelligence:\n\n"""\n${text}\n"""`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.1,
+          responseMimeType: 'application/json',
+          responseSchema: triageResponseSchema,
         },
-      ],
-      generationConfig: {
-        temperature: 0.1,
-        responseMimeType: 'application/json',
-        responseSchema: triageResponseSchema,
-      },
-    }),
-  });
+      }),
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    const errText = await response.text().catch(() => '');
-    throw new Error(`Gemini ${model} returned HTTP ${response.status}: ${errText.slice(0, 200)}`);
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      throw new Error(`Gemini ${model} HTTP ${response.status}: ${errText.slice(0, 200)}`);
+    }
+
+    const data = await response.json();
+    const part = data?.candidates?.[0]?.content?.parts?.find(
+      (p: any) => typeof p?.text === 'string'
+    );
+    return part?.text ?? null;
+  } finally {
+    clearTimeout(timer);
   }
-
-  const data = await response.json();
-  const part = data?.candidates?.[0]?.content?.parts?.find(
-    (p: any) => typeof p?.text === 'string'
-  );
-  return part?.text ?? null;
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -247,21 +260,24 @@ export default async function handler(req: Request): Promise<Response> {
         break;
       } catch (err: any) {
         lastError = err;
+        const isAbort = err?.name === 'AbortError';
         console.warn(
-          `Model ${modelName} encountered error (${err?.message || err}). Attempting next candidate...`
+          `Model ${modelName} error${isAbort ? ' (timed out after ' + GEMINI_TIMEOUT_MS + 'ms)' : ''}: ${err?.message || err}`
         );
       }
     }
 
     if (!parsedData) {
       console.warn(
-        'All Gemini candidate models failed or unavailable. Signaling client fallback.',
+        'All Gemini candidate models failed or unavailable.',
         lastError?.message || lastError
       );
       return jsonResponse(
         {
           success: false,
-          error: lastError?.message || 'Gemini service temporarily unavailable',
+          error: lastError?.name === 'AbortError'
+            ? `Gemini request timed out after ${GEMINI_TIMEOUT_MS / 1000}s — the model may be overloaded. Try again.`
+            : lastError?.message || 'Gemini service temporarily unavailable',
           fallback: true,
         },
         200
