@@ -207,6 +207,15 @@ export default function AITriageConsole({
         // 2) Gemini not configured / temporarily unavailable -> rule-based fallback.
         serverFallback = true;
         result = mapRuleBasedResult(reportText.trim());
+      } else if (!payload) {
+        // 3) The response wasn't JSON at all — the /api/triage route is likely
+        //    not deployed on this host (e.g. static hosting without the
+        //    serverless function).
+        throw new Error(
+          'Triage endpoint did not return a JSON response (HTTP ' +
+            res.status +
+            '). On Vercel, make sure the api/triage serverless function is included in the deployment and GEMINI_API_KEY is set in your project environment variables.'
+        );
       } else {
         throw new Error(payload?.error || 'Triage service returned an unexpected response.');
       }
