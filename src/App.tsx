@@ -8,6 +8,10 @@ import { IncidentDetailModal } from './components/IncidentDetailModal';
 import { DashboardTicker } from './components/DashboardTicker';
 import { SidebarNav } from './components/SidebarNav';
 import AITriageConsole from './components/AITriageConsole';
+import FeedIngestionView from './components/FeedIngestionView';
+import ResponseUnitsView from './components/ResponseUnitsView';
+import SopsHotlinesView from './components/SopsHotlinesView';
+import NgoCommunitiesView from './components/NgoCommunitiesView';
 import { INITIAL_INCIDENTS, BASELINE_STATS, SIMULATED_INCIDENTS } from './data/mockData';
 import { FilterState, Incident, Severity, VerificationStatus } from './types';
 import { CheckCircle, X } from 'lucide-react';
@@ -329,6 +333,14 @@ export function App() {
               onCreateIncident={handleCreateIncidentFromTriage}
               onNavigateToSituationRoom={() => setActiveTab('dashboard')}
             />
+          ) : activeTab === 'reports' ? (
+            <FeedIngestionView />
+          ) : activeTab === 'teams' ? (
+            <ResponseUnitsView />
+          ) : activeTab === 'ngos' ? (
+            <NgoCommunitiesView />
+          ) : activeTab === 'protocols' ? (
+            <SopsHotlinesView />
           ) : (
             <>
               {/* Moving live-report ticker */}

@@ -9,7 +9,8 @@ import React from 'react';import {
   BarChart3,
   PhoneCall,
   Sparkles,
-  House
+  House,
+  HeartHandshake
 } from 'lucide-react';
 
 interface SidebarNavProps {
@@ -31,6 +32,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
     { id: 'map', label: 'Hyderabad GIS Map', icon: Map },
     { id: 'reports', label: 'Feed & Ingestion', icon: Radio },
     { id: 'teams', label: 'SDRF / NDRF Units', icon: Users },
+    { id: 'ngos', label: 'NGOs & Communities', icon: HeartHandshake },
     { id: 'protocols', label: 'SOPs & Hotlines', icon: PhoneCall },
   ];
 
