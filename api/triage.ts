@@ -3,9 +3,7 @@ import { runGeminiTriage } from '../src/utils/geminiTriage';
 // Vercel serverless function: maps to POST /api/triage on the deployed site.
 // This is what the AI Triage Console calls in production — the Express
 // server (server.ts) only runs in the dev/preview sandbox.
-export const config = {
-  runtime: 'nodejs20.x',
-};
+// Default (Node.js) runtime is used — no runtime config needed.
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
