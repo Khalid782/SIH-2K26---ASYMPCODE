@@ -23,9 +23,9 @@
 
   .dark body,
   .dark #root {
-    background-color: #0c1a2d;
-    background-image: linear-gradient(180deg, #0f2640 0%, #0c1a2d 40%, #091624 100%);
-    color: #e2e8f0;
+    background-color: #0a162a;
+    background-image: linear-gradient(180deg, #112a4a 0%, #0a162a 42%, #081120 100%);
+    color: #f1f5f9;
   }
 
   ::selection {
@@ -192,6 +192,12 @@ html {
 }
 *::-webkit-scrollbar-thumb:hover {
   background: #7dd3fc;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: #1e4a6e;
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #25638f;
 }
 
 /* Leaflet base map chrome on light theme */

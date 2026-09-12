@@ -116,20 +116,20 @@ function RotatingIncidentCard() {
 
   return (
     <div
-      className="relative h-[280px] sm:h-[300px] rounded-2xl bg-white/90 dark:bg-sky-900/90 backdrop-blur border border-sky-100 dark:border-sky-800 shadow-[0_24px_60px_-24px_rgba(2,132,199,0.35)] overflow-hidden"
+      className="relative h-[280px] sm:h-[300px] rounded-2xl bg-white dark:bg-[#0f2a4a] backdrop-blur border border-sky-100 dark:border-sky-800/60 shadow-[0_24px_60px_-24px_rgba(2,132,199,0.35)] dark:shadow-[0_24px_60px_-24px_rgba(2,132,199,0.12)] overflow-hidden transition-colors duration-300"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-sky-100">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-sky-100 dark:border-sky-800/50">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
           </span>
-          <span className="text-[11px] font-bold uppercase tracking-widest text-sky-800">Live Ingestion Feed</span>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-sky-800 dark:text-sky-200">Live Ingestion Feed</span>
         </div>
-        <span className="text-[10px] font-mono text-sky-400">GHMC-EOC v2.4</span>
+        <span className="text-[10px] font-mono text-sky-400 dark:text-sky-400">GHMC-EOC v2.4</span>
       </div>
 
       {/* Rotating incident */}
@@ -147,28 +147,28 @@ function RotatingIncidentCard() {
               <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md border ${sev.chip}`}>
                 {item.severity}
               </span>
-              <span className="text-[10px] font-mono text-sky-500">{item.id}</span>
+              <span className="text-[10px] font-mono text-sky-500 dark:text-sky-400">{item.id}</span>
             </div>
-            <span className="flex items-center gap-1 text-[10px] text-sky-500 whitespace-nowrap">
+            <span className="flex items-center gap-1 text-[10px] text-sky-500 dark:text-sky-300 whitespace-nowrap">
               <Clock className="w-3 h-3" /> {item.timeAgo}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-sky-900 font-semibold text-sm mb-1">
-            <MapPin className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+          <div className="flex items-center gap-1.5 text-sky-900 dark:text-sky-50 font-semibold text-sm mb-1">
+            <MapPin className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />
             <span className="truncate">{item.location}</span>
           </div>
-          {item.landmark && <p className="text-[11px] text-sky-600/80 mb-2 truncate">{item.landmark}</p>}
+          {item.landmark && <p className="text-[11px] text-sky-600/80 dark:text-sky-300/80 mb-2 truncate">{item.landmark}</p>}
 
-          <p className="text-xs text-sky-800/90 leading-relaxed line-clamp-3 mb-3">{item.originalReport}</p>
+          <p className="text-xs text-sky-800/90 dark:text-slate-300 leading-relaxed line-clamp-3 mb-3">{item.originalReport}</p>
 
           {/* Confidence bar */}
           <div className="mb-3">
-            <div className="flex justify-between text-[10px] text-sky-600 mb-1">
+            <div className="flex justify-between text-[10px] text-sky-600 dark:text-sky-300 mb-1">
               <span className="font-medium">AI extraction confidence</span>
               <span className="font-mono font-bold">{item.aiConfidence}%</span>
             </div>
-            <div className="h-1.5 rounded-full bg-sky-100 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-sky-100 dark:bg-sky-800/50 overflow-hidden">
               <motion.div
                 key={`bar-${item.id}`}
                 initial={{ width: 0 }}
@@ -180,7 +180,7 @@ function RotatingIncidentCard() {
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-[10px] text-sky-600">
+            <span className="flex items-center gap-1.5 text-[10px] text-sky-600 dark:text-sky-400">
               <Radio className="w-3 h-3" /> {item.source}
             </span>
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${STATUS_STYLES[item.status] ?? 'bg-sky-50 text-sky-600 border-sky-200'}`}>
@@ -198,7 +198,7 @@ function RotatingIncidentCard() {
             onClick={() => setIndex(i)}
             aria-label={`Show incident ${i + 1}`}
             className={`h-1.5 rounded-full transition-all cursor-pointer ${
-              i === index % 4 ? 'w-6 bg-sky-500' : 'w-1.5 bg-sky-200 hover:bg-sky-300'
+              i === index % 4 ? 'w-6 bg-sky-500' : 'w-1.5 bg-sky-200 dark:bg-sky-700 hover:bg-sky-300 dark:hover:bg-sky-600'
             }`}
           />
         ))}
@@ -294,24 +294,24 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#f7fcfe] dark:bg-[#0c1a2d] text-sky-950 dark:text-sky-100 font-sans overflow-x-hidden transition-colors duration-300">
-      {/* Soft powder-blue glow backdrop */}
+    <div className="min-h-screen w-full bg-[#f7fcfe] dark:bg-[#0a162a] text-sky-950 dark:text-slate-100 font-sans overflow-x-hidden transition-colors duration-300">
+      {/* Soft powder-blue glow backdrop — brighter in light, subtle deep blue in dark */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full bg-sky-200/40 blur-[130px]" />
-        <div className="absolute top-1/3 -right-48 w-[520px] h-[520px] rounded-full bg-cyan-100/50 blur-[130px]" />
-        <div className="absolute bottom-0 left-1/3 w-[480px] h-[420px] rounded-full bg-sky-100/60 blur-[120px]" />
+        <div className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full bg-sky-200/40 dark:bg-sky-500/[0.07] blur-[130px]" />
+        <div className="absolute top-1/3 -right-48 w-[520px] h-[520px] rounded-full bg-cyan-100/50 dark:bg-sky-700/[0.08] blur-[130px]" />
+        <div className="absolute bottom-0 left-1/3 w-[480px] h-[420px] rounded-full bg-sky-100/60 dark:bg-sky-500/[0.05] blur-[120px]" />
       </div>
 
       {/* ---------------- Header ---------------- */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-sky-950/80 backdrop-blur-xl border-b border-sky-100/80 dark:border-sky-800 transition-colors duration-300">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a1930]/85 backdrop-blur-xl border-b border-sky-100/80 dark:border-sky-800/50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <a href="#top" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-100 via-white to-sky-200 dark:from-sky-800 dark:via-sky-900 dark:to-sky-800 border border-sky-200 dark:border-sky-700 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_4px_12px_-4px_rgba(2,132,199,0.45)] group-hover:scale-105 transition-transform">
-              <BeaconLogo className="w-4.5 h-4.5 text-sky-600" />
+              <BeaconLogo className="w-4.5 h-4.5 text-sky-600 dark:text-sky-300" />
             </div>
             <div>
-              <div className="text-[15px] font-bold tracking-tight leading-none text-sky-950">CRISISBEACON</div>
-              <div className="text-[10px] text-sky-600/70 font-medium mt-0.5 tracking-wide">
+              <div className="text-[15px] font-bold tracking-tight leading-none text-sky-950 dark:text-white">CRISISBEACON</div>
+              <div className="text-[10px] text-sky-600/70 dark:text-sky-300/70 font-medium mt-0.5 tracking-wide">
                 Real-Time Disaster Intelligence
               </div>
             </div>
@@ -322,36 +322,24 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               <a
                 key={l.href}
                 href={l.href}
-                className="text-[13px] font-medium text-sky-700/80 hover:text-sky-950 transition-colors relative group"
+                className="text-[13px] font-medium text-sky-700/80 dark:text-sky-200/80 hover:text-sky-950 dark:hover:text-white transition-colors relative group"
               >
                 {l.label}
-                <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-sky-500 rounded-full group-hover:w-full transition-all duration-300" />
+                <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-sky-500 dark:bg-sky-400 rounded-full group-hover:w-full transition-all duration-300" />
               </a>
             ))}
           </nav>
 
           <div className="flex items-center gap-2.5">
-            {/* Dark-mode toggle */}
+            {/* Dark-mode toggle - desktop */}
             {onToggleDark && (
               <button
                 onClick={onToggleDark}
                 title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                 aria-label="Toggle dark mode"
-                className="flex items-center justify-center w-9 h-9 rounded-xl bg-sky-50/80 dark:bg-sky-800/70 border border-sky-200/70 dark:border-sky-700 text-sky-600 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-700 transition cursor-pointer active:scale-90 shadow-sm"
+                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl bg-sky-50/80 dark:bg-sky-800/60 border border-sky-200/70 dark:border-sky-700 text-sky-600 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-700 hover:text-sky-700 dark:hover:text-white transition cursor-pointer active:scale-90 shadow-sm"
               >
                 {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-            )}
-
-            {/* Mobile dark-mode toggle */}
-            {onToggleDark && (
-              <button
-                onClick={onToggleDark}
-                title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-800 transition-colors"
-              >
-                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
             )}
 
@@ -364,7 +352,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </button>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="md:hidden p-2 rounded-lg hover:bg-sky-50 text-sky-700 cursor-pointer"
+              className="md:hidden p-2 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-800/60 text-sky-700 dark:text-sky-200 cursor-pointer transition-colors"
               aria-label="Toggle menu"
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -380,7 +368,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="md:hidden overflow-hidden bg-white/95 backdrop-blur border-t border-sky-100"
+              className="md:hidden overflow-hidden bg-white/95 dark:bg-[#0a1930]/95 backdrop-blur border-t border-sky-100 dark:border-sky-800/50"
             >
               <div className="px-4 py-3 space-y-1">
                 {navLinks.map((l) => (
@@ -388,11 +376,22 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                     key={l.href}
                     href={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-sky-800 hover:bg-sky-50 transition-colors"
+                    className="block px-3 py-2.5 rounded-lg text-sm font-medium text-sky-800 dark:text-sky-200 hover:bg-sky-50 dark:hover:bg-sky-800/50 transition-colors"
                   >
                     {l.label}
                   </a>
                 ))}
+                {onToggleDark && (
+                  <button
+                    onClick={() => {
+                      onToggleDark();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-sky-700 dark:text-sky-200 hover:bg-sky-50 dark:hover:bg-sky-800/50 transition-colors"
+                  >
+                    {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setMenuOpen(false);
@@ -416,13 +415,13 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
         transition={{ duration: 0.5 }}
         className="sticky top-16 z-40 mx-auto max-w-7xl -mb-2"
       >
-        <div className="mx-4 sm:mx-6 rounded-xl bg-white/80 dark:bg-sky-900/80 backdrop-blur border border-sky-100 dark:border-sky-800 overflow-hidden shadow-[0_8px_24px_-14px_rgba(2,132,199,0.35)]">
+        <div className="mx-4 sm:mx-6 rounded-xl bg-white/85 dark:bg-[#0f2942]/90 backdrop-blur border border-sky-100 dark:border-sky-700/40 overflow-hidden shadow-[0_8px_24px_-14px_rgba(2,132,199,0.35)]">
           <div className="flex items-stretch">
-            <div className="shrink-0 flex items-center gap-1.5 bg-sky-600 text-white text-[10px] font-bold uppercase tracking-widest px-3.5 py-2.5">
+            <div className="shrink-0 flex items-center gap-1.5 bg-sky-600 dark:bg-sky-600 text-white text-[10px] font-bold uppercase tracking-widest px-3.5 py-2.5">
               <Radio className="w-3 h-3" /> Live
             </div>
             <div className="relative flex-1 overflow-hidden">
-              <div className="animate-marquee flex whitespace-nowrap py-2.5 text-[11px] font-medium text-sky-800/90 dark:text-sky-300">
+              <div className="animate-marquee flex whitespace-nowrap py-2.5 text-[11px] font-medium text-sky-800/90 dark:text-sky-100/90">
                 {[0, 1].map((dup) => (
                   <div key={dup} className="flex shrink-0">
                     {INITIAL_INCIDENTS.slice(0, 12).map((i) => (
@@ -448,27 +447,27 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <div className="inline-flex items-center gap-2 bg-white border border-sky-200/80 rounded-full px-3.5 py-1.5 shadow-[0_2px_10px_-4px_rgba(2,132,199,0.3)] mb-5">
+            <div className="inline-flex items-center gap-2 bg-white dark:bg-[#0f2942] border border-sky-200/80 dark:border-sky-700/50 rounded-full px-3.5 py-1.5 shadow-[0_2px_10px_-4px_rgba(2,132,199,0.3)] dark:shadow-[0_2px_12px_-4px_rgba(0,0,0,0.4)] mb-5 transition-colors">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
               </span>
-              <span className="text-[11px] font-semibold tracking-wide text-sky-800">
+              <span className="text-[11px] font-semibold tracking-wide text-sky-800 dark:text-sky-200">
                 Hyderabad Emergency Operations Center &middot; SIH Prototype
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05] text-sky-950">
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.05] text-sky-950 dark:text-white">
               Disaster intelligence,
               <br />
-              <span className="bg-gradient-to-r from-sky-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-sky-600 via-sky-500 to-cyan-500 dark:from-sky-300 dark:via-sky-200 dark:to-cyan-300 bg-clip-text text-transparent">
                 when every second
               </span>
               <br />
               counts.
             </h1>
 
-            <p className="mt-5 text-[15px] sm:text-base text-sky-700/80 leading-relaxed max-w-xl">
+            <p className="mt-5 text-[15px] sm:text-base text-sky-700/80 dark:text-sky-100/80 leading-relaxed max-w-xl">
               CRISISBEACON turns social media posts, WhatsApp messages and 112 calls into a single
               live command picture — AI-triaged, geocoded and dispatched to rescue teams in real time.
             </p>
@@ -476,29 +475,29 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             <div className="mt-6 flex flex-col sm:flex-row gap-3.5">
               <button
                 onClick={onEnter}
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap bg-gradient-to-b from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white text-sm font-semibold px-6 py-3.5 rounded-xl shadow-[0_14px_30px_-10px_rgba(2,132,199,0.8)] transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap bg-gradient-to-b from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white text-sm font-semibold px-6 py-3.5 rounded-xl shadow-[0_14px_30px_-10px_rgba(2,132,199,0.8)] dark:shadow-[0_14px_30px_-10px_rgba(2,132,199,0.4)] transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer"
               >
                 <Zap className="w-4.5 h-4.5" />
                 Launch Situation Room
               </button>
               <a
                 href="#live-feed"
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap bg-white hover:bg-sky-50 text-sky-800 text-sm font-semibold px-6 py-3.5 rounded-xl border border-sky-200 shadow-[0_4px_14px_-6px_rgba(2,132,199,0.35)] transition-all hover:border-sky-300 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap bg-white dark:bg-[#0f2942] hover:bg-sky-50 dark:hover:bg-sky-800 text-sky-800 dark:text-sky-100 text-sm font-semibold px-6 py-3.5 rounded-xl border border-sky-200 dark:border-sky-700/50 shadow-[0_4px_14px_-6px_rgba(2,132,199,0.35)] transition-all hover:border-sky-300 dark:hover:border-sky-600 active:scale-95"
               >
                 Watch live feed
                 <ChevronDown className="w-4 h-4" />
               </a>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] font-medium text-sky-600/80">
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] font-medium text-sky-600/80 dark:text-sky-300/90">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Gemini AI triage engine
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Gemini AI triage engine
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> 6 core zones covered
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> 6 core zones covered
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Free &amp; open prototype
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Free &amp; open prototype
               </span>
             </div>
           </motion.div>
@@ -510,21 +509,21 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
             className="relative"
           >
-            <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-br from-sky-200/50 via-transparent to-cyan-100/50 blur-2xl" />
+            <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-br from-sky-200/50 via-transparent to-cyan-100/50 dark:from-sky-600/[0.07] dark:via-transparent dark:to-sky-400/[0.05] blur-2xl" />
             <div className="relative space-y-4">
               <RotatingIncidentCard />
 
               {/* Zone pulse map */}
-              <div className="rounded-2xl bg-white/90 backdrop-blur border border-sky-100 p-4 shadow-[0_18px_45px_-22px_rgba(2,132,199,0.4)]">
+              <div className="rounded-2xl bg-white dark:bg-[#0f2942] backdrop-blur border border-sky-100 dark:border-sky-800/40 p-4 shadow-[0_18px_45px_-22px_rgba(2,132,199,0.4)] dark:shadow-[0_18px_45px_-22px_rgba(0,0,0,0.4)] transition-colors">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-sky-800">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-sky-800 dark:text-sky-200">
                     Zone Risk Monitor
                   </span>
-                  <span className="text-[10px] font-mono text-sky-400">Hyderabad Metro</span>
+                  <span className="text-[10px] font-mono text-sky-400 dark:text-sky-400">Hyderabad Metro</span>
                 </div>
-                <div className="relative h-36 rounded-xl bg-gradient-to-br from-sky-50 via-white to-cyan-50 dark:from-sky-900 dark:via-sky-950 dark:to-sky-900 border border-sky-100 dark:border-sky-800 overflow-hidden">
+                <div className="relative h-36 rounded-xl bg-gradient-to-br from-sky-50 via-white to-cyan-50 dark:from-[#0a1930] dark:via-[#0f2942] dark:to-[#0a1930] border border-sky-100 dark:border-sky-700/30 overflow-hidden">
                   {/* faint grid lines */}
-                  <div className="absolute inset-0 opacity-40" style={{
+                  <div className="absolute inset-0 opacity-40 dark:opacity-20" style={{
                     backgroundImage:
                       'linear-gradient(rgba(2,132,199,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(2,132,199,0.08) 1px, transparent 1px)',
                     backgroundSize: '28px 28px',
@@ -541,12 +540,12 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                   </div>
 
                   {/* Concentric rings */}
-                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/30 dark:border-sky-600/30 animate-ring-pulse" style={{ animationDelay: '0s' }} />
-                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/20 dark:border-sky-600/20 animate-ring-pulse" style={{ animationDelay: '1.3s' }} />
-                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/15 dark:border-sky-600/15 animate-ring-pulse" style={{ animationDelay: '2.6s' }} />
+                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/30 dark:border-sky-500/20 animate-ring-pulse" style={{ animationDelay: '0s' }} />
+                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/20 dark:border-sky-500/15 animate-ring-pulse" style={{ animationDelay: '1.3s' }} />
+                  <div className="absolute top-1/2 left-1/2 w-24 h-24 rounded-full border border-sky-300/15 dark:border-sky-500/10 animate-ring-pulse" style={{ animationDelay: '2.6s' }} />
 
                   {/* Center beacon dot */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.7)]" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sky-500 dark:bg-sky-400 shadow-[0_0_8px_rgba(14,165,233,0.7)]" />
 
                   {ZONES.map((z) => {
                     const color = z.level > 85 ? '#f43f5e' : z.level > 70 ? '#fb923c' : '#0ea5e9';
@@ -568,11 +567,11 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                               style={{ backgroundColor: color }}
                             />
                             <span
-                              className="relative inline-flex rounded-full h-3 w-3 border-2 border-white shadow"
+                              className="relative inline-flex rounded-full h-3 w-3 border-2 border-white dark:border-[#0f2942] shadow"
                               style={{ backgroundColor: color }}
                             />
                           </span>
-                          <span className="mt-1 text-[9px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-300 bg-white/80 dark:bg-sky-800/80 border border-sky-100 dark:border-sky-700 rounded px-1.5 py-0.5 opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform">
+                          <span className="mt-1 text-[9px] font-bold uppercase tracking-wide text-sky-700 dark:text-sky-200 bg-white/80 dark:bg-[#0a1930]/90 border border-sky-100 dark:border-sky-700/40 rounded px-1.5 py-0.5 opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-transform">
                             {z.short}
                           </span>
                         </div>
@@ -580,7 +579,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                     );
                   })}
                 </div>
-                <div className="flex items-center justify-between mt-3 text-[10px] text-sky-600">
+                <div className="flex items-center justify-between mt-3 text-[10px] text-sky-600 dark:text-sky-300/90">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-rose-500" /> Critical
                   </span>
@@ -608,12 +607,12 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
-              className="bg-white/90 dark:bg-sky-900/90 backdrop-blur border border-sky-100 dark:border-sky-800 rounded-2xl px-5 py-5 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] hover:shadow-[0_18px_40px_-18px_rgba(2,132,199,0.5)] hover:-translate-y-0.5 transition-all"
+              className="bg-white dark:bg-[#0f2942] backdrop-blur border border-sky-100 dark:border-sky-700/40 rounded-2xl px-5 py-5 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] dark:shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)] hover:shadow-[0_18px_40px_-18px_rgba(2,132,199,0.5)] dark:hover:shadow-[0_18px_40px_-18px_rgba(2,132,199,0.15)] hover:-translate-y-0.5 transition-all"
             >
-              <div className="text-3xl font-extrabold tracking-tight text-sky-950">
+              <div className="text-3xl font-extrabold tracking-tight text-sky-950 dark:text-white">
                 <CountUp to={s.value} suffix={s.suffix} />
               </div>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-sky-600/80 mt-1.5">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-sky-600/80 dark:text-sky-300/80 mt-1.5">
                 {s.label}
               </div>
             </motion.div>
@@ -630,17 +629,17 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-white border border-sky-200/80 rounded-full px-3.5 py-1.5 shadow-sm mb-4">
-            <Satellite className="w-3.5 h-3.5 text-sky-500" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700">The Platform</span>
+          <div className="inline-flex items-center gap-2 bg-white dark:bg-[#0f2942] border border-sky-200/80 dark:border-sky-700/40 rounded-full px-3.5 py-1.5 shadow-sm mb-4 transition-colors">
+            <Satellite className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700 dark:text-sky-200">The Platform</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950 dark:text-white">
             One command center for the{' '}
-            <span className="bg-gradient-to-r from-sky-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-sky-600 to-cyan-500 dark:from-sky-300 dark:to-cyan-300 bg-clip-text text-transparent">
               whole city
             </span>
           </h2>
-          <p className="mt-4 text-sm sm:text-[15px] text-sky-700/75 leading-relaxed">
+          <p className="mt-4 text-sm sm:text-[15px] text-sky-700/75 dark:text-sky-100/75 leading-relaxed">
             Built for emergency operations teams who need to see everything, trust what matters,
             and act instantly.
           </p>
@@ -656,15 +655,15 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.45, delay: i * 0.08 }}
-                className="group bg-white/90 dark:bg-sky-900/90 backdrop-blur border border-sky-100 dark:border-sky-800 rounded-2xl p-5.5 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] hover:shadow-[0_22px_48px_-20px_rgba(2,132,199,0.55)] hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="group bg-white dark:bg-[#0f2942] backdrop-blur border border-sky-100 dark:border-sky-700/40 rounded-2xl p-5.5 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] dark:shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)] hover:shadow-[0_22px_48px_-20px_rgba(2,132,199,0.55)] dark:hover:shadow-[0_22px_48px_-20px_rgba(2,132,199,0.2)] hover:-translate-y-1 transition-all duration-300 cursor-default"
               >
                 <div
                   className={`w-11 h-11 rounded-xl bg-gradient-to-br ${f.accent} flex items-center justify-center text-white shadow-[0_8px_18px_-8px_rgba(2,132,199,0.7)] group-hover:scale-110 transition-transform duration-300 mb-4`}
                 >
                   <Icon className="w-5.5 h-5.5" />
                 </div>
-                <h3 className="text-[15px] font-bold text-sky-950 mb-2">{f.title}</h3>
-                <p className="text-[13px] text-sky-700/75 leading-relaxed">{f.body}</p>
+                <h3 className="text-[15px] font-bold text-sky-950 dark:text-white mb-2">{f.title}</h3>
+                <p className="text-[13px] text-sky-700/75 dark:text-slate-300 leading-relaxed">{f.body}</p>
               </motion.div>
             );
           })}
@@ -681,20 +680,20 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8"
         >
           <div>
-            <div className="inline-flex items-center gap-2 bg-white border border-sky-200/80 rounded-full px-3.5 py-1.5 shadow-sm mb-4">
-              <Activity className="w-3.5 h-3.5 text-sky-500" />
-              <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700">Interactive demo</span>
+            <div className="inline-flex items-center gap-2 bg-white dark:bg-[#0f2942] border border-sky-200/80 dark:border-sky-700/40 rounded-full px-3.5 py-1.5 shadow-sm mb-4 transition-colors">
+              <Activity className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700 dark:text-sky-200">Interactive demo</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950 dark:text-white">
               See the feed in action
             </h2>
-            <p className="mt-3 text-sm text-sky-700/75 max-w-lg">
+            <p className="mt-3 text-sm text-sky-700/75 dark:text-sky-100/70 max-w-lg">
               Filter real incident data by severity and tap any card to inspect the extracted intelligence.
             </p>
           </div>
 
           {/* Severity filter tabs */}
-          <div className="flex items-center gap-1.5 bg-white/90 border border-sky-100 rounded-xl p-1.5 shadow-sm w-fit">
+          <div className="flex items-center gap-1.5 bg-white dark:bg-[#0f2942] border border-sky-100 dark:border-sky-700/40 rounded-xl p-1.5 shadow-sm w-fit transition-colors">
             {(['All', 'Critical', 'High', 'Low'] as const).map((f) => (
               <button
                 key={f}
@@ -702,7 +701,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   feedFilter === f
                     ? 'bg-gradient-to-b from-sky-500 to-sky-600 text-white shadow-[0_4px_12px_-4px_rgba(2,132,199,0.7)]'
-                    : 'text-sky-700/80 hover:bg-sky-50 hover:text-sky-900'
+                    : 'text-sky-700/80 dark:text-sky-200/80 hover:bg-sky-50 dark:hover:bg-sky-800 hover:text-sky-900 dark:hover:text-white'
                 }`}
               >
                 {f}
@@ -727,21 +726,21 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                 >
                   <button
                     onClick={() => setExpandedId(isOpen ? null : inc.id)}
-                    className={`w-full text-left bg-white/90 backdrop-blur border rounded-2xl shadow-[0_10px_26px_-18px_rgba(2,132,199,0.45)] transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(2,132,199,0.55)] ${
-                      isOpen ? 'border-sky-300 ring-2 ring-sky-100' : 'border-sky-100'
+                    className={`w-full text-left bg-white dark:bg-[#0f2942] backdrop-blur border rounded-2xl shadow-[0_10px_26px_-18px_rgba(2,132,199,0.45)] dark:shadow-[0_10px_26px_-18px_rgba(0,0,0,0.4)] transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(2,132,199,0.55)] dark:hover:shadow-[0_18px_40px_-20px_rgba(2,132,199,0.15)] ${
+                      isOpen ? 'border-sky-300 dark:border-sky-600 ring-2 ring-sky-100 dark:ring-sky-500/20' : 'border-sky-100 dark:border-sky-700/40'
                     } p-4.5`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-2.5">
                       <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md border ${sev.chip}`}>
                         {inc.severity}
                       </span>
-                      <span className="text-[10px] font-mono text-sky-500">{inc.id}</span>
+                      <span className="text-[10px] font-mono text-sky-500 dark:text-sky-400">{inc.id}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-sky-950 font-semibold text-sm mb-1">
-                      <MapPin className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                    <div className="flex items-center gap-1.5 text-sky-950 dark:text-white font-semibold text-sm mb-1">
+                      <MapPin className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />
                       <span className="truncate">{inc.location}</span>
                     </div>
-                    <div className="text-[11px] text-sky-600/80 mb-2.5">{inc.disasterType} &middot; {inc.timeAgo}</div>
+                    <div className="text-[11px] text-sky-600/80 dark:text-sky-300/70 mb-2.5">{inc.disasterType} &middot; {inc.timeAgo}</div>
 
                     <AnimatePresence initial={false}>
                       {isOpen && (
@@ -752,7 +751,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                           transition={{ duration: 0.25 }}
                           className="overflow-hidden"
                         >
-                          <p className="text-xs text-sky-800/90 leading-relaxed mb-3 pt-1 border-t border-sky-100">
+                          <p className="text-xs text-sky-800/90 dark:text-slate-300 leading-relaxed mb-3 pt-1 border-t border-sky-100 dark:border-sky-700/40">
                             &ldquo;{inc.originalReport}&rdquo;
                           </p>
                           <div className="flex flex-wrap items-center gap-1.5 mb-2">
@@ -770,22 +769,22 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                               </span>
                             ) : null}
                           </div>
-                          <div className="flex items-center justify-between text-[10px] text-sky-600 mb-1">
+                          <div className="flex items-center justify-between text-[10px] text-sky-600 dark:text-sky-300 mb-1">
                             <span>AI confidence</span>
                             <span className="font-mono font-bold">{inc.aiConfidence}%</span>
                           </div>
-                          <div className="h-1.5 rounded-full bg-sky-100 overflow-hidden">
+                          <div className="h-1.5 rounded-full bg-sky-100 dark:bg-sky-800/50 overflow-hidden">
                             <div className={`h-full rounded-full ${sev.bar}`} style={{ width: `${inc.aiConfidence}%` }} />
                           </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
 
-                    <div className={`flex items-center justify-between mt-1 ${isOpen ? 'opacity-0' : ''} ${isOpen ? '' : ''}`}>
-                      <span className="flex items-center gap-1.5 text-[10px] text-sky-600">
+                    <div className={`flex items-center justify-between mt-1 ${isOpen ? 'opacity-0 h-0 overflow-hidden' : ''}`}>
+                      <span className="flex items-center gap-1.5 text-[10px] text-sky-600 dark:text-sky-400">
                         <Radio className="w-3 h-3" /> {inc.source}
                       </span>
-                      <span className="flex items-center gap-1 text-[10px] font-semibold text-sky-500">
+                      <span className="flex items-center gap-1 text-[10px] font-semibold text-sky-500 dark:text-sky-400">
                         {isOpen ? 'Collapse' : 'Inspect'}
                         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                       </span>
@@ -807,13 +806,13 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-white border border-sky-200/80 rounded-full px-3.5 py-1.5 shadow-sm mb-4">
-            <Zap className="w-3.5 h-3.5 text-sky-500" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700">How it works</span>
+          <div className="inline-flex items-center gap-2 bg-white dark:bg-[#0f2942] border border-sky-200/80 dark:border-sky-700/40 rounded-full px-3.5 py-1.5 shadow-sm mb-4 transition-colors">
+            <Zap className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-sky-700 dark:text-sky-200">How it works</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-sky-950 dark:text-white">
             From signal to response in{' '}
-            <span className="bg-gradient-to-r from-sky-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-sky-600 to-cyan-500 dark:from-sky-300 dark:to-cyan-300 bg-clip-text text-transparent">
               three steps
             </span>
           </h2>
@@ -821,7 +820,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
 
         <div className="grid md:grid-cols-3 gap-4 relative">
           {/* connector line */}
-          <div className="hidden md:block absolute top-[52px] left-[16%] right-[16%] h-px bg-gradient-to-r from-sky-200 via-sky-300 to-sky-200" />
+          <div className="hidden md:block absolute top-[52px] left-[16%] right-[16%] h-px bg-gradient-to-r from-sky-200 via-sky-300 to-sky-200 dark:from-sky-800/40 dark:via-sky-600/40 dark:to-sky-800/40" />
           {steps.map((s, i) => {
             const Icon = s.icon;
             return (
@@ -831,16 +830,16 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.45, delay: i * 0.12 }}
-                className="relative bg-white/90 backdrop-blur border border-sky-100 rounded-2xl p-6 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] hover:shadow-[0_20px_44px_-20px_rgba(2,132,199,0.5)] hover:-translate-y-0.5 transition-all"
+                className="relative bg-white dark:bg-[#0f2942] backdrop-blur border border-sky-100 dark:border-sky-700/40 rounded-2xl p-6 shadow-[0_12px_30px_-18px_rgba(2,132,199,0.4)] dark:shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)] hover:shadow-[0_20px_44px_-20px_rgba(2,132,199,0.5)] dark:hover:shadow-[0_20px_44px_-20px_rgba(2,132,199,0.15)] hover:-translate-y-0.5 transition-all"
               >
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-100 via-white to-sky-200 border border-sky-200 flex items-center justify-center text-sky-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_-6px_rgba(2,132,199,0.45)]">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-100 via-white to-sky-200 dark:from-sky-800 dark:via-sky-700 dark:to-sky-800 border border-sky-200 dark:border-sky-600/40 flex items-center justify-center text-sky-600 dark:text-sky-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_-6px_rgba(2,132,199,0.45)]">
                     <Icon className="w-5.5 h-5.5" />
                   </div>
-                  <span className="text-3xl font-extrabold text-sky-100 tracking-tight">{s.step}</span>
+                  <span className="text-3xl font-extrabold text-sky-100 dark:text-sky-800 tracking-tight">{s.step}</span>
                 </div>
-                <h3 className="text-[15px] font-bold text-sky-950 mb-2">{s.title}</h3>
-                <p className="text-[13px] text-sky-700/75 leading-relaxed">{s.body}</p>
+                <h3 className="text-[15px] font-bold text-sky-950 dark:text-white mb-2">{s.title}</h3>
+                <p className="text-[13px] text-sky-700/75 dark:text-slate-300 leading-relaxed">{s.body}</p>
               </motion.div>
             );
           })}
@@ -854,21 +853,21 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.5 }}
-          className="bg-white/80 backdrop-blur border border-sky-100 rounded-2xl px-6 sm:px-10 py-8 shadow-[0_14px_36px_-20px_rgba(2,132,199,0.4)]"
+          className="bg-white/80 dark:bg-[#0f2942]/90 backdrop-blur border border-sky-100 dark:border-sky-700/40 rounded-2xl px-6 sm:px-10 py-8 shadow-[0_14px_36px_-20px_rgba(2,132,199,0.4)] dark:shadow-[0_14px_36px_-20px_rgba(0,0,0,0.45)] transition-colors"
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <Building2 className="w-5 h-5 text-sky-500" />
+              <Building2 className="w-5 h-5 text-sky-500 dark:text-sky-400" />
               <div>
-                <div className="text-sm font-bold text-sky-950">Built for city emergency networks</div>
-                <div className="text-[11px] text-sky-600/75">Unified dispatch across every responding agency</div>
+                <div className="text-sm font-bold text-sky-950 dark:text-white">Built for city emergency networks</div>
+                <div className="text-[11px] text-sky-600/75 dark:text-sky-300/70">Unified dispatch across every responding agency</div>
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-2.5">
               {['GHMC', 'SDRF', 'NDRF', 'EMRI 108', 'Police 112', 'TSSPDCL', 'Fire & Rescue'].map((a) => (
                 <span
                   key={a}
-                  className="text-[11px] font-bold tracking-wide text-sky-800 bg-sky-50/80 border border-sky-200/70 rounded-full px-3.5 py-1.5 hover:bg-sky-100 hover:border-sky-300 transition-colors cursor-default"
+                  className="text-[11px] font-bold tracking-wide text-sky-800 dark:text-sky-100 bg-sky-50/80 dark:bg-sky-800/40 border border-sky-200/70 dark:border-sky-600/30 rounded-full px-3.5 py-1.5 hover:bg-sky-100 dark:hover:bg-sky-700/50 hover:border-sky-300 dark:hover:border-sky-500/40 transition-colors cursor-default"
                 >
                   {a}
                 </span>
@@ -885,10 +884,10 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 via-sky-600 to-cyan-600 text-white px-6 sm:px-12 py-12 sm:py-16 text-center shadow-[0_30px_70px_-30px_rgba(2,132,199,0.9)]"
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 via-sky-600 to-cyan-600 dark:from-sky-600 dark:via-sky-700 dark:to-cyan-700 text-white px-6 sm:px-12 py-12 sm:py-16 text-center shadow-[0_30px_70px_-30px_rgba(2,132,199,0.9)] dark:shadow-[0_30px_70px_-30px_rgba(2,132,199,0.35)]"
         >
-          {/* decorative rings */}            <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 dark:bg-sky-400/10 blur-2xl" />
-          <div className="pointer-events-none absolute -bottom-32 -left-16 w-80 h-80 rounded-full bg-cyan-300/20 dark:bg-cyan-900/20 blur-3xl" />
+          {/* decorative rings */}            <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 dark:bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-32 -left-16 w-80 h-80 rounded-full bg-cyan-300/20 dark:bg-cyan-400/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
@@ -896,7 +895,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           }} />
 
           <div className="relative">
-            <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-4 py-1.5 backdrop-blur mb-5">
+            <div className="inline-flex items-center gap-2 bg-white/15 dark:bg-white/15 border border-white/25 rounded-full px-4 py-1.5 backdrop-blur mb-5">
               <HeartPulse className="w-3.5 h-3.5" />
               <span className="text-[11px] font-bold uppercase tracking-widest">Every minute matters</span>
             </div>
@@ -919,19 +918,19 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
         </motion.div>
       </section>
 
-      {/* ---------------- Footer ---------------- */}        <footer className="relative z-10 border-t border-sky-100 dark:border-sky-800 bg-white/60 dark:bg-sky-950/60 backdrop-blur transition-colors duration-300">
+      {/* ---------------- Footer ---------------- */}        <footer className="relative z-10 border-t border-sky-100 dark:border-sky-800/40 bg-white/60 dark:bg-[#0a1930]/70 backdrop-blur transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-100 via-white to-sky-200 dark:from-sky-800 dark:via-sky-900 dark:to-sky-800 border border-sky-200 dark:border-sky-700 flex items-center justify-center">
-              <BeaconLogo className="w-4 h-4 text-sky-600" />
+              <BeaconLogo className="w-4 h-4 text-sky-600 dark:text-sky-300" />
             </div>
             <div>
-              <div className="text-[13px] font-bold tracking-tight text-sky-950 leading-none">CRISISBEACON</div>
-              <div className="text-[10px] text-sky-600/70 mt-0.5">Real-Time Disaster Intelligence Platform</div>
+              <div className="text-[13px] font-bold tracking-tight text-sky-950 dark:text-white leading-none">CRISISBEACON</div>
+              <div className="text-[10px] text-sky-600/70 dark:text-sky-300/60 mt-0.5">Real-Time Disaster Intelligence Platform</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-5 text-[11px] text-sky-600/80 dark:text-sky-400">
+          <div className="flex items-center gap-5 text-[11px] text-sky-600/80 dark:text-sky-300/80">
             <span className="flex items-center gap-1.5">
               <PhoneCall className="w-3 h-3" /> Emergency: 112
             </span>
@@ -940,7 +939,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </span>
           </div>
 
-          <div className="text-[10px] text-sky-500/70 dark:text-sky-500">
+          <div className="text-[10px] text-sky-500/70 dark:text-sky-400/70">
             &copy; {new Date().getFullYear()} CRISISBEACON &middot; SIH Prototype &middot; Built with care
           </div>
         </div>
