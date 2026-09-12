@@ -16,6 +16,7 @@ import { INITIAL_INCIDENTS, BASELINE_STATS, SIMULATED_INCIDENTS } from './data/m
 import { FilterState, Incident, Severity, VerificationStatus } from './types';
 import { CheckCircle, X } from 'lucide-react';
 import { supabase } from './supabaseClient';
+import { mapRowsToIncidents, mapRowToIncident, mapIncidentToRow, toSupabaseTimestamp } from './utils/supabaseMapper';
 import LandingPage from './components/LandingPage';
 
 export function App() {
@@ -64,25 +65,28 @@ export function App() {
   // Simulated live ingestion: streams scripted reports into the feed
   useEffect(() => {
     if (!liveSim) return;
-    const id = setInterval(() => {
+    const id = setInterval(async () => {
       const n = simIndexRef.current;
       simIndexRef.current += 1;
       const template = SIMULATED_INCIDENTS[n % SIMULATED_INCIDENTS.length];
+      const now = new Date();
       const next: Incident = {
         ...template,
         id: `INC-2026-${109 + n}`,
+        created_at: toSupabaseTimestamp(now) || now.toISOString(),
         timeAgo: 'Just now',
-        timestamp: `${new Date().toLocaleString([], {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        })} IST`,
+        timestamp: toSupabaseTimestamp(now) || now.toISOString(),
       };
       setIncidents((prev) => [next, ...prev]);
       setHighlightId(next.id);
+
+      // Persist simulated incident to Supabase (fresh table, clean headers & datetime format)
+      if (supabase) {
+        const { error } = await supabase.from('incidents').insert([mapIncidentToRow(next)]);
+        if (error) {
+          console.error('Error inserting simulated incident into Supabase:', error);
+        }
+      }
       showNotification(
         `New report: ${next.disasterType} near ${next.location.split(',')[0]} — AI confidence ${next.aiConfidence}%`
       );
@@ -114,7 +118,7 @@ export function App() {
       if (error) {
         console.error('Error fetching incidents:', error);
       } else if (data && data.length > 0) {
-        setIncidents(data as Incident[]);
+        setIncidents(mapRowsToIncidents(data));
       }
     };
 
@@ -127,14 +131,14 @@ export function App() {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'incidents' },
         (payload) => {
-          setIncidents((prev) => [payload.new as Incident, ...prev]);
+          setIncidents((prev) => [mapRowToIncident(payload.new as Record<string, any>), ...prev]);
         }
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'incidents' },
         (payload) => {
-          const updated = payload.new as Incident;
+          const updated = mapRowToIncident(payload.new as Record<string, any>);
           setIncidents((prev) =>
             prev.map((inc) => (inc.id === updated.id ? updated : inc))
           );
@@ -181,13 +185,23 @@ export function App() {
     });
   };
 
-  // Create Incident from AI Triage Console
-  const handleCreateIncidentFromTriage = (newIncident: Incident) => {
-    setIncidents((prev) => [newIncident, ...prev]);
+  // Create Incident from AI Triage Console (also persists to Supabase fresh table)
+  const handleCreateIncidentFromTriage = async (newIncident: Incident) => {
+    const ts = toSupabaseTimestamp(new Date());
+    const withTimestamp: Incident = {
+      ...newIncident,
+      created_at: newIncident.created_at || ts || undefined,
+      timestamp: newIncident.timestamp || ts || 'Just now',
+    };
+    setIncidents((prev) => [withTimestamp, ...prev]);
     setHighlightId(newIncident.id);
     setTimeout(() => {
       setHighlightId((cur) => (cur === newIncident.id ? null : cur));
     }, 5000);
+    if (supabase) {
+      const { error } = await supabase.from('incidents').insert([mapIncidentToRow(withTimestamp)]);
+      if (error) console.error('Error inserting triage incident into Supabase:', error);
+    }
     showNotification(
       `Gemini triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} marked on map & added to feed`
     );

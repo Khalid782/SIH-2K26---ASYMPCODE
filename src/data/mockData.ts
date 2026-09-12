@@ -3,6 +3,7 @@ import { Incident } from '../types';
 export const INITIAL_INCIDENTS: Incident[] = [
   {
     id: 'INC-2026-081',
+    created_at: '2026-08-25T08:58:12Z',
     location: 'Mehdipatnam, Hyderabad',
     landmark: 'Near Pillar 42, PVNR Expressway',
     coordinates: [17.3916, 78.4411],
@@ -25,6 +26,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-082',
+    created_at: '2026-08-25T08:54:30Z',
     location: 'Tolichowki, Hyderabad',
     landmark: 'Tolichowki Flyover Underpass & Nadeem Colony',
     coordinates: [17.3986, 78.4069],
@@ -46,6 +48,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-083',
+    created_at: '2026-08-25T08:48:15Z',
     location: 'Charminar, Hyderabad',
     landmark: 'Near Gulzar Houz & Nayapul Drainage',
     coordinates: [17.3616, 78.4747],
@@ -66,6 +69,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-084',
+    created_at: '2026-08-25T08:45:00Z',
     location: 'Gachibowli, Hyderabad',
     landmark: 'DLF Cybercity Junction & IIIT Road',
     coordinates: [17.4401, 78.3489],
@@ -86,6 +90,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-085',
+    created_at: '2026-08-25T08:41:20Z',
     location: 'Banjara Hills, Hyderabad',
     landmark: 'Road No. 12 near Pension Office',
     coordinates: [17.4156, 78.4350],
@@ -107,6 +112,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-086',
+    created_at: '2026-08-25T08:36:10Z',
     location: 'Secunderabad, Hyderabad',
     landmark: 'Railway Station Subway #2 & Clock Tower',
     coordinates: [17.4399, 78.4983],
@@ -128,6 +134,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-087',
+    created_at: '2026-08-25T08:32:00Z',
     location: 'Moosarambagh, Hyderabad',
     landmark: 'Musi River Causeway bridge',
     coordinates: [17.3755, 78.5144],
@@ -149,6 +156,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-088',
+    created_at: '2026-08-25T08:28:45Z',
     location: 'Malakpet, Hyderabad',
     landmark: 'Near Malakpet Railway Bridge & Chaderghat',
     coordinates: [17.3748, 78.4912],
@@ -169,6 +177,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-089',
+    created_at: '2026-08-25T08:25:00Z',
     location: 'Banjara Hills, Hyderabad',
     landmark: 'Road No. 1, Nagarjuna Circle',
     coordinates: [17.4244, 78.4485],
@@ -188,6 +197,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-090',
+    created_at: '2026-08-25T08:19:15Z',
     location: 'Mehdipatnam, Hyderabad',
     landmark: 'Rythu Bazar & Military Gate',
     coordinates: [17.3888, 78.4355],
@@ -207,6 +217,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-091',
+    created_at: '2026-08-25T08:15:00Z',
     location: 'Tolichowki, Hyderabad',
     landmark: 'Paramount Hills & Brindavan Colony',
     coordinates: [17.4045, 78.4112],
@@ -228,6 +239,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-092',
+    created_at: '2026-08-25T08:10:00Z',
     location: 'Gachibowli, Hyderabad',
     landmark: 'Near Wipro Circle & Financial District',
     coordinates: [17.4320, 78.3410],
@@ -247,6 +259,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-093',
+    created_at: '2026-08-25T08:06:30Z',
     location: 'Charminar, Hyderabad',
     landmark: 'Near Laad Bazar & Shahalibanda',
     coordinates: [17.3555, 78.4720],
@@ -267,6 +280,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-094',
+    created_at: '2026-08-25T08:02:10Z',
     location: 'Secunderabad, Hyderabad',
     landmark: 'Paradise Circle & PG Road',
     coordinates: [17.4445, 78.4870],
@@ -286,6 +300,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-095',
+    created_at: '2026-08-25T07:59:00Z',
     location: 'Amberpet, Hyderabad',
     landmark: 'Near Ali Cafe & Musi tributary nala',
     coordinates: [17.3870, 78.5190],
@@ -306,6 +321,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-096',
+    created_at: '2026-08-25T07:54:10Z',
     location: 'Kukatpally, Hyderabad',
     landmark: 'Y Junction & JNTU Road',
     coordinates: [17.4938, 78.3995],
@@ -326,6 +342,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-097',
+    created_at: '2026-08-25T07:42:00Z',
     location: 'Secunderabad, Hyderabad',
     landmark: 'Trimulgherry Lal Bazar',
     coordinates: [17.4720, 78.5020],
@@ -345,6 +362,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-098',
+    created_at: '2026-08-25T07:30:00Z',
     location: 'Banjara Hills, Hyderabad',
     landmark: 'Road No. 3, Sagar Society',
     coordinates: [17.4200, 78.4380],
@@ -363,6 +381,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-099',
+    created_at: '2026-08-25T07:12:00Z',
     location: 'Gachibowli, Hyderabad',
     landmark: 'Bio Diversity Junction flyover ramp',
     coordinates: [17.4380, 78.3650],
@@ -382,6 +401,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-100',
+    created_at: '2026-08-25T07:00:00Z',
     location: 'Mehdipatnam, Hyderabad',
     landmark: 'Rethi Bowli signal junction',
     coordinates: [17.3820, 78.4380],
@@ -401,6 +421,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-101',
+    created_at: '2026-08-25T06:48:00Z',
     location: 'Tolichowki, Hyderabad',
     landmark: 'Seven Tombs Road Nala',
     coordinates: [17.3950, 78.3960],
@@ -420,6 +441,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-102',
+    created_at: '2026-08-25T06:30:00Z',
     location: 'Charminar, Hyderabad',
     landmark: 'Madina Building & Pathergatti',
     coordinates: [17.3680, 78.4730],
@@ -439,6 +461,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-103',
+    created_at: '2026-08-25T06:12:00Z',
     location: 'Banjara Hills, Hyderabad',
     landmark: 'Road No. 10, Star Hospital lane',
     coordinates: [17.4180, 78.4410],
@@ -458,6 +481,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-104',
+    created_at: '2026-08-25T06:00:00Z',
     location: 'Secunderabad, Hyderabad',
     landmark: 'Marredpally Teachers Colony',
     coordinates: [17.4520, 78.5100],
@@ -477,6 +501,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-105',
+    created_at: '2026-08-25T05:36:00Z',
     location: 'Gachibowli, Hyderabad',
     landmark: 'Telecom Nagar nala culvert',
     coordinates: [17.4450, 78.3580],
@@ -496,6 +521,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-106',
+    created_at: '2026-08-25T05:12:00Z',
     location: 'Mehdipatnam, Hyderabad',
     landmark: 'Sarojini Devi Eye Hospital perimeter',
     coordinates: [17.3960, 78.4460],
@@ -515,6 +541,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-107',
+    created_at: '2026-08-25T05:00:00Z',
     location: 'Tolichowki, Hyderabad',
     landmark: 'Samata Nagar lowlands',
     coordinates: [17.4080, 78.4010],
@@ -535,6 +562,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-108',
+    created_at: '2026-08-25T04:30:00Z',
     location: 'Charminar, Hyderabad',
     landmark: 'Mir Alam Tank sluice gate overflow',
     coordinates: [17.3450, 78.4520],
@@ -561,6 +589,7 @@ export const INITIAL_INCIDENTS: Incident[] = [
 export const SIMULATED_INCIDENTS: Incident[] = [
   {
     id: 'INC-2026-SIM-01',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'Attapur, Hyderabad',
     landmark: 'PVNR Expressway Pillar 88',
     coordinates: [17.3725, 78.431],
@@ -580,6 +609,7 @@ export const SIMULATED_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-SIM-02',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'Dilsukhnagar, Hyderabad',
     landmark: 'Chaitanyapuri Bus Stop',
     coordinates: [17.3688, 78.5247],
@@ -603,6 +633,7 @@ export const SIMULATED_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-SIM-03',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'Uppal, Hyderabad',
     landmark: 'Ramanathapur Nala',
     coordinates: [17.3984, 78.5583],
@@ -623,6 +654,7 @@ export const SIMULATED_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-SIM-04',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'Madhapur, Hyderabad',
     landmark: 'Durgam Cheruvu Road',
     coordinates: [17.4483, 78.3915],
@@ -646,6 +678,7 @@ export const SIMULATED_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-SIM-05',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'LB Nagar, Hyderabad',
     landmark: 'Ring Road Service Road',
     coordinates: [17.3457, 78.5522],
@@ -666,6 +699,7 @@ export const SIMULATED_INCIDENTS: Incident[] = [
   },
   {
     id: 'INC-2026-SIM-06',
+    created_at: '2026-08-25T09:00:00Z',
     location: 'Begumpet, Hyderabad',
     landmark: 'Rasoolpura Nala Bridge',
     coordinates: [17.4448, 78.4682],

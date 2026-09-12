@@ -137,6 +137,7 @@ export default function AITriageConsole({
 
     return {
       id: newId,
+      created_at: now.toISOString(),
       location: result.primaryLocation || result.location,
       extractedLocation: result.primaryLocation || result.location,
       primaryLocation: result.primaryLocation || result.location,

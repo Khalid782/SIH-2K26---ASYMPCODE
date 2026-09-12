@@ -23,6 +23,7 @@ export type VerificationStatus =
 
 export interface Incident {
   id: string;
+  created_at?: string;
   location: string;
   extractedLocation?: string;
   primaryLocation?: string;
