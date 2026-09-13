@@ -279,7 +279,7 @@ export function App() {
   }
 
   return (
-    <div className="h-screen w-full overflow-hidden flex flex-col text-sky-950 dark:text-sky-100 font-sans bg-gradient-to-br from-white via-sky-50/70 to-sky-100/60 dark:bg-gradient-to-br dark:from-sky-950 dark:via-sky-950 dark:to-sky-950 transition-colors duration-300">
+    <div className="h-screen w-full overflow-hidden flex flex-col text-ink dark:text-paper font-sans bg-gradient-to-br from-[#e7ddd0] via-[#ddd4c1] to-[#cfc6b3] dark:bg-gradient-to-br dark:from-ink-2 dark:via-ink dark:to-ink transition-colors duration-300">
       {/* Top Header */}
       <Header
         lastUpdated={lastUpdated}
@@ -296,12 +296,12 @@ export function App() {
 
       {/* Floating Notification Toast */}
       {notification && (
-        <div className="fixed bottom-4 right-4 z-[2100] bg-white/95 dark:bg-sky-900 backdrop-blur-md text-sky-900 dark:text-sky-100 px-4 py-2.5 rounded-xl shadow-2xl border border-sky-200/80 dark:border-sky-700 flex items-center gap-3 text-xs">
+        <div className="fixed bottom-4 right-4 z-[2100] bg-paper/95 dark:bg-ink/90 backdrop-blur-md text-ink dark:text-paper px-4 py-2.5 rounded-xl shadow-2xl border border-paper-2 dark:border-paper/20 flex items-center gap-3 text-xs">
           <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
           <span className="font-medium">{notification}</span>
           <button
             onClick={() => setNotification(null)}
-            className="text-sky-400 hover:text-sky-800 p-0.5 cursor-pointer ml-1"
+            className="text-mute hover:text-ink p-0.5 cursor-pointer ml-1"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -366,11 +366,11 @@ export function App() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
-                      <h2 className="text-xs font-bold uppercase tracking-wider text-sky-900 dark:text-sky-100">
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
                         Hyderabad GIS Tactical Incident Map
                       </h2>
                     </div>
-                    <span className="text-[11px] text-sky-600/80 font-mono">
+                    <span className="text-[11px] text-mute font-mono">
                       OpenStreetMap &bull; 6 Core Zones
                     </span>
                   </div>
@@ -386,11 +386,11 @@ export function App() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-sm bg-sky-600"></span>
-                      <h2 className="text-xs font-bold uppercase tracking-wider text-sky-900 dark:text-sky-100">
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
                         Intelligence Feeds
                       </h2>
                     </div>
-                    <span className="text-[11px] text-sky-600/80">
+                    <span className="text-[11px] text-mute">
                       Click to inspect & action
                     </span>
                   </div>

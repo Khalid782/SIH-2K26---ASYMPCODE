@@ -47,11 +47,11 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
 
         {/* Middle: Active Event & Status */}
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-          <div className="flex items-center gap-2 bg-paper-2/80 dark:bg-ink/60 border border-paper-2/70 dark:border-mute px-3 py-1.5 rounded-lg text-xs">
-            <MapPin className="w-3.5 h-3.5 text-mute dark:text-mute shrink-0" />
-            <span className="text-mute/80 dark:text-mute font-medium">Active event:</span>
-            <span className="text-paper dark:text-paper font-semibold tracking-wide">
-              Hyderabad Flood Response
+          <div className="flex items-center gap-2 bg-ink dark:bg-paper border border-ink dark:border-paper px-3 py-1.5 rounded-lg text-xs shadow-sm">
+            <MapPin className="w-3.5 h-3.5 text-paper dark:text-ink shrink-0" />
+            <span className="text-paper/70 dark:text-ink/70 font-medium">Active event:</span>
+            <span className="text-paper dark:text-ink font-bold tracking-wide">
+              Hyderabad Crisis Mapping
             </span>
           </div>
 

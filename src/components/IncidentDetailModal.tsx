@@ -33,6 +33,14 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
   onClose,
   onUpdateStatus,
 }) => {
+  // Close on Escape
+  React.useEffect(() => {
+    if (!incident) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [incident, onClose]);
+
   if (!incident) return null;
 
   const getSeverityStyle = (severity: Incident['severity']) => {
@@ -64,11 +72,16 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
   const sevStyle = getSeverityStyle(incident.severity);
 
   return createPortal(
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-ink/95 backdrop-blur-xl">
+    <div
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-ink/35 dark:bg-ink/45 backdrop-blur-[2px]"
+      onClick={onClose}
+      aria-hidden="true"
+    >
       <div 
         className="bg-paper w-full max-w-2xl rounded-2xl shadow-[0_30px_80px_-30px_rgba(17,17,16,0.55)] border border-paper-2/80 overflow-hidden flex flex-col max-h-[90vh] animate-modal-in"
         role="dialog"
         aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Header */}
         <div className="px-5 py-4 bg-gradient-to-r from-paper-2 via-paper to-paper-2/80 text-ink flex items-center justify-between border-b border-paper-2">
