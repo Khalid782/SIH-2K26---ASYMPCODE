@@ -3,9 +3,31 @@
 /* Enable class-based dark mode (toggle .dark on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ------------------------------------------------------------------ */
+/* Design tokens — bone/ink editorial blueprint palette               */
+/* ------------------------------------------------------------------ */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-display: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-editorial: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --color-paper: #f1efea;
+  --color-paper-2: #e8e4da;
+  --color-ink: #111110;
+  --color-ink-2: #0b0b0a;
+  --color-mute: #6f6b62;
+  /* Single functional accent — emergency signal red */
+  --color-signal: #d43a22;
+}
+
 @layer base {
   * {
-    border-color: var(--color-sky-100, #e0f2fe);
+    border-color: color-mix(in oklab, #111110 12%, transparent);
+  }
+
+  .dark * {
+    border-color: color-mix(in oklab, #f1efea 14%, transparent);
   }
 
   html,
@@ -15,27 +37,24 @@
   }
 
   body {
-    background-color: #f7fcfe;
-    background-image: linear-gradient(180deg, #ffffff 0%, #f2f9fd 40%, #e8f5fb 100%);
-    background-attachment: fixed;
+    background-color: #f1efea;
     transition: background-color 0.35s ease, color 0.35s ease;
   }
 
   .dark body,
   .dark #root {
-    background-color: #0a162a;
-    background-image: linear-gradient(180deg, #112a4a 0%, #0a162a 42%, #081120 100%);
-    color: #f1f5f9;
+    background-color: #0b0b0a;
+    color: #f1efea;
   }
 
   ::selection {
-    background: var(--color-sky-200, #bae6fd);
-    color: var(--color-sky-950, #082f49);
+    background: #111110;
+    color: #f1efea;
   }
 
   .dark ::selection {
-    background: var(--color-sky-700, #0369a1);
-    color: #f0fdfa;
+    background: #f1efea;
+    color: #111110;
   }
 }
 
@@ -57,6 +76,20 @@ html {
   animation: marquee 32s linear infinite;
 }
 .animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Editorial display marquees (illoca-style oversized bands) */
+.animate-marquee-slow {
+  animation: marquee 58s linear infinite;
+}
+.animate-marquee-slow:hover {
+  animation-play-state: paused;
+}
+.animate-marquee-fast {
+  animation: marquee 18s linear infinite;
+}
+.animate-marquee-fast:hover {
   animation-play-state: paused;
 }
 
@@ -178,7 +211,7 @@ html {
   animation: modal-in 0.22s ease-out;
 }
 
-/* Slim, powder-blue scrollbars */
+/* Slim, monochrome hairline scrollbars */
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -187,17 +220,16 @@ html {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #bae6fd;
-  border-radius: 9999px;
+  background: #d3cec3;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #7dd3fc;
+  background: #b3ada0;
 }
 .dark *::-webkit-scrollbar-thumb {
-  background: #1e4a6e;
+  background: #2c2c2a;
 }
 .dark *::-webkit-scrollbar-thumb:hover {
-  background: #25638f;
+  background: #3d3d3a;
 }
 
 /* Leaflet base map chrome on light theme */
