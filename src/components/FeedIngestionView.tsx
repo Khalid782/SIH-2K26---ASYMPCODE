@@ -16,7 +16,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-whatsapp',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Citizen WhatsApp Line</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Citizen WhatsApp Line</span>,
       'Text / Voice notes',
       <StatusBadge key="s" label="Online" tone="green" pulse />,
       <span key="n" className="font-mono">1,284</span>,
@@ -28,7 +28,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-112',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Emergency Line 112</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Emergency Line 112</span>,
       'Voice → transcript',
       <StatusBadge key="s" label="Online" tone="green" pulse />,
       <span key="n" className="font-mono">612</span>,
@@ -40,7 +40,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-twitter',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">X / Twitter Monitor</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">X / Twitter Monitor</span>,
       'Social media',
       <StatusBadge key="s" label="Online" tone="green" />,
       <span key="n" className="font-mono">389</span>,
@@ -52,7 +52,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-facebook',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Facebook Community Groups</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Facebook Community Groups</span>,
       'Social media',
       <StatusBadge key="s" label="Online" tone="green" />,
       <span key="n" className="font-mono">214</span>,
@@ -64,7 +64,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-sensors',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">GHMC Sensor Telemetry</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">GHMC Sensor Telemetry</span>,
       'IoT water gauges',
       <StatusBadge key="s" label="Online" tone="green" pulse />,
       <span key="n" className="font-mono">96</span>,
@@ -76,7 +76,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-volunteer',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Field Volunteer App</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Field Volunteer App</span>,
       'Field app',
       <StatusBadge key="s" label="Online" tone="green" />,
       <span key="n" className="font-mono">173</span>,
@@ -88,7 +88,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-sms',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">SMS 112 Gateway</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">SMS 112 Gateway</span>,
       'SMS',
       <StatusBadge key="s" label="Degraded" tone="amber" />,
       <span key="n" className="font-mono">148</span>,
@@ -101,7 +101,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-traffic',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Traffic Police Feed</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Traffic Police Feed</span>,
       'Agency feed',
       <StatusBadge key="s" label="Online" tone="green" />,
       <span key="n" className="font-mono">87</span>,
@@ -113,7 +113,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-web',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Web / Portal Form</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Web / Portal Form</span>,
       'Web',
       <StatusBadge key="s" label="Online" tone="green" />,
       <span key="n" className="font-mono">64</span>,
@@ -125,7 +125,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ch-radio',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Community Radio / HAM</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Community Radio / HAM</span>,
       'Radio',
       <StatusBadge key="s" label="Standby" tone="slate" />,
       <span key="n" className="font-mono">12</span>,
@@ -163,10 +163,10 @@ export default function FeedIngestionView() {
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-sky-600/80 dark:text-sky-400">
+      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
         <Activity className="w-3.5 h-3.5" />
         <Inbox className="w-3.5 h-3.5" />
-        Queue backlog of <strong className="text-sky-950 dark:text-sky-100">87</strong> messages is being
+        Queue backlog of <strong className="text-ink dark:text-paper">87</strong> messages is being
         drained by the severity engine &mdash; estimated clear in 4 minutes.
       </div>
     </div>

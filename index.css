@@ -26,6 +26,32 @@
     border-color: color-mix(in oklab, #111110 12%, transparent);
   }
 
+  button,
+  input,
+  select,
+  textarea,
+  [role='button'] {
+    border-radius: 0.5rem;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead th:first-child {
+    border-top-left-radius: 0.5rem;
+  }
+  thead th:last-child {
+    border-top-right-radius: 0.5rem;
+  }
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+  }
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+  }
+
   .dark * {
     border-color: color-mix(in oklab, #f1efea 14%, transparent);
   }

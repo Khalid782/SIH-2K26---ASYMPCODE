@@ -38,12 +38,12 @@ function AnimatedNumber({ value, className }: { value: number; className?: strin
 
 const numBase = 'text-2xl font-bold tracking-tight font-mono bg-gradient-to-b bg-clip-text text-transparent';
 const NUM_STYLES = {
-  total: `${numBase} from-sky-950 via-sky-700 to-cyan-500 drop-shadow-[0_2px_10px_rgba(2,132,199,0.35)]`,
+  total: `${numBase} from-ink via-mute to-mute/70 drop-shadow-[0_2px_10px_rgba(17,17,16,0.35)]`,
   critical: `${numBase} from-rose-700 via-rose-500 to-rose-400 drop-shadow-[0_2px_10px_rgba(244,63,94,0.4)]`,
   high: `${numBase} from-orange-700 via-orange-500 to-amber-400 drop-shadow-[0_2px_10px_rgba(249,115,22,0.4)]`,
   low: `${numBase} from-amber-700 via-amber-500 to-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.35)]`,
   verified: `${numBase} from-emerald-700 via-emerald-500 to-emerald-400 drop-shadow-[0_2px_10px_rgba(16,185,129,0.4)]`,
-  actioned: `${numBase} from-sky-700 via-sky-500 to-cyan-400 drop-shadow-[0_2px_10px_rgba(14,165,233,0.4)]`,
+  actioned: `${numBase} from-ink via-mute to-mute/70 drop-shadow-[0_2px_10px_rgba(17,17,16,0.4)]`,
 };
 
 interface SummaryCardsProps {
@@ -62,7 +62,7 @@ interface SummaryCardsProps {
 }
 
 const cardBase =
-  'text-left p-3.5 rounded-xl border transition-all cursor-pointer bg-white/95 dark:bg-sky-900/90 dark:border-sky-800 shadow-[0_1px_2px_rgba(8,47,73,0.05),0_10px_22px_-16px_rgba(2,132,199,0.3)] hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(8,47,73,0.06),0_14px_28px_-14px_rgba(2,132,199,0.4)]';
+  'text-left p-3.5 rounded-xl border transition-all cursor-pointer bg-paper/95 dark:bg-ink/90 dark:border-paper/25 shadow-[0_1px_2px_rgba(17,17,16,0.05),0_10px_22px_-16px_rgba(17,17,16,0.3)] hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(17,17,16,0.06),0_14px_28px_-14px_rgba(17,17,16,0.4)]';
 
 export const SummaryCards: React.FC<SummaryCardsProps> = ({
   counts,
@@ -82,21 +82,21 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         }}
         className={`${cardBase} ${
           activeSeverityFilter === 'All' && activeStatusFilter === 'All'
-            ? 'border-sky-500 ring-2 ring-sky-500/15 bg-sky-50/60'
-            : 'border-sky-100 hover:border-sky-300'
+            ? 'border-signal/80 ring-2 ring-signal/80/15 bg-paper-2/60'
+            : 'border-paper-2 hover:border-paper-2/70'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-700/70">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-mute/70">
             Total Incidents
           </span>
-          <div className="w-6 h-6 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
+          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-mute">
             <Activity className="w-3.5 h-3.5" />
           </div>
         </div>
         <div className="mt-2 flex items-baseline gap-2">
           <AnimatedNumber value={counts.total} className={NUM_STYLES.total} />
-          <span className="text-[11px] text-sky-600/70 font-medium">Recorded</span>
+          <span className="text-[11px] text-mute/70 font-medium">Recorded</span>
         </div>
       </button>
 
@@ -107,7 +107,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         className={`${cardBase} ${
           activeSeverityFilter === 'Critical'
             ? 'border-rose-500 ring-2 ring-rose-500/15 bg-rose-50/50'
-            : 'border-sky-100 hover:border-rose-300'
+            : 'border-paper-2 hover:border-rose-300'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -131,7 +131,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         className={`${cardBase} ${
           activeSeverityFilter === 'High'
             ? 'border-orange-500 ring-2 ring-orange-500/15 bg-orange-50/50'
-            : 'border-sky-100 hover:border-orange-300'
+            : 'border-paper-2 hover:border-orange-300'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -155,7 +155,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         className={`${cardBase} ${
           activeSeverityFilter === 'Low'
             ? 'border-amber-500 ring-2 ring-amber-500/15 bg-amber-50/50'
-            : 'border-sky-100 hover:border-amber-300'
+            : 'border-paper-2 hover:border-amber-300'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -179,7 +179,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         className={`${cardBase} ${
           activeStatusFilter === 'Verified'
             ? 'border-emerald-500 ring-2 ring-emerald-500/15 bg-emerald-50/50'
-            : 'border-sky-100 hover:border-emerald-300'
+            : 'border-paper-2 hover:border-emerald-300'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -202,21 +202,21 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         onClick={() => onSelectStatus && onSelectStatus(activeStatusFilter === 'Actioned' ? 'All' : 'Actioned')}
         className={`${cardBase} ${
           activeStatusFilter === 'Actioned'
-            ? 'border-sky-500 ring-2 ring-sky-500/15 bg-sky-50/60'
-            : 'border-sky-100 hover:border-sky-400'
+            ? 'border-signal/80 ring-2 ring-signal/80/15 bg-paper-2/60'
+            : 'border-paper-2 hover:border-mute'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-700">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-mute">
             Actioned
           </span>
-          <div className="w-6 h-6 rounded-lg bg-sky-100 flex items-center justify-center text-sky-700">
+          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-mute">
             <CheckCheck className="w-3.5 h-3.5" />
           </div>
         </div>
         <div className="mt-2 flex items-baseline gap-2">
           <AnimatedNumber value={counts.actioned} className={NUM_STYLES.actioned} />
-          <span className="text-[11px] text-sky-700/80 font-medium">Dispatched</span>
+          <span className="text-[11px] text-mute/80 font-medium">Dispatched</span>
         </div>
       </button>
     </div>

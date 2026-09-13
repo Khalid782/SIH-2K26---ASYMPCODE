@@ -74,7 +74,7 @@ const METHOD = [
 ];
 
 const STATS = [
-  { value: 47, suffix: '', label: 'Incidents tracked', note: 'ROLLING 24H' },
+  { value: 30, suffix: '', label: 'Incidents tracked', note: 'CURATED SET' },
   { value: 93, suffix: '%', label: 'Triage accuracy', note: 'EXTRACTION' },
   { value: 6, suffix: '', label: 'Core zones', note: 'HYDERABAD' },
   { value: 4, suffix: 'm', label: 'Median dispatch', note: 'VERIFY → UNIT' },
@@ -218,7 +218,7 @@ function LiveReadout() {
     <div
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="border border-ink/15 bg-paper-2/60 dark:border-paper/15 dark:bg-paper/[0.03]"
+      className="rounded-xl border border-ink/15 bg-paper-2/60 dark:border-paper/15 dark:bg-paper/[0.03]"
     >
       <div className="flex items-center justify-between border-b border-ink/12 px-4 py-3 dark:border-paper/12">
         <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]">
@@ -325,7 +325,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
       <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/12 bg-paper/85 backdrop-blur-md dark:border-paper/12 dark:bg-ink-2/85">
         <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between px-5 sm:px-8">
           <a href="#top" className="flex items-center gap-2.5">
-            <span className="grid h-6 w-6 place-items-center border border-ink/30 dark:border-paper/30">
+            <span className="grid h-6 w-6 place-items-center rounded-lg border border-ink/30 dark:border-paper/30">
               <BeaconLogo className="h-3.5 w-3.5" />
             </span>
             <span className="font-display text-[13px] font-extrabold uppercase tracking-[-0.01em]">Crisisbeacon</span>
@@ -355,7 +355,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                 onClick={onToggleDark}
                 aria-label="Toggle dark mode"
                 title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                className="grid h-7 w-7 cursor-pointer place-items-center border border-ink/20 text-ink/70 transition-colors hover:bg-ink hover:text-paper dark:border-paper/20 dark:text-paper/70 dark:hover:bg-paper dark:hover:text-ink"
+                className="grid h-7 w-7 cursor-pointer place-items-center rounded-lg border border-ink/20 text-ink/70 transition-colors hover:bg-ink hover:text-paper dark:border-paper/20 dark:text-paper/70 dark:hover:bg-paper dark:hover:text-ink"
               >
                 {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
               </button>
@@ -363,7 +363,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
 
             <button
               onClick={onEnter}
-              className="group inline-flex cursor-pointer items-center gap-2 bg-ink px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-signal dark:bg-paper dark:text-ink dark:hover:bg-signal dark:hover:text-paper"
+              className="group inline-flex cursor-pointer items-center gap-2 rounded-lg bg-ink px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-signal dark:bg-paper dark:text-ink dark:hover:bg-signal dark:hover:text-paper"
             >
               Enter
               <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -372,7 +372,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             <button
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
-              className="grid h-7 w-7 cursor-pointer place-items-center border border-ink/20 text-ink lg:hidden dark:border-paper/20 dark:text-paper"
+              className="grid h-7 w-7 cursor-pointer place-items-center rounded-lg border border-ink/20 text-ink lg:hidden dark:border-paper/20 dark:text-paper"
             >
               {menuOpen ? <X className="h-3.5 w-3.5" /> : <Menu className="h-3.5 w-3.5" />}
             </button>
@@ -386,7 +386,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.24 }}
-              className="overflow-hidden border-t border-ink/12 bg-paper/95 backdrop-blur lg:hidden dark:border-paper/12 dark:bg-ink-2/95"
+              className="overflow-hidden rounded-b-lg border-t border-ink/12 bg-paper/95 backdrop-blur lg:hidden dark:border-paper/12 dark:bg-ink-2/95"
             >
               {NAV.map((item) => (
                 <a
@@ -459,7 +459,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             <div className="mt-10 flex flex-wrap items-center gap-x-9 gap-y-5">
               <button
                 onClick={onEnter}
-                className="group inline-flex cursor-pointer items-center gap-3 bg-ink px-6 py-4 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-colors hover:bg-signal dark:bg-paper dark:text-ink dark:hover:bg-signal dark:hover:text-paper"
+                className="group inline-flex cursor-pointer items-center gap-3 rounded-lg bg-ink px-6 py-4 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-colors hover:bg-signal dark:bg-paper dark:text-ink dark:hover:bg-signal dark:hover:text-paper"
               >
                 Enter the Situation Room
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -489,7 +489,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
         </div>
 
         {/* Spec sheet band */}
-        <div className="mt-16 grid grid-cols-2 gap-px border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 md:grid-cols-4">
+        <div className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 md:grid-cols-4">
           {STATS.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -497,7 +497,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
-              className="bg-paper p-5 sm:p-6 dark:bg-ink-2"
+              className="bg-paper p-5 sm:p-6 dark:bg-ink-2 first:rounded-tl-xl last:rounded-tr-xl md:[&:nth-child(4)]:rounded-tr-xl md:[&:nth-child(5)]:rounded-bl-xl md:[&:nth-child(8)]:rounded-br-xl"
             >
               <div className="font-display text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">
                 <CountUp to={stat.value} suffix={stat.suffix} />
@@ -618,7 +618,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </p>
           </div>
 
-          <div className="flex items-center gap-px border border-ink/15 dark:border-paper/15">
+          <div className="flex items-center gap-px overflow-hidden rounded-lg border border-ink/15 dark:border-paper/15">
             {(['All', 'Critical', 'High', 'Low'] as const).map((filter) => (
               <button
                 key={filter}
@@ -635,7 +635,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           </div>
         </div>
 
-        <div className="mt-12 grid gap-px border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {feedIncidents.map((incident: Incident) => {
               const isOpen = expandedId === incident.id;
@@ -647,7 +647,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.22 }}
-                  className="bg-paper dark:bg-ink-2"
+                  className="bg-paper dark:bg-ink-2 first:rounded-tl-xl last:rounded-tr-xl md:first:rounded-tl-xl md:last:rounded-tr-xl"
                 >
                   <button
                     onClick={() => setExpandedId(isOpen ? null : incident.id)}
@@ -732,9 +732,9 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </div>
           </div>
 
-          <div className="mt-14 grid gap-px border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 md:grid-cols-3">
+          <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-ink/12 bg-ink/12 dark:border-paper/12 dark:bg-paper/12 md:grid-cols-3">
             {METHOD.map((item) => (
-              <div key={item.step} className="bg-paper p-6 sm:p-8 dark:bg-ink-2">
+              <div key={item.step} className="bg-paper p-6 sm:p-8 dark:bg-ink-2 first:rounded-tl-xl last:rounded-tr-xl md:first:rounded-tl-xl md:last:rounded-tr-xl">
                 <div className="flex items-baseline justify-between">
                   <span className="font-display text-[3.5rem] font-extrabold leading-none tracking-[-0.05em] text-ink/12 dark:text-paper/15">
                     {item.step}
@@ -758,9 +758,9 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               </p>
             </div>
             <div className="lg:col-span-8">
-              <div className="grid grid-cols-2 gap-px border border-ink/12 bg-ink/12 sm:grid-cols-3 dark:border-paper/12 dark:bg-paper/12">
+              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-ink/12 bg-ink/12 sm:grid-cols-3 dark:border-paper/12 dark:bg-paper/12">
                 {ZONES.map((zone) => (
-                  <div key={zone.code} className="group bg-paper p-5 transition-colors hover:bg-ink dark:bg-ink-2 dark:hover:bg-paper">
+                  <div key={zone.code} className="group bg-paper p-5 transition-colors hover:bg-ink dark:bg-ink-2 dark:hover:bg-paper first:rounded-tl-xl last:rounded-tr-xl md:first:rounded-tl-xl md:last:rounded-tr-xl">
                     <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute transition-colors group-hover:text-paper/60 dark:text-paper/40 dark:group-hover:text-ink/60">
                       {zone.code}
                     </div>
@@ -807,7 +807,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           </p>
           <button
             onClick={onEnter}
-            className="group mt-10 inline-flex cursor-pointer items-center gap-3 border border-paper/35 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors hover:bg-paper hover:text-ink dark:border-ink/35 dark:hover:bg-ink dark:hover:text-paper"
+            className="group mt-10 inline-flex cursor-pointer items-center gap-3 rounded-lg border border-paper/35 px-7 py-4 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors hover:bg-paper hover:text-ink dark:border-ink/35 dark:hover:bg-ink dark:hover:text-paper"
           >
             Open the Situation Room
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -821,7 +821,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <div className="flex items-center gap-2.5">
-                <span className="grid h-7 w-7 place-items-center border border-ink/25 dark:border-paper/25">
+                <span className="grid h-7 w-7 place-items-center rounded-lg border border-ink/25 dark:border-paper/25">
                   <BeaconLogo className="h-4 w-4" />
                 </span>
                 <span className="font-display text-sm font-extrabold uppercase tracking-[-0.01em]">

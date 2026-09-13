@@ -15,7 +15,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-hhf',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Helping Hand Foundation</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Helping Hand Foundation</span>,
       'Medical camps & rescue',
       'Tolichowki',
       <span key="n" className="font-mono">120</span>,
@@ -26,7 +26,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-goonj',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Goonj</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Goonj</span>,
       'Relief material & ration',
       'City-wide',
       <span key="n" className="font-mono">200</span>,
@@ -37,7 +37,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-seeds',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">SEEDS India</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">SEEDS India</span>,
       'Search & rescue volunteers',
       'Old City',
       <span key="n" className="font-mono">85</span>,
@@ -48,7 +48,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-yrc',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Youth Red Cross</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Youth Red Cross</span>,
       'First aid & stretcher teams',
       'Secunderabad',
       <span key="n" className="font-mono">150</span>,
@@ -59,7 +59,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-akshaya',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Akshaya Patra</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Akshaya Patra</span>,
       'Cooked meals for shelters',
       'All shelters',
       <span key="n" className="font-mono">60</span>,
@@ -70,7 +70,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-sja',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">St. John Ambulance</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">St. John Ambulance</span>,
       'Ambulance backup',
       'Banjara Hills',
       <span key="n" className="font-mono">40</span>,
@@ -81,7 +81,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-janmitra',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Jan Mitra Volunteers</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Jan Mitra Volunteers</span>,
       'Local flood volunteers',
       'Mehdipatnam',
       <span key="n" className="font-mono">95</span>,
@@ -92,7 +92,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-aid',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">AID Hyderabad</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">AID Hyderabad</span>,
       'De-watering support',
       'Amberpet',
       <span key="n" className="font-mono">55</span>,
@@ -103,7 +103,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-bsg',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Bharat Scouts & Guides</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Bharat Scouts & Guides</span>,
       'Shelter management',
       'Kukatpally',
       <span key="n" className="font-mono">70</span>,
@@ -114,7 +114,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'ngo-care',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Care & Share Foundation</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Care & Share Foundation</span>,
       'Child-safe evacuation',
       'Tolichowki',
       <span key="n" className="font-mono">30</span>,
@@ -152,7 +152,7 @@ export default function NgoCommunitiesView() {
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-sky-600/80 dark:text-sky-400">
+      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
         <Users className="w-3.5 h-3.5" />
         <Radio className="w-3.5 h-3.5" />
         Community radio slot every hour at :45 — used to broadcast shelter locations and relief

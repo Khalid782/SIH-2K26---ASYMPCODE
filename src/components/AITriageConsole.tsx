@@ -266,17 +266,17 @@ export default function AITriageConsole({
   return (
     <div className="max-w-4xl mx-auto w-full space-y-4">
       <div className="flex items-center gap-2">
-        <span className="w-2.5 h-2.5 rounded-sm bg-sky-500"></span>
-        <h2 className="text-xs font-bold uppercase tracking-wider text-sky-950 dark:text-sky-100">
+        <span className="w-2.5 h-2.5 rounded-full bg-signal/80"></span>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
           AI Triage Console
         </h2>
-        <span className="text-[11px] text-sky-600/80 font-mono ml-auto">
+        <span className="text-[11px] text-mute/80 font-mono ml-auto">
           Severity Engine &bull; NER Parser &bull; Gemini 2.5 Flash
         </span>
       </div>
 
-      <div className="bg-white/95 dark:bg-sky-900/90 border border-sky-100/90 dark:border-sky-800 rounded-xl p-4 space-y-3 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
-        <label className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80">
+      <div className="bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-xl p-4 space-y-3 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)]">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-mute/80">
           Raw Citizen Report
         </label>
         <textarea
@@ -285,13 +285,13 @@ export default function AITriageConsole({
           placeholder='e.g. "pani ghar mein aa gaya, 2 log trapped hai near Gandhi Nagar bridge, please help urgent"'
           rows={4}
           disabled={isAnalyzing}
-          className="w-full text-sm text-sky-950 dark:text-sky-100 border border-sky-200 dark:border-sky-700 rounded-lg p-3 bg-sky-50/40 dark:bg-sky-800/50 placeholder:text-sky-400/70 dark:placeholder:text-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400/30 focus:border-sky-400 resize-none disabled:bg-sky-50 dark:disabled:bg-sky-900"
+          className="w-full text-sm text-ink dark:text-paper border border-paper-2 dark:border-mute rounded-lg p-3 bg-paper-2/40 dark:bg-ink/50 placeholder:text-mute/70 dark:placeholder:text-mute focus:outline-none focus:ring-2 focus:ring-mute/30 focus:border-mute resize-none disabled:bg-paper-2 dark:disabled:bg-paper"
         />
         <div className="flex items-center gap-2">
           <button
             onClick={handleAnalyze}
             disabled={!reportText.trim() || isAnalyzing}
-            className="inline-flex items-center gap-2 bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-sky-700 shadow-[0_4px_12px_-6px_rgba(2,132,199,0.6)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center gap-2 bg-mute text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-mute shadow-[0_4px_12px_-6px_rgba(17,17,16,0.6)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {isAnalyzing ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -303,7 +303,7 @@ export default function AITriageConsole({
           {(reportText || analysisResult) && !isAnalyzing && (
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 hover:text-sky-900 px-2 py-2"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-mute hover:text-paper px-2 py-2"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Clear
@@ -311,7 +311,7 @@ export default function AITriageConsole({
           )}
         </div>
         {analysisError && (
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-md p-3">
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             <span>{analysisError}</span>
           </div>
@@ -319,12 +319,12 @@ export default function AITriageConsole({
       </div>
 
       {analysisResult && (
-        <div className="bg-white/95 dark:bg-sky-900/90 border border-sky-100/90 dark:border-sky-800 rounded-xl p-4 space-y-4 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_10px_24px_-18px_rgba(2,132,199,0.3)]">
+        <div className="bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-xl p-4 space-y-4 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)]">
           {!analysisResult.isRelevant ? (
-            <div className="flex items-start gap-2 bg-sky-50/70 border border-sky-100 text-sky-700 text-sm rounded-lg p-3">
+            <div className="flex items-start gap-2 bg-paper-2/70 border border-paper-2 text-mute text-sm rounded-lg p-3">
               <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-sky-950 dark:text-sky-100">
+                <p className="font-semibold text-ink dark:text-paper">
                   Not classified as a distress report
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -337,42 +337,42 @@ export default function AITriageConsole({
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <span
-                  className={`text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${severityStyles[analysisResult.severity]}`}
+                  className={`text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded-full border ${severityStyles[analysisResult.severity]}`}
                 >
                   {analysisResult.severity}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-lg bg-sky-100 text-sky-800 border border-sky-200">
+                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-paper-2 text-paper-2 border border-paper-2">
                   {analysisResult.disasterType}
                 </span>
                 {analysisResult.engineUsed === 'Gemini AI' ? (
-                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
                     <Zap className="w-3 h-3" />
                     Gemini AI
                   </span>
                 ) : (
-                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
                     Rule-Based Fallback
                   </span>
                 )}
-                <span className="text-[11px] text-sky-600/80 ml-auto">
+                <span className="text-[11px] text-mute/80 ml-auto">
                   AI Confidence: <strong>{analysisResult.aiConfidence}%</strong>
                 </span>
               </div>
 
               {(analysisResult.cleanedReport || analysisResult.fallbackClean) && (
-                <div className="bg-gradient-to-br from-sky-50/80 to-white dark:from-sky-800/40 dark:to-sky-900/60 border border-sky-100 dark:border-sky-700 rounded-lg p-3">
+                <div className="bg-gradient-to-br from-paper-2/80 to-white dark:from-paper-2/40 dark:to-paper/60 border border-paper-2 dark:border-mute rounded-lg p-3">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <FileText className="w-3.5 h-3.5 text-sky-500" />
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300">
+                    <FileText className="w-3.5 h-3.5 text-mute" />
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-mute dark:text-paper/70">
                       {analysisResult.engineUsed === 'Gemini AI'
                         ? 'Cleaned by Gemini — readable version'
                         : 'Normalized report (Gemini rewrite unavailable)'}
                     </p>
                   </div>
-                  <p className="text-sm text-sky-950 dark:text-sky-100 leading-relaxed">
+                  <p className="text-sm text-ink dark:text-paper leading-relaxed">
                     {analysisResult.cleanedReport || analysisResult.fallbackClean || reportText.trim()}
                   </p>
-                  <p className="text-[11px] text-slate-400 dark:text-sky-500 italic mt-1.5">
+                  <p className="text-[11px] text-slate-400 dark:text-mute italic mt-1.5">
                     Original: &ldquo;{reportText.trim()}&rdquo;
                   </p>
                 </div>
@@ -380,12 +380,12 @@ export default function AITriageConsole({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-mute shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sky-950 dark:text-sky-100 font-medium">
+                    <p className="text-ink dark:text-paper font-medium">
                       {analysisResult.primaryLocation}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-sky-400">
+                    <p className="text-[11px] text-slate-500 dark:text-mute">
                       Location confidence: {analysisResult.locationConfidence}%
                       {analysisResult.coordinates &&
                         ` · ${analysisResult.coordinates.lat.toFixed(4)}, ${analysisResult.coordinates.lng.toFixed(4)}`}
@@ -393,12 +393,12 @@ export default function AITriageConsole({
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Radio className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                  <Radio className="w-4 h-4 text-mute shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sky-950 dark:text-sky-100 font-medium">
+                    <p className="text-ink dark:text-paper font-medium">
                       {analysisResult.recommendedPriority}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-sky-400">
+                    <p className="text-[11px] text-slate-500 dark:text-mute">
                       Recommended response priority
                     </p>
                   </div>
@@ -407,14 +407,14 @@ export default function AITriageConsole({
 
               {analysisResult.detectedSignals.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-mute/80 mb-1.5">
                     Detected Signals
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {analysisResult.detectedSignals.map((signal, i) => (
                       <span
                         key={i}
-                        className="text-[11px] bg-sky-100/80 text-sky-800 dark:bg-sky-800 dark:text-sky-200 px-2 py-1 rounded-lg"
+                        className="text-[11px] bg-paper-2/80 text-paper-2 dark:bg-paper-2 dark:text-paper px-2 py-1 rounded-lg"
                       >
                         {signal}
                       </span>
@@ -425,14 +425,14 @@ export default function AITriageConsole({
 
               {analysisResult.responseNeeded.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-sky-600/80 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-mute/80 mb-1.5">
                     Response Resources Needed
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {analysisResult.responseNeeded.map((resource, i) => (
                       <span
                         key={i}
-                        className="text-[11px] bg-sky-50 text-sky-800 dark:bg-sky-800 dark:text-sky-200 px-2 py-1 rounded-lg border border-sky-200 dark:border-sky-700"
+                        className="text-[11px] bg-paper-2 text-paper-2 dark:bg-paper-2 dark:text-paper px-2 py-1 rounded-lg border border-paper-2 dark:border-mute"
                       >
                         {resource}
                       </span>

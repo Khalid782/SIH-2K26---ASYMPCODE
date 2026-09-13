@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { SummaryCards } from './components/SummaryCards';
 import { FilterBar } from './components/FilterBar';
@@ -12,8 +12,8 @@ import FeedIngestionView from './components/FeedIngestionView';
 import ResponseUnitsView from './components/ResponseUnitsView';
 import SopsHotlinesView from './components/SopsHotlinesView';
 import NgoCommunitiesView from './components/NgoCommunitiesView';
-import { INITIAL_INCIDENTS, BASELINE_STATS, SIMULATED_INCIDENTS } from './data/mockData';
-import { FilterState, Incident, Severity, VerificationStatus } from './types';
+import { INITIAL_INCIDENTS } from './data/mockData';
+import { FilterState, Incident, VerificationStatus } from './types';
 import { CheckCircle, X } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { mapRowsToIncidents, mapRowToIncident, mapIncidentToRow, toSupabaseTimestamp } from './utils/supabaseMapper';
@@ -36,10 +36,8 @@ export function App() {
   const [lastUpdated, setLastUpdated] = useState<string>('Just now');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
-  const [liveSim, setLiveSim] = useState<boolean>(true);
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [liveClock, setLiveClock] = useState<string>('');
-  const simIndexRef = useRef(0);
 
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -62,41 +60,6 @@ export function App() {
     return () => clearInterval(id);
   }, []);
 
-  // Simulated live ingestion: streams scripted reports into the feed
-  useEffect(() => {
-    if (!liveSim) return;
-    const id = setInterval(async () => {
-      const n = simIndexRef.current;
-      simIndexRef.current += 1;
-      const template = SIMULATED_INCIDENTS[n % SIMULATED_INCIDENTS.length];
-      const now = new Date();
-      const next: Incident = {
-        ...template,
-        id: `INC-2026-${109 + n}`,
-        created_at: toSupabaseTimestamp(now) || now.toISOString(),
-        timeAgo: 'Just now',
-        timestamp: toSupabaseTimestamp(now) || now.toISOString(),
-      };
-      setIncidents((prev) => [next, ...prev]);
-      setHighlightId(next.id);
-
-      // Persist simulated incident to Supabase (fresh table, clean headers & datetime format)
-      if (supabase) {
-        const { error } = await supabase.from('incidents').insert([mapIncidentToRow(next)]);
-        if (error) {
-          console.error('Error inserting simulated incident into Supabase:', error);
-        }
-      }
-      showNotification(
-        `New report: ${next.disasterType} near ${next.location.split(',')[0]} — AI confidence ${next.aiConfidence}%`
-      );
-      setTimeout(() => {
-        setHighlightId((cur) => (cur === next.id ? null : cur));
-      }, 5000);
-    }, 26000);
-    return () => clearInterval(id);
-  }, [liveSim]);
-
   useEffect(() => {
     const client = supabase;
 
@@ -108,17 +71,37 @@ export function App() {
       return;
     }
 
-    // Fetch initial incidents from Supabase
+    // Fetch initial incidents from Supabase — capped at 30 (DB may still hold old 107 demo rows)
     const fetchIncidents = async () => {
       const { data, error } = await client
         .from('incidents')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(30);
 
       if (error) {
         console.error('Error fetching incidents:', error);
-      } else if (data && data.length > 0) {
-        setIncidents(mapRowsToIncidents(data));
+      } else if (data) {
+        if (data.length > 0) setIncidents(mapRowsToIncidents(data));
+        // If DB holds more than 30 rows (legacy demo/simulated inserts), trim the oldest in background
+        // so the count stays at 30 until you connect a real API.
+        try {
+          const { count } = await client.from('incidents').select('id', { count: 'exact', head: true });
+          if (count !== null && count > 30) {
+            const { data: allIds } = await client
+              .from('incidents')
+              .select('id')
+              .order('created_at', { ascending: false });
+            if (allIds && allIds.length > 30) {
+              const toDelete: string[] = (allIds as { id: string }[]).slice(30).map((r) => r.id);
+              const { error: delErr } = await client.from('incidents').delete().in('id', toDelete);
+              if (delErr) console.warn('Auto-trim excess incidents failed (run SQL below manually):', delErr.message);
+              else console.info(`Trimmed ${toDelete.length} excess incidents from Supabase — now 30.`);
+            }
+          }
+        } catch (e) {
+          console.warn('Auto-trim check failed:', e);
+        }
       }
     };
 
@@ -303,8 +286,6 @@ export function App() {
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
         liveClock={liveClock}
-        liveSim={liveSim}
-        onToggleLive={() => setLiveSim((v) => !v)}
         onHome={() => {
           setView('landing');
           window.scrollTo(0, 0);
@@ -358,7 +339,7 @@ export function App() {
           ) : (
             <>
               {/* Moving live-report ticker */}
-              <DashboardTicker incidents={incidents} live={liveSim} />
+              <DashboardTicker incidents={incidents} />
 
               {/* Summary Metric Cards */}
               <SummaryCards

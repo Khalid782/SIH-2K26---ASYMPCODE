@@ -199,7 +199,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
             <button
               key={zone.name}
               onClick={() => handleFlyToZone(zone.coords, zone.zoom)}
-              className="px-2 py-0.5 rounded bg-sky-50 dark:bg-sky-800 hover:bg-sky-100 dark:hover:bg-sky-700 active:bg-sky-200 text-sky-800 dark:text-sky-200 hover:text-sky-950 dark:hover:text-white border border-sky-200/80 dark:border-sky-700 text-[11px] font-medium whitespace-nowrap transition cursor-pointer"
+              className="px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-800 hover:bg-sky-100 dark:hover:bg-sky-700 active:bg-sky-200 text-sky-800 dark:text-sky-200 hover:text-sky-950 dark:hover:text-white border border-sky-200/80 dark:border-sky-700 text-[11px] font-medium whitespace-nowrap transition cursor-pointer"
             >
               {zone.name}
             </button>

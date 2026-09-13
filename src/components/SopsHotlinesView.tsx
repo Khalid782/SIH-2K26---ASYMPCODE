@@ -13,8 +13,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-112',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">National Emergency</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">112</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">National Emergency</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">112</span>,
       '24 × 7',
       'MHA',
     ],
@@ -22,8 +22,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-100',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Police</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">100</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Police</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">100</span>,
       '24 × 7',
       'Hyderabad Police',
     ],
@@ -31,8 +31,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-108',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Ambulance</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">108</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Ambulance</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">108</span>,
       '24 × 7',
       'GVK EMRI',
     ],
@@ -40,8 +40,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-101',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Fire & Rescue</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">101</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Fire & Rescue</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">101</span>,
       '24 × 7',
       'Fire Dept',
     ],
@@ -49,8 +49,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-ghmc',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">GHMC Flood Helpline</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">040-21111111</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">GHMC Flood Helpline</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">040-21111111</span>,
       '24 × 7',
       'GHMC Control Room',
     ],
@@ -58,8 +58,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-power',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Power Outage</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">1912</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Power Outage</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">1912</span>,
       '24 × 7',
       'TSSPDCL',
     ],
@@ -67,8 +67,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-ndrf',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">NDRF Helpline</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">9711077372</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">NDRF Helpline</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">9711077372</span>,
       '24 × 7',
       'NDRF HQ',
     ],
@@ -76,8 +76,8 @@ const HOTLINE_ROWS: OpsRow[] = [
   {
     id: 'h-child',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Child Helpline</span>,
-      <span key="n" className="font-mono font-bold text-sky-950 dark:text-sky-100">1098</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Child Helpline</span>,
+      <span key="n" className="font-mono font-bold text-ink dark:text-paper">1098</span>,
       '24 × 7',
       'Ministry of Women & Child',
     ],
@@ -97,7 +97,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-1',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-FLD-01</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-FLD-01</span>,
       'Flood Evacuation Protocol',
       'Red alert / water entry',
       'GHMC + SDRF',
@@ -108,7 +108,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-2',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-RSC-02</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-RSC-02</span>,
       'Water Rescue Operations',
       'Trapped persons',
       'SDRF / NDRF',
@@ -119,7 +119,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-3',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-MED-03</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-MED-03</span>,
       'Medical Boat Evacuation',
       'Medical cases in flood',
       'EMRI 108',
@@ -130,7 +130,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-4',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-ELE-04</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-ELE-04</span>,
       'Electrical Hazard Response',
       'Wires in water',
       'TSSPDCL',
@@ -141,7 +141,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-5',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-SHT-05</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-SHT-05</span>,
       'Shelter & Relief Activation',
       'Evacuation > 100',
       'GHMC Revenue',
@@ -152,7 +152,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-6',
     cells: [
-      <span key="c" className="font-mono font-semibold text-sky-700 dark:text-sky-300">SOP-COM-06</span>,
+      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-COM-06</span>,
       'Siren & Community Alert',
       'Dam / nala breach',
       'HMWSSB',
@@ -193,12 +193,12 @@ export default function SopsHotlinesView() {
         rows={SOP_ROWS}
         footer={
           <span className="flex items-center gap-1.5">
-            <LifeBuoy className="w-3.5 h-3.5 text-sky-500" />
+            <LifeBuoy className="w-3.5 h-3.5 text-mute" />
             When Gemini triage flags a report, the matching SOP ID is attached to the incident card.
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-sky-600/80 dark:text-sky-400">
+      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
         <BookOpenCheck className="w-3.5 h-3.5" />
         Full playbook PDFs are available from the GHMC disaster-control room on request.
       </div>

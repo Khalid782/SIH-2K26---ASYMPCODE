@@ -16,7 +16,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-alpha',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">SDRF Alpha Unit</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">SDRF Alpha Unit</span>,
       'SDRF Telangana',
       'Mehdipatnam',
       <span key="n" className="font-mono">24</span>,
@@ -28,7 +28,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-bravo',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">SDRF Bravo Unit</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">SDRF Bravo Unit</span>,
       'SDRF Telangana',
       'Tolichowki',
       <span key="n" className="font-mono">18</span>,
@@ -40,7 +40,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-ndrf-t1',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">NDRF 10th Bn — Team 1</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">NDRF 10th Bn — Team 1</span>,
       'NDRF',
       'Moosarambagh',
       <span key="n" className="font-mono">40</span>,
@@ -52,7 +52,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-ndrf-evac',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">NDRF Evacuation Squad C</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">NDRF Evacuation Squad C</span>,
       'NDRF',
       'Tolichowki · Paramount',
       <span key="n" className="font-mono">16</span>,
@@ -64,7 +64,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-drf3',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">GHMC DRF-3</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">GHMC DRF-3</span>,
       'GHMC',
       'Gachibowli',
       <span key="n" className="font-mono">12</span>,
@@ -76,7 +76,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-dqr1',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">DQR Team 1</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">DQR Team 1</span>,
       'GHMC QRT',
       'Amberpet',
       <span key="n" className="font-mono">8</span>,
@@ -88,7 +88,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-fire',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Fire & Emergency Squad</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Fire & Emergency Squad</span>,
       'Fire Dept',
       'Charminar',
       <span key="n" className="font-mono">14</span>,
@@ -100,7 +100,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-tsspdcl',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Electrical Crew — TSSPDCL</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Electrical Crew — TSSPDCL</span>,
       'TSSPDCL',
       'Gachibowli',
       <span key="n" className="font-mono">6</span>,
@@ -112,7 +112,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-emri',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">EMRI 108 Medical Unit</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">EMRI 108 Medical Unit</span>,
       'GVK EMRI',
       'Banjara Hills',
       <span key="n" className="font-mono">4</span>,
@@ -124,7 +124,7 @@ const ROWS: OpsRow[] = [
   {
     id: 'u-rpf',
     cells: [
-      <span key="c" className="font-semibold text-sky-950 dark:text-sky-100">Railway Protection Squad</span>,
+      <span key="c" className="font-semibold text-ink dark:text-paper">Railway Protection Squad</span>,
       'RPF',
       'Secunderabad',
       <span key="n" className="font-mono">10</span>,
@@ -157,12 +157,12 @@ export default function ResponseUnitsView() {
         rows={ROWS}
         footer={
           <span className="flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5 text-sky-500" />
+            <Truck className="w-3.5 h-3.5 text-mute" />
             Additional 2 NDRF teams are on 20-minute standby at the AOC and can be airborne on request.
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-sky-600/80 dark:text-sky-400">
+      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
         <PhoneCall className="w-3.5 h-3.5" />
         Unit-to-unit comms on GRN channel 4 &bull; <ShieldCheck className="w-3.5 h-3.5" />
         all units report position every 5 minutes via the field app.
