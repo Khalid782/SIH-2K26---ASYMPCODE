@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/triage.ts": { "maxDuration": 30 },
+    "api/news.ts": { "maxDuration": 20 },
+    "api/facilities.ts": { "maxDuration": 20 }
+  }
+}
