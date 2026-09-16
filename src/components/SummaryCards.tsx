@@ -111,7 +111,11 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-600">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-rose-600">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-500 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose-500" />
+            </span>
             Critical
           </span>
           <div className="w-6 h-6 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">

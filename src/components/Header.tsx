@@ -15,6 +15,8 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefreshing, liveClock, onHome, darkMode, onToggleDark }) => {
   return (
     <header className="shrink-0 bg-paper/85 dark:bg-ink/85 backdrop-blur-md border-b border-paper-2 dark:border-paper/25 text-ink dark:text-paper sticky top-0 z-30 shadow-[0_1px_0_0_rgba(17,17,16,0.06),0_14px_34px_-24px_rgba(17,17,16,0.45)]">
+      {/* Emergency caution tape — command-room identity */}
+      <div aria-hidden className="hazard-tape h-1" />
       <div className="w-full px-4 sm:px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         {/* Left: Platform Title & Subtitle — CRISISBEACON home button */}
         <button
@@ -47,11 +49,15 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
 
         {/* Middle: Active Event & Status */}
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-          <div className="flex items-center gap-2 bg-ink dark:bg-paper border border-ink dark:border-paper px-3 py-1.5 rounded-lg text-xs shadow-sm">
-            <MapPin className="w-3.5 h-3.5 text-paper dark:text-ink shrink-0" />
-            <span className="text-paper/70 dark:text-ink/70 font-medium">Active event:</span>
-            <span className="text-paper dark:text-ink font-bold tracking-wide">
+          <div className="flex items-center gap-2 bg-alert border border-alert px-3 py-1.5 rounded-lg text-xs text-paper shadow-[0_10px_28px_-18px_rgba(224,40,26,0.95)]">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden font-medium text-paper/75 sm:inline">Active event:</span>
+            <span className="font-bold tracking-wide">
               Hyderabad Crisis Mapping
+            </span>
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-caution opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-caution" />
             </span>
           </div>
 

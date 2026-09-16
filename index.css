@@ -19,6 +19,18 @@
   --color-mute: #6f6b62;
   /* Single functional accent — emergency signal red */
   --color-signal: #d43a22;
+
+  /* ---------------- Emergency command palette ---------------- */
+  --font-hazard: 'Barlow Condensed', 'Inter Tight', ui-sans-serif, sans-serif;
+
+  --color-alert: #e0281a;
+  --color-alert-2: #ff4a33;
+  --color-hazard: #f0932b;
+  --color-caution: #ffc93c;
+  --color-void: #07070a;
+  --color-steel: #101014;
+  --color-steel-2: #191921;
+  --color-safe: #12a150;
 }
 
 @layer base {
@@ -307,5 +319,253 @@ html {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
+}
+
+/* ================================================================== */
+/* EMERGENCY COMMAND THEME                                            */
+/* Hazard tape, HUD surfaces, radar, 3D card motion                    */
+/* ================================================================== */
+
+/* ---------------- Hazard tape ---------------- */
+/* Diagonal red/black caution stripes that scroll continuously.
+   Horizontal travel of 39.6px is exactly one pattern period for a
+   45° repeating gradient with a 28px period, so the loop is seamless. */
+.hazard-tape {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-alert) 0 14px,
+    #0b0b0d 14px 28px
+  );
+  animation: hazard-move 1.5s linear infinite;
+}
+
+@keyframes hazard-move {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 39.6px 0;
+  }
+}
+
+/* ---------------- HUD grid backdrops ---------------- */
+.hud-grid {
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 16, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 16, 0.07) 1px, transparent 1px);
+  background-size: 46px 46px;
+  animation: grid-pan 22s linear infinite;
+}
+
+.dark .hud-grid {
+  background-image:
+    linear-gradient(to right, rgba(241, 239, 234, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(241, 239, 234, 0.07) 1px, transparent 1px);
+}
+
+@keyframes grid-pan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 46px 46px;
+  }
+}
+
+.hud-dots {
+  background-image: radial-gradient(rgba(17, 17, 16, 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.dark .hud-dots {
+  background-image: radial-gradient(rgba(241, 239, 234, 0.16) 1px, transparent 1px);
+}
+
+/* ---------------- Scanlines ---------------- */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.055) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.dark .scanlines::after {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.045) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: screen;
+}
+
+/* ---------------- Radar ---------------- */
+.radar-disc {
+  background: conic-gradient(
+    from 0deg,
+    rgba(224, 40, 26, 0.75) 0deg,
+    rgba(224, 40, 26, 0.18) 32deg,
+    rgba(224, 40, 26, 0) 78deg,
+    rgba(224, 40, 26, 0) 360deg
+  );
+  animation: radar-sweep 4.2s linear infinite;
+}
+
+.radar-rings {
+  background-image:
+    repeating-radial-gradient(
+      circle at center,
+      transparent 0 18px,
+      rgba(17, 17, 16, 0.13) 18px 19px
+    );
+}
+
+.dark .radar-rings {
+  background-image: repeating-radial-gradient(
+    circle at center,
+    transparent 0 18px,
+    rgba(241, 239, 234, 0.14) 18px 19px
+  );
+}
+
+/* ---------------- Emergency motion ---------------- */
+@keyframes siren {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+}
+.animate-siren {
+  animation: siren 2.4s ease-in-out infinite;
+}
+
+@keyframes blip-ring {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+.animate-blip-ring {
+  animation: blip-ring 2.4s ease-out infinite;
+}
+
+@keyframes blink-hard {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+.animate-blink {
+  animation: blink-hard 1.1s steps(1, end) infinite;
+}
+
+@keyframes alert-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(224, 40, 26, 0.45), 0 18px 60px -28px rgba(224, 40, 26, 0.75);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(224, 40, 26, 0.8), 0 22px 80px -22px rgba(224, 40, 26, 0.95);
+  }
+}
+.animate-alert-glow {
+  animation: alert-glow 3s ease-in-out infinite;
+}
+
+@keyframes float-3d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+.animate-float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+}
+
+@keyframes sweep-line {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(1200%);
+    opacity: 0;
+  }
+}
+.animate-sweep-line {
+  animation: sweep-line 5.5s linear infinite;
+}
+
+/* ---------------- 3D surfaces ---------------- */
+.scene {
+  perspective: 1400px;
+}
+
+.scene-tight {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Extruded hazard plate — reads as a physical 3D tile.
+   Deliberately does NOT transition `transform`: these plates are driven by
+   Framer Motion springs, and a CSS transition on transform fights them. */
+.plate-3d {
+  transform-style: preserve-3d;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+    0 10px 30px -18px rgba(17, 17, 16, 0.55),
+    0 2px 0 0 rgba(17, 17, 16, 0.08);
+}
+
+.dark .plate-3d {
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 18px 44px -22px rgba(0, 0, 0, 0.9),
+    0 2px 0 0 rgba(0, 0, 0, 0.6);
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hazard-tape,
+  .hud-grid,
+  .radar-disc,
+  .animate-siren,
+  .animate-blink,
+  .animate-alert-glow,
+  .animate-float-3d,
+  .animate-blip-ring,
+  .animate-sweep-line,
+  .animate-marquee,
+  .animate-marquee-slow,
+  .animate-marquee-fast {
+    animation: none !important;
   }
 }

@@ -322,7 +322,7 @@ export function App() {
         />
 
         {/* Dashboard Center Canvas */}
-        <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 max-w-7xl mx-auto w-full">
+        <main className="hud-grid flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 max-w-7xl mx-auto w-full">
           {activeTab === 'triage' ? (
             <AITriageConsole
               onCreateIncident={handleCreateIncidentFromTriage}
@@ -365,7 +365,10 @@ export function App() {
                 <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-sm bg-red-600"></span>
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-alert opacity-70" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-alert" />
+                      </span>
                       <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
                         Hyderabad GIS Tactical Incident Map
                       </h2>
@@ -385,7 +388,7 @@ export function App() {
                 <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-sm bg-sky-600"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-hazard"></span>
                       <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
                         Intelligence Feeds
                       </h2>
