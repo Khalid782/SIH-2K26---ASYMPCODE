@@ -161,7 +161,11 @@ export interface GeminiTriageOutcome {
   error?: string;
 }
 
-const CANDIDATE_MODELS = ['gemini-2.5-flash', 'gemini-3.7-flash', 'gemini-2.5-pro'];
+const CANDIDATE_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.7-flash',
+  'gemini-3.1-pro-preview',
+];
 
 const GEMINI_URL = (model: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
