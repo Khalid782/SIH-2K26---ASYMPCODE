@@ -55,6 +55,7 @@ export interface Incident {
   };
   assignedTeam?: string;
   notes?: string[];
+  reportCount?: number;
 }
 
 export interface FilterState {

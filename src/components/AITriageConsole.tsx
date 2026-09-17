@@ -11,7 +11,6 @@ import {
   FileText,
   Zap,
 } from 'lucide-react';
-import { supabase } from '../supabaseClient';
 import { Incident, Severity } from '../types';
 import { analyzeDisasterReport, TriageAnalysisResult } from '../utils/triageEngine';
 
@@ -228,13 +227,6 @@ export default function AITriageConsole({
         const newIncident = buildIncident(result, reportText);
         onCreateIncident(newIncident);
         setCreatedIncidentId(newIncident.id);
-
-        if (supabase) {
-          const { error } = await supabase.from('incidents').insert([newIncident]);
-          if (error) {
-            console.error('Error inserting incident into Supabase:', error);
-          }
-        }
       }
     } catch (err: any) {
       // Surface abort errors as a clear timeout message.

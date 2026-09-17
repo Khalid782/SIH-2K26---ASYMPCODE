@@ -168,13 +168,106 @@ export function App() {
     });
   };
 
+  // --- Incident Deduplication (single gate inside handleCreateIncidentFromTriage) ---
+  const haversineKm = (a: [number, number], b: [number, number]): number => {
+    const R = 6371; // Earth radius km
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const [lat1, lng1] = a;
+    const [lat2, lng2] = b;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const s1 =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(s1)));
+  };
+
+  const NOISE_WORDS = new Set(['hyderabad', 'telangana', 'india']);
+
+  const normalizeLoc = (loc: string | undefined): string => {
+    if (!loc) return '';
+    const lowered = loc.toLowerCase();
+    const noPunct = lowered.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+    const collapsed = noPunct.replace(/\s+/g, ' ').trim();
+    const tokens = collapsed.split(' ').filter((tok) => tok.length > 0 && !NOISE_WORDS.has(tok));
+    return tokens.join(' ');
+  };
+
+  const MAX_DUP_DISTANCE_KM = 1.0;
+  const WITHIN_MINUTES = 30;
+
+  const findDuplicateIncident = (candidate: Incident, pool: Incident[]): Incident | null => {
+    const normCand = normalizeLoc(
+      candidate.primaryLocation || candidate.extractedLocation || candidate.location
+    );
+    const candTokens = new Set(normCand.split(' ').filter((t) => t.length > 0));
+
+    for (const existing of pool) {
+      if (existing.disasterType !== candidate.disasterType) continue;
+
+      const normExist = normalizeLoc(
+        existing.primaryLocation || existing.extractedLocation || existing.location
+      );
+      const existTokens = new Set(normExist.split(' ').filter((t) => t.length > 0));
+
+      let locOk = false;
+      if (normCand.length > 0 && normExist.length > 0) {
+        if (normCand === normExist) {
+          locOk = true;
+        } else {
+          let shared = 0;
+          for (const t of candTokens) if (existTokens.has(t)) shared++;
+          const minUnique = Math.min(candTokens.size, existTokens.size);
+          locOk = minUnique >= 1 && shared === minUnique;
+        }
+      }
+      if (!locOk) continue;
+
+      const distanceKm = haversineKm(candidate.coordinates, existing.coordinates);
+      if (distanceKm > MAX_DUP_DISTANCE_KM) continue;
+
+      let createdAtMs: number | null = null;
+      if (existing.created_at) {
+        const t = new Date(existing.created_at).getTime();
+        if (!Number.isNaN(t)) createdAtMs = t;
+      }
+      if (createdAtMs === null) continue;
+      const ageMin = (Date.now() - createdAtMs) / 60000;
+      if (ageMin > WITHIN_MINUTES) continue;
+
+      return existing;
+    }
+    return null;
+  };
+
   // Create Incident from AI Triage Console (also persists to Supabase fresh table)
   const handleCreateIncidentFromTriage = async (newIncident: Incident) => {
+    // ---- Step A: Deduplicate BEFORE any state/DB mutation ----
+    const duplicate = findDuplicateIncident(newIncident, incidents);
+    if (duplicate) {
+      setIncidents((prev) =>
+        prev.map((inc) =>
+          inc.id === duplicate.id
+            ? { ...inc, reportCount: (inc.reportCount ?? 1) + 1 }
+            : inc
+        )
+      );
+      setHighlightId(duplicate.id);
+      setTimeout(() => {
+        setHighlightId((cur) => (cur === duplicate.id ? null : cur));
+      }, 4000);
+      const total = (duplicate.reportCount ?? 1) + 1;
+      showNotification(`Duplicate report merged with ${duplicate.id} (${total} reports)`);
+      return;
+    }
+
+    // ---- Step B: No duplicate — original creation flow unchanged ----
     const ts = toSupabaseTimestamp(new Date());
     const withTimestamp: Incident = {
       ...newIncident,
       created_at: newIncident.created_at || ts || undefined,
       timestamp: newIncident.timestamp || ts || 'Just now',
+      reportCount: 1,
     };
     setIncidents((prev) => [withTimestamp, ...prev]);
     setHighlightId(newIncident.id);
@@ -329,7 +422,7 @@ export function App() {
               onNavigateToSituationRoom={() => setActiveTab('dashboard')}
             />
           ) : activeTab === 'reports' ? (
-            <FeedIngestionView />
+            <FeedIngestionView onCreateIncident={handleCreateIncidentFromTriage} />
           ) : activeTab === 'teams' ? (
             <ResponseUnitsView />
           ) : activeTab === 'ngos' ? (
