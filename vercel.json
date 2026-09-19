@@ -5,7 +5,7 @@
   "outputDirectory": "dist",
   "functions": {
     "api/triage.ts": { "maxDuration": 30 },
-    "api/test-gemini.ts": { "maxDuration": 20 },
+    "api/test-gemini.ts": { "maxDuration": 30 },
     "api/facilities.ts": { "maxDuration": 20 }
   },
   "rewrites": [

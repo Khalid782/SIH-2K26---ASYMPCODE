@@ -29,11 +29,8 @@ If isRelevant is false, still fill in best-guess values for other fields.
 
 HYDERABAD REFERENCE COORDINATES: Tolichowki [17.3986, 78.4069], Mehdipatnam [17.3916, 78.4411], Gachibowli [17.4401, 78.3489], Madhapur [17.4483, 78.3915], Charminar [17.3616, 78.4747], Secunderabad [17.4399, 78.4983], Banjara Hills [17.4156, 78.4350], Kukatpally [17.4938, 78.3995], LB Nagar [17.3457, 78.5522], City Center [17.4065, 78.4482].`;
 
-const CANDIDATE_MODELS = [
-  'gemini-3.8-flash',
-  'gemini-3.7-flash',
-  'gemini-3.1-pro-preview',
-];
+const CANDIDATE_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash'];
+const MODEL_TIMEOUT_MS = 11_000;
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -56,7 +53,7 @@ async function callGemini(model: string, apiKey: string, reportText: string): Pr
         responseMimeType: 'application/json',
       },
     }),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
   });
 
   if (!res.ok) {
