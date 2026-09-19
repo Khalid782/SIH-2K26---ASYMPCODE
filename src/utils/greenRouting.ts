@@ -4,6 +4,7 @@ import {
   featureCollection,
   union,
   booleanIntersects,
+  booleanPointInPolygon,
   lineString,
   distance,
 } from '@turf/turf';
@@ -55,11 +56,20 @@ export function buildHazards(incidents: Incident[]): { hazards: Hazard[]; mask: 
 }
 
 /**
- * A route may only be shown when every vertex sits inside Hyderabad/the served
- * region and the whole line stays clear of the merged hazard mask.
+ * A route may only be shown when every vertex sits inside Hyderabad/the served region and
+ * the line never occupies a hazard buffer — with one deliberate exception.
+ *
+ * Escape routing: the start point is expected to be *inside* a red/orange buffer, because
+ * getting people out of one is the whole purpose. A route may therefore occupy a prefix of
+ * the buffers its start sits in (`startHazards`), but it must leave them and never re-enter.
+ * Every other hazard must be avoided outright.
  * Fails closed: unusable geometry is never treated as "clear".
  */
-export function routeClear(coordinates: unknown, mask: Mask | null): boolean {
+export function routeClear(
+  coordinates: unknown,
+  hazards: Hazard[],
+  startHazards: Hazard[] = []
+): boolean {
   if (
     !Array.isArray(coordinates) ||
     coordinates.length < 2 ||
@@ -67,7 +77,24 @@ export function routeClear(coordinates: unknown, mask: Mask | null): boolean {
   ) {
     return false;
   }
-  return !mask || !booleanIntersects(lineString(coordinates as Position[]), mask);
+
+  const positions = coordinates as Position[];
+  const line = lineString(positions);
+
+  for (const hazard of hazards) {
+    if (!booleanIntersects(line, hazard.polygon)) continue;
+
+    // A buffer the route did not start inside has to be avoided completely.
+    if (!startHazards.includes(hazard)) return false;
+
+    // Started inside this one: it must exit, and it must never come back.
+    const exit = positions.findIndex((p) => !booleanPointInPolygon(point(p), hazard.polygon));
+    if (exit < 0) return false;
+    const tail = positions.slice(exit);
+    if (tail.length >= 2 && booleanIntersects(lineString(tail), hazard.polygon)) return false;
+  }
+
+  return true;
 }
 
 export interface PreviewRoute {
@@ -93,13 +120,17 @@ export function routeConflict(
 ): string | null {
   if (route.length < 2) return 'The drawn route is no longer usable.';
 
-  const { mask, hazards } = buildHazards(incidents);
-  const line = lineString(route.map(([lat, lng]) => [lng, lat]));
+  const { hazards } = buildHazards(incidents);
+  const positions = route.map(([lat, lng]) => [lng, lat] as Position);
 
-  if (mask && booleanIntersects(line, mask)) {
+  // The route legitimately begins inside the buffer it is escaping, so that one stays
+  // allowed. Everything else follows the same rules as the initial check.
+  const startHazards = hazards.filter((h) => booleanIntersects(point(positions[0]), h.polygon));
+
+  if (!routeClear(positions, hazards.filter((h) => h.confirmed), startHazards)) {
     return 'A confirmed hazard buffer now crosses this route.';
   }
-  if (hazards.some((h) => !h.confirmed && booleanIntersects(line, h.polygon))) {
+  if (!routeClear(positions, hazards.filter((h) => !h.confirmed), startHazards)) {
     return 'An unverified report now crosses this route.';
   }
   if (
@@ -127,21 +158,13 @@ export async function findGreenRoute(
 ): Promise<PreviewRoute> {
   if (!inHyderabad(origin)) throw new Error('Select a start point within Hyderabad.');
 
-  const { mask, hazards } = buildHazards(incidents);
+  const { hazards } = buildHazards(incidents);
   const start = point([origin[1], origin[0]]);
 
-  if (mask && booleanIntersects(start, mask)) {
-    throw new Error('Start is inside a reported hazard buffer. No route preview can be offered.');
-  }
-
-  // Unverified reports also withhold routes pending review. Catch that here rather than
-  // after three dead OSRM attempts, and name the remedy so the operator is not stuck on
-  // a generic "no alternative" message.
-  if (hazards.some((h) => !h.confirmed && booleanIntersects(start, h.polygon))) {
-    throw new Error(
-      'Start is inside an unverified report buffer. Verify or dismiss that report before a route can be offered.'
-    );
-  }
+  // Escape routing: a start inside a hazard buffer is the expected case, not an error —
+  // the red/orange zone is exactly where someone needs a way out. The route is allowed to
+  // cross the buffers this start sits in, but must leave them and stay clear of the rest.
+  const startHazards = hazards.filter((h) => booleanIntersects(start, h.polygon));
 
   const destinations = facilities
     .filter(
@@ -187,7 +210,7 @@ export async function findGreenRoute(
         (r: any) =>
           Number.isFinite(r.distance) &&
           Number.isFinite(r.duration) &&
-          routeClear(r.geometry?.coordinates, mask)
+          routeClear(r.geometry?.coordinates, hazards, startHazards)
       )
       .sort((a: any, b: any) => a.distance - b.distance)[0];
 
@@ -196,10 +219,7 @@ export async function findGreenRoute(
     const coords = route.geometry.coordinates;
     // Check the short snapped-road connectors too; never bridge a hazard silently.
     const fullLine = [[origin[1], origin[0]], ...coords, [end[1], end[0]]];
-    if (!routeClear(fullLine, mask)) continue;
-    if (hazards.some((h) => !h.confirmed && booleanIntersects(lineString(fullLine), h.polygon))) {
-      continue;
-    }
+    if (!routeClear(fullLine, hazards, startHazards)) continue;
 
     return {
       coordinates: coords.map((p: number[]) => [p[1], p[0]] as LatLng),

@@ -102,6 +102,12 @@ export default function GreenRoutePanel({
   };
   useEffect(() => () => cancelAutoReroute(), []);
 
+  // Escape routing puts the start *inside* the hazard, so on the first load the pin is
+  // dropped on the worst open report: the route then leads out of the red/orange zone
+  // instead of past it. A manual pick (map click or the locality dropdown) wins from then
+  // on, so a later report never yanks the start point out from under the operator.
+  const autoOriginDone = useRef(false);
+
   // Load the facility list once the operator enables green-zone routing. The green zone
   // must never be empty, so a rate-limited provider or a missing endpoint degrades to the
   // built-in fallback list instead of showing nothing.
@@ -154,6 +160,22 @@ export default function GreenRoutePanel({
   const requestContext = JSON.stringify([origin, kind, destinations.map((d) => d.id)]);
 
   const hazards = useMemo(() => buildHazards(incidents), [incidents, hazardKey]);
+
+  useEffect(() => {
+    if (autoOriginDone.current || !routingReady || !incidents.length) return;
+    const worst = incidents
+      .filter(
+        (i) =>
+          inHyderabad(i.coordinates) &&
+          ['Critical', 'High'].includes(i.severity) &&
+          !['False Alarm', 'Duplicate'].includes(i.status)
+      )
+      .sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'Critical' ? -1 : 1))[0];
+    if (!worst) return;
+    autoOriginDone.current = true;
+    setOrigin(worst.coordinates);
+    setRoute(null);
+  }, [routingReady, incidents]);
 
   // Block 2 — the green zone itself: facilities outside every reported hazard buffer.
   // Computed once so the markers, the displayed count and the preview candidates agree.
@@ -252,6 +274,7 @@ export default function GreenRoutePanel({
       const next: LatLng = [event.latlng.lat, event.latlng.lng];
       if (inHyderabad(next)) {
         // Clicking anywhere is a request: route from there, no button needed.
+        autoOriginDone.current = true;
         cancelAutoReroute();
         setRouteWanted(true);
         setOrigin(next);
@@ -531,6 +554,7 @@ export default function GreenRoutePanel({
                 onChange={(e) => {
                   const found = KNOWN_LOCATIONS.find((l) => l.name === e.target.value);
                   if (found) {
+                    autoOriginDone.current = true;
                     cancelAutoReroute();
                     setRouteWanted(true);
                     setOrigin(found.coordinates);
@@ -668,9 +692,11 @@ export default function GreenRoutePanel({
           )}
 
           <p className="text-[11px] text-ink dark:text-paper">
-            Tap anywhere on the map to route from there. Not emergency navigation: facility
-            opening, capacity and emergency assistance are unverified, and absence of reports does
-            not establish safety.
+            The start point drops inside the red/orange zone by default &mdash; the worst open
+            report &mdash; so the route leads <strong>out of</strong> the hazard rather than past
+            it. Tap anywhere on the map to move it. Not emergency navigation: facility opening,
+            capacity and emergency assistance are unverified, and absence of reports does not
+            establish safety.
           </p>
 
           <p className="text-[11px] text-ink dark:text-paper">

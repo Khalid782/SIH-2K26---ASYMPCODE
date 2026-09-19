@@ -680,17 +680,11 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
       <section id="top" ref={heroRef} className="relative flex min-h-[90vh] items-center overflow-hidden bg-void text-paper">
         {/* --- Hyderabad city video backdrop — image fallback + light washes so footage is unmistakable --- */}
         <div aria-hidden className="absolute inset-0 bg-void">
-          {/* Hyderabad cityscape fallback — shows instantly and stays behind the video (like PetaBencana) */}
+          {/* Hyderabad panorama shot from Golconda Fort — shows instantly and stays behind the video */}
           <img
-            src="https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1920&q=80"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Panoramic_View_of_Hyderabaad.webm/1920px--Panoramic_View_of_Hyderabaad.webm.jpg"
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-          />
-          <img
-            src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=1920&q=80"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-60"
             loading="eager"
           />
           <video
@@ -699,13 +693,20 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             loop
             playsInline
             preload="auto"
-            poster="https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1920&q=80"
+            poster="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Panoramic_View_of_Hyderabaad.webm/1920px--Panoramic_View_of_Hyderabaad.webm.jpg"
             className="absolute inset-0 h-full w-full object-cover"
             onLoadedData={(e) => ((e.target as HTMLVideoElement).style.opacity = '1')}
             style={{ opacity: 1 }}
           >
+            <source
+              src="https://upload.wikimedia.org/wikipedia/commons/transcoded/7/74/Panoramic_View_of_Hyderabaad.webm/Panoramic_View_of_Hyderabaad.webm.1080p.vp9.webm"
+              type="video/webm"
+            />
+            <source
+              src="https://upload.wikimedia.org/wikipedia/commons/transcoded/7/74/Panoramic_View_of_Hyderabaad.webm/Panoramic_View_of_Hyderabaad.webm.480p.vp9.webm"
+              type="video/webm"
+            />
             <source src="https://videos.pexels.com/video-files/852421/852421-hd_1920_1080_30fps.mp4" type="video/mp4" />
-            <source src="https://videos.pexels.com/video-files/3202634/3202634-hd_1920_1080_30fps.mp4" type="video/mp4" />
           </video>
           {/* PetaBencana-style light wash — video stays clearly visible */}
           <div className="absolute inset-0 bg-void/30" />
@@ -806,6 +807,11 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </div>
           </motion.div>
         </div>
+
+        {/* Attribution required by the CC BY-SA 4.0 licence on the Hyderabad panorama footage. */}
+        <p className="absolute bottom-12 left-5 z-10 font-mono text-[9px] uppercase tracking-[0.18em] text-paper/40 sm:left-8">
+          Hyderabad aerial &mdash; Wikimedia Commons, CC BY-SA 4.0
+        </p>
 
         <HazardTape className="h-2" />
       </section>
