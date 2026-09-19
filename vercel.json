@@ -4,11 +4,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
+    "api/health.ts": { "maxDuration": 10 },
     "api/triage.ts": { "maxDuration": 30 },
     "api/test-gemini.ts": { "maxDuration": 30 },
     "api/facilities.ts": { "maxDuration": 20 }
   },
   "rewrites": [
+    { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/test-gemini", "destination": "/api/test-gemini" },
     { "source": "/api/triage", "destination": "/api/triage" },
     { "source": "/api/facilities", "destination": "/api/facilities" },
