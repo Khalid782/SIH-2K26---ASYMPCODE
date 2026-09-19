@@ -269,21 +269,26 @@ export function App() {
   // Create Incident from AI Triage Console (also persists to Supabase fresh table)
   const handleCreateIncidentFromTriage = async (newIncident: Incident) => {
     // ---- Step A: Deduplicate BEFORE any state/DB mutation ----
+    // Must write the incremented count back to Supabase — Tasks 1–3 incremented only in
+    // local React state, so a reload reset every merged incident to its seeded value.
     const duplicate = findDuplicateIncident(newIncident, incidents);
     if (duplicate) {
+      const nextCount = (duplicate.reportCount ?? 1) + 1;
       setIncidents((prev) =>
-        prev.map((inc) =>
-          inc.id === duplicate.id
-            ? { ...inc, reportCount: (inc.reportCount ?? 1) + 1 }
-            : inc
-        )
+        prev.map((inc) => (inc.id === duplicate.id ? { ...inc, reportCount: nextCount } : inc))
       );
       setHighlightId(duplicate.id);
       setTimeout(() => {
         setHighlightId((cur) => (cur === duplicate.id ? null : cur));
       }, 4000);
-      const total = (duplicate.reportCount ?? 1) + 1;
-      showNotification(`Duplicate report merged with ${duplicate.id} (${total} reports)`);
+      showNotification(`Duplicate report merged with ${duplicate.id} (${nextCount} reports)`);
+      if (supabase) {
+        const { error } = await supabase
+          .from('incidents')
+          .update({ report_count: nextCount } as any)
+          .eq('id', duplicate.id);
+        if (error) console.error('Error incrementing report_count:', duplicate.id, error);
+      }
       return;
     }
 

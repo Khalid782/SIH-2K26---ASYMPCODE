@@ -73,6 +73,7 @@ export function mapRowToIncident(row: Record<string, any>): Incident {
     entitiesExtracted,
     assignedTeam: row.assigned_team ?? row.assignedTeam,
     notes: row.notes,
+    reportCount: (row.report_count ?? row.reportCount ?? 1) as number,
   };
 }
 
@@ -121,5 +122,6 @@ export function mapIncidentToRow(incident: Incident): Record<string, any> {
     water_level: incident.entitiesExtracted?.waterLevel ?? null,
     affected_area: incident.entitiesExtracted?.affectedArea ?? null,
     notes: incident.notes ?? [],
+    report_count: incident.reportCount ?? 1,
   };
 }
