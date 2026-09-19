@@ -10,9 +10,9 @@ const TONE_CLASSES: Record<BadgeTone, string> = {
   red:
     'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-700',
   sky:
-    'bg-paper-2 text-mute border-paper-2 dark:bg-ink/60 dark:text-paper/70 dark:border-mute',
+    'bg-paper-2 text-ink dark:text-paper border-paper-2 dark:bg-ink/60 dark:text-paper dark:border-mute',
   slate:
-    'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
+    'bg-slate-50 text-ink dark:text-paper border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700',
 };
 
 export const StatusBadge: React.FC<{
@@ -34,7 +34,7 @@ export const ViewHeader: React.FC<{ title: string; label: string }> = ({ title, 
     <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
       {title}
     </h2>
-    <span className="text-[11px] text-mute/80 dark:text-mute font-mono ml-auto">{label}</span>
+    <span className="text-[11px] text-ink dark:text-paper font-mono ml-auto">{label}</span>
   </div>
 );
 
@@ -47,7 +47,7 @@ export const StatChips: React.FC<{
         key={item.label}
         className="inline-flex items-center gap-2 bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-lg px-3 py-1.5 shadow-[0_1px_2px_rgba(17,17,16,0.04)]"
       >
-        <span className="text-[11px] font-medium text-mute/80 dark:text-mute">{item.label}</span>
+        <span className="text-[11px] font-medium text-ink dark:text-paper">{item.label}</span>
         <span className={`text-xs font-bold ${item.tone ? TONE_CLASSES[item.tone].split(' ')[1] : 'text-ink dark:text-paper'}`}>
           {item.value}
         </span>
@@ -91,7 +91,7 @@ export const OpsTable: React.FC<OpsTableProps> = ({
 }) => (
   <div className="bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-xl shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)] overflow-hidden">
     <div className="px-4 py-3 border-b border-paper-2 dark:border-paper/25 flex items-center gap-2.5 flex-wrap">
-      <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-paper-2 to-paper-2 dark:from-paper-2 dark:to-paper border border-paper-2 dark:border-mute flex items-center justify-center text-mute dark:text-mute shrink-0">
+      <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-paper-2 to-paper-2 dark:from-paper-2 dark:to-paper border border-paper-2 dark:border-mute flex items-center justify-center text-ink dark:text-paper shrink-0">
         {icon}
       </span>
       <div className="min-w-0">
@@ -99,7 +99,7 @@ export const OpsTable: React.FC<OpsTableProps> = ({
           {title}
         </h3>
         {subtitle && (
-          <p className="text-[11px] text-mute/80 dark:text-mute">{subtitle}</p>
+          <p className="text-[11px] text-ink dark:text-paper">{subtitle}</p>
         )}
       </div>
       {chip && (
@@ -115,7 +115,7 @@ export const OpsTable: React.FC<OpsTableProps> = ({
             {columns.map((c) => (
               <th
                 key={c.key}
-                className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-mute dark:text-mute whitespace-nowrap ${c.className || ''}`}
+                className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-ink dark:text-paper whitespace-nowrap ${c.className || ''}`}
               >
                 {c.label}
               </th>
@@ -135,7 +135,7 @@ export const OpsTable: React.FC<OpsTableProps> = ({
               {row.cells.map((cell, i) => (
                 <td
                   key={i}
-                  className={`px-4 py-2.5 text-paper dark:text-paper align-middle whitespace-nowrap ${columns[i]?.className || ''}`}
+                  className={`px-4 py-2.5 text-ink dark:text-paper align-middle whitespace-nowrap ${columns[i]?.className || ''}`}
                 >
                   {cell}
                 </td>
@@ -146,7 +146,7 @@ export const OpsTable: React.FC<OpsTableProps> = ({
       </table>
     </div>
     {footer && (
-      <div className="px-4 py-2.5 border-t border-paper-2 dark:border-paper/25 bg-paper-2/50 dark:bg-ink/40 text-[11px] text-mute/80 dark:text-mute">
+      <div className="px-4 py-2.5 border-t border-paper-2 dark:border-paper/25 bg-paper-2/50 dark:bg-ink/40 text-[11px] text-ink dark:text-paper">
         {footer}
       </div>
     )}

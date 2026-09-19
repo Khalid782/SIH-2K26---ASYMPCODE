@@ -509,7 +509,7 @@ export default function GreenRoutePanel({
       )}
 
       {!enabled && (
-        <p className="text-[11px] text-mute/70 dark:text-mute">
+        <p className="text-[11px] text-ink dark:text-paper">
           Enable to draw the green zone: every hospital and NGO standing outside the reported
           hazard buffers.
         </p>
@@ -518,7 +518,7 @@ export default function GreenRoutePanel({
       {enabled && (
         <>
           <div className="flex flex-wrap items-end gap-2">
-            <label className="flex-1 min-w-40 text-[10px] font-bold uppercase tracking-wider text-mute/80">
+            <label className="flex-1 min-w-40 text-[10px] font-bold uppercase tracking-wider text-ink dark:text-paper">
               Start locality
               <select
                 aria-label="Route start locality"
@@ -550,7 +550,7 @@ export default function GreenRoutePanel({
               </select>
             </label>
 
-            <label className="text-[10px] font-bold uppercase tracking-wider text-mute/80">
+            <label className="text-[10px] font-bold uppercase tracking-wider text-ink dark:text-paper">
               Destination type
               <select
                 aria-label="Destination type"
@@ -588,7 +588,7 @@ export default function GreenRoutePanel({
                 setRoute(null);
                 setMessage('');
               }}
-              className="p-2.5 border border-paper-2 dark:border-mute rounded-lg text-mute hover:text-ink dark:hover:text-paper transition cursor-pointer"
+              className="p-2.5 border border-paper-2 dark:border-mute rounded-lg text-ink dark:text-paper hover:text-ink dark:hover:text-white transition cursor-pointer"
             >
               <X size={14} />
             </button>
@@ -604,7 +604,7 @@ export default function GreenRoutePanel({
                 {(route.distance / 1000).toFixed(1)} km &middot;{' '}
                 {Math.max(1, Math.round(route.duration / 60))} min to {route.destination}
               </p>
-              <p className="text-[11px] text-mute/80 dark:text-mute">
+              <p className="text-[11px] text-ink dark:text-paper">
                 {route.kind} &bull;{' '}
                 <a
                   className="underline"
@@ -619,7 +619,7 @@ export default function GreenRoutePanel({
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-mute/80 dark:text-mute">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink dark:text-paper">
             <span className="inline-flex items-center gap-1.5">
               <span className="w-3.5 h-2.5 rounded-sm border border-dashed border-safe bg-safe/15" />
               green zone (safe to travel)
@@ -667,13 +667,13 @@ export default function GreenRoutePanel({
             </p>
           )}
 
-          <p className="text-[11px] text-mute/70 dark:text-mute/80">
+          <p className="text-[11px] text-ink dark:text-paper">
             Tap anywhere on the map to route from there. Not emergency navigation: facility
             opening, capacity and emergency assistance are unverified, and absence of reports does
             not establish safety.
           </p>
 
-          <p className="text-[11px] text-mute/80 dark:text-mute">
+          <p className="text-[11px] text-ink dark:text-paper">
             Source:{' '}
             {facilityFallback
               ? 'built-in fallback list (approximate, OpenStreetMap unavailable)'
@@ -692,13 +692,13 @@ export default function GreenRoutePanel({
             </p>
           )}
 
-          <div role="status" aria-live="polite" className="text-[11px] text-mute/80 dark:text-mute">
+          <div role="status" aria-live="polite" className="text-[11px] text-ink dark:text-paper">
             {message}
           </div>
 
           {/* Runtime readout. The map is the only place these values are visible, so the
               panel states them plainly instead of leaving a blank map to be guessed at. */}
-          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 rounded-lg border border-paper-2/80 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-2.5 py-2 font-mono text-[10px] text-mute/90 dark:text-mute">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 rounded-lg border border-paper-2/80 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-2.5 py-2 font-mono text-[10px] text-ink dark:text-paper">
             <dt>facilities API</dt>
             <dd className={facilityStatus === 'unreachable' ? 'text-alert' : undefined}>
               {facilityStatus}

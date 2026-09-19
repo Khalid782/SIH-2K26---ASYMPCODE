@@ -437,7 +437,7 @@ export function App() {
           <span className="font-medium">{notification}</span>
           <button
             onClick={() => setNotification(null)}
-            className="text-mute hover:text-ink p-0.5 cursor-pointer ml-1"
+            className="text-ink dark:text-paper hover:text-ink p-0.5 cursor-pointer ml-1"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -509,7 +509,7 @@ export function App() {
                         Hyderabad GIS Tactical Incident Map
                       </h2>
                     </div>
-                    <span className="text-[11px] text-mute font-mono">
+                    <span className="text-[11px] text-ink dark:text-paper font-mono">
                       OpenStreetMap &bull; 6 Core Zones
                     </span>
                   </div>
@@ -532,7 +532,7 @@ export function App() {
                         Intelligence Feeds
                       </h2>
                     </div>
-                    <span className="text-[11px] text-mute">
+                    <span className="text-[11px] text-ink dark:text-paper">
                       Click to inspect & action
                     </span>
                   </div>

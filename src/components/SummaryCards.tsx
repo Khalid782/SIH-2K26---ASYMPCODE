@@ -38,12 +38,12 @@ function AnimatedNumber({ value, className }: { value: number; className?: strin
 
 const numBase = 'text-2xl font-bold tracking-tight font-mono bg-gradient-to-b bg-clip-text text-transparent';
 const NUM_STYLES = {
-  total: `${numBase} from-ink via-mute to-mute/70 drop-shadow-[0_2px_10px_rgba(17,17,16,0.35)]`,
+  total: `${numBase} from-ink via-ink to-ink drop-shadow-[0_2px_10px_rgba(17,17,16,0.35)]`,
   critical: `${numBase} from-rose-700 via-rose-500 to-rose-400 drop-shadow-[0_2px_10px_rgba(244,63,94,0.4)]`,
   high: `${numBase} from-orange-700 via-orange-500 to-amber-400 drop-shadow-[0_2px_10px_rgba(249,115,22,0.4)]`,
   low: `${numBase} from-amber-700 via-amber-500 to-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.35)]`,
   verified: `${numBase} from-emerald-700 via-emerald-500 to-emerald-400 drop-shadow-[0_2px_10px_rgba(16,185,129,0.4)]`,
-  actioned: `${numBase} from-ink via-mute to-mute/70 drop-shadow-[0_2px_10px_rgba(17,17,16,0.4)]`,
+  actioned: `${numBase} from-ink via-ink to-ink drop-shadow-[0_2px_10px_rgba(17,17,16,0.4)]`,
 };
 
 interface SummaryCardsProps {
@@ -87,16 +87,16 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-mute/70">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-ink dark:text-paper">
             Total Incidents
           </span>
-          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-mute">
+          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-ink dark:text-paper">
             <Activity className="w-3.5 h-3.5" />
           </div>
         </div>
         <div className="mt-2 flex items-baseline gap-2">
           <AnimatedNumber value={counts.total} className={NUM_STYLES.total} />
-          <span className="text-[11px] text-mute/70 font-medium">Recorded</span>
+          <span className="text-[11px] text-ink dark:text-paper font-medium">Recorded</span>
         </div>
       </button>
 
@@ -211,16 +211,16 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-mute">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-ink dark:text-paper">
             Actioned
           </span>
-          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-mute">
+          <div className="w-6 h-6 rounded-lg bg-paper-2 flex items-center justify-center text-ink dark:text-paper">
             <CheckCheck className="w-3.5 h-3.5" />
           </div>
         </div>
         <div className="mt-2 flex items-baseline gap-2">
           <AnimatedNumber value={counts.actioned} className={NUM_STYLES.actioned} />
-          <span className="text-[11px] text-mute/80 font-medium">Dispatched</span>
+          <span className="text-[11px] text-ink dark:text-paper font-medium">Dispatched</span>
         </div>
       </button>
     </div>

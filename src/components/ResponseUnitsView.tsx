@@ -157,12 +157,12 @@ export default function ResponseUnitsView() {
         rows={ROWS}
         footer={
           <span className="flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5 text-mute" />
+            <Truck className="w-3.5 h-3.5 text-ink dark:text-paper" />
             Additional 2 NDRF teams are on 20-minute standby at the AOC and can be airborne on request.
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
+      <div className="flex items-center gap-1.5 text-[11px] text-ink dark:text-paper">
         <PhoneCall className="w-3.5 h-3.5" />
         Unit-to-unit comms on GRN channel 4 &bull; <ShieldCheck className="w-3.5 h-3.5" />
         all units report position every 5 minutes via the field app.

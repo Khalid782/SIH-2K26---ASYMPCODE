@@ -478,7 +478,7 @@ function CommandConsole() {
                       className="flex items-baseline justify-between gap-3 border-b border-dashed border-ink/12 py-1.5 dark:border-paper/12"
                     >
                       <dt className="shrink-0 tracking-[0.16em] text-mute dark:text-paper/45">{key}</dt>
-                      <dd className="truncate text-right font-medium">{value}</dd>
+                      <dd className="truncate text-right font-medium text-ink dark:text-paper">{value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -676,22 +676,56 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
         </AnimatePresence>
       </header>
 
-      {/* ---------------- Hero ---------------- */}
-      <section id="top" ref={heroRef} className="relative overflow-hidden">
-        {/* Backdrop: HUD grid + siren bloom */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="hud-grid absolute inset-0 opacity-70" />
-          <div className="absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-alert/20 blur-[130px] animate-siren" />
-          <div className="absolute -right-32 top-40 h-[460px] w-[460px] rounded-full bg-hazard/15 blur-[140px]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-paper to-transparent dark:from-void" />
+      {/* ---------------- Hero — Hyderabad video backdrop (petabencana-style) ---------------- */}
+      <section id="top" ref={heroRef} className="relative flex min-h-[90vh] items-center overflow-hidden bg-void text-paper">
+        {/* --- Hyderabad city video backdrop — image fallback + light washes so footage is unmistakable --- */}
+        <div aria-hidden className="absolute inset-0 bg-void">
+          {/* Hyderabad cityscape fallback — shows instantly and stays behind the video (like PetaBencana) */}
+          <img
+            src="https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover opacity-60"
+            loading="eager"
+          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1920&q=80"
+            className="absolute inset-0 h-full w-full object-cover"
+            onLoadedData={(e) => ((e.target as HTMLVideoElement).style.opacity = '1')}
+            style={{ opacity: 1 }}
+          >
+            <source src="https://videos.pexels.com/video-files/852421/852421-hd_1920_1080_30fps.mp4" type="video/mp4" />
+            <source src="https://videos.pexels.com/video-files/3202634/3202634-hd_1920_1080_30fps.mp4" type="video/mp4" />
+          </video>
+          {/* PetaBencana-style light wash — video stays clearly visible */}
+          <div className="absolute inset-0 bg-void/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-void/55 via-transparent to-void/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-void/25 via-transparent to-transparent" />
         </div>
 
-        <div className="relative z-10 mx-auto grid max-w-[1600px] items-center gap-14 px-5 pb-20 pt-14 sm:px-8 sm:pt-20 lg:grid-cols-12 lg:gap-10">
+        {/* HUD + bloom layered over the video — subtle so footage stays visible */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="hud-grid absolute inset-0 opacity-10" />
+          <div className="absolute -left-40 top-0 h-[520px] w-[520px] rounded-full bg-alert/18 blur-[110px] animate-siren" />
+          <div className="absolute -right-32 top-32 h-[460px] w-[460px] rounded-full bg-hazard/10 blur-[130px]" />
+        </div>
+
+        <div className="relative z-10 mx-auto flex max-w-[1600px] w-full flex-col gap-10 px-5 py-10 sm:px-8 sm:py-16 lg:flex-row lg:items-end lg:justify-between lg:gap-12 lg:py-16">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7"
+            className="w-full max-w-3xl lg:shrink-0"
           >
             <span className="inline-flex items-center gap-2.5 rounded-full border border-alert/35 bg-alert/10 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-alert">
               <TriangleAlert className="h-3.5 w-3.5" />
@@ -705,7 +739,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               <RotatingWord words={['moving.', 'dispatching.', 'on it.']} className="text-alert" />
             </h1>
 
-            <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-mute dark:text-paper/60">
+            <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-paper/75">
               CRISISBEACON fuses 112 calls, WhatsApp forwards, social posts and field reports into one live
               disaster command picture — triaged, geocoded against Hyderabad&apos;s six core zones and
               dispatched before the second call comes in.
@@ -724,7 +758,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               </motion.button>
               <a
                 href="#feed"
-                className="group inline-flex items-center gap-2.5 border-b border-ink/25 pb-1 font-mono text-[11px] uppercase tracking-[0.2em] text-mute transition-colors hover:border-alert hover:text-alert dark:border-paper/25 dark:text-paper/55 dark:hover:border-alert dark:hover:text-alert"
+                className="group inline-flex items-center gap-2.5 border-b border-paper/30 pb-1 font-mono text-[11px] uppercase tracking-[0.2em] text-paper/70 transition-colors hover:border-alert hover:text-alert"
               >
                 Watch the live feed
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -732,12 +766,12 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
             </div>
 
             {/* Emergency hotlines */}
-            <div className="mt-11 grid gap-px overflow-hidden rounded-xl border border-ink/12 bg-ink/10 sm:grid-cols-3 dark:border-paper/12 dark:bg-paper/10">
+            <div className="mt-11 grid gap-px overflow-hidden rounded-xl border border-paper/15 bg-paper/10 backdrop-blur-sm sm:grid-cols-3">
               {HOTLINES.map(({ code, label, Icon }) => (
                 <a
                   key={code}
                   href={`tel:${code}`}
-                  className="group flex items-center gap-3 bg-paper px-4 py-3.5 transition-colors hover:bg-alert hover:text-paper dark:bg-void dark:hover:bg-alert"
+                  className="group flex items-center gap-3 bg-paper px-4 py-3.5 transition-colors hover:bg-alert hover:text-paper dark:bg-void dark:hover:bg-alert shadow-[0_2px_18px_rgba(0,0,0,0.22)]"
                 >
                   <Icon className="h-4 w-4 shrink-0 text-alert transition-colors group-hover:text-paper" />
                   <span className="flex flex-col leading-tight">
@@ -750,22 +784,22 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
               ))}
             </div>
 
-            <p className="mt-8 font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-mute dark:text-paper/40">
+            <p className="mt-8 font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-paper/50">
               Gemini extraction · 6 core zones · No signup for the prototype
             </p>
           </motion.div>
 
-          {/* Console */}
+          {/* Floating command console — docks to bottom-right so the Hyderabad video stays open (PetaBencana-style) */}
           <motion.div
             initial={{ opacity: 0, y: 34 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5"
+            className="w-full max-w-[520px] self-stretch lg:w-[440px] lg:max-w-none lg:shrink-0 lg:self-end xl:w-[480px]"
           >
-            <div className="scene">
+            <div className="scene h-full">
               <motion.div
                 style={{ y: consoleY, rotateX: consoleTilt, transformStyle: 'preserve-3d' }}
-                className="origin-top"
+                className="origin-bottom lg:origin-top"
               >
                 <CommandConsole />
               </motion.div>

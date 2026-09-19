@@ -70,13 +70,13 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
         );
       case 'False Alarm':
         return (
-          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-full border border-slate-200 line-through">
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-ink dark:text-paper bg-slate-100 px-1.5 py-0.5 rounded-full border border-slate-200 line-through">
             False Alarm
           </span>
         );
       case 'Duplicate':
         return (
-          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-full border border-slate-200">
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-ink dark:text-paper bg-slate-100 px-1.5 py-0.5 rounded-full border border-slate-200">
             Duplicate
           </span>
         );
@@ -99,7 +99,7 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
             Incoming Reports
           </h2>
         </div>
-        <span className="text-[11px] font-semibold text-mute dark:text-mute font-mono bg-paper-2/80 dark:bg-paper-2 px-2 py-0.5 rounded-full">
+        <span className="text-[11px] font-semibold text-ink dark:text-paper font-mono bg-paper-2/80 dark:bg-paper-2 px-2 py-0.5 rounded-full">
           {incidents.length} LIVE FEEDS
         </span>
       </div>
@@ -107,7 +107,7 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
       {/* Scrollable Feed */}
       <div className="flex-1 overflow-y-auto divide-y divide-paper-2/80 p-1.5">
         {incidents.length === 0 ? (
-          <div className="p-8 text-center text-mute/80 text-xs">
+          <div className="p-8 text-center text-ink dark:text-paper text-xs">
             No incident reports matching the selected filters.
           </div>
         ) : (
@@ -129,11 +129,11 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
                 {/* Header row: Location & Badges */}
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-mute shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-ink dark:text-paper shrink-0" />
                     <span className="font-bold text-xs text-ink dark:text-paper tracking-tight">
                       {incident.location}
                     </span>
-                    <span className="text-[11px] text-mute/70 dark:text-mute font-medium">
+                    <span className="text-[11px] text-ink dark:text-paper font-semibold">
                       &bull; {incident.disasterType}
                     </span>
                   </div>
@@ -148,30 +148,30 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
                 </div>
 
                 {/* Report Content */}
-                <p className="text-xs text-paper/80 dark:text-paper/70 leading-relaxed line-clamp-2 mb-2 font-normal">
+                <p className="text-xs text-ink dark:text-paper leading-relaxed line-clamp-2 mb-2 font-medium">
                   "{incident.originalReport}"
                 </p>
 
                 {/* Footer metadata row */}
-                <div className="flex flex-wrap items-center justify-between gap-y-1.5 text-[11px] text-mute/70 dark:text-mute pt-1 border-t border-paper-2/80 dark:border-paper/25">
+                <div className="flex flex-wrap items-center justify-between gap-y-1.5 text-[11px] text-ink dark:text-paper pt-1 border-t border-paper-2/80 dark:border-paper/25">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 text-mute font-medium">
-                      <Sparkles className="w-3 h-3 text-mute dark:text-mute" />
-                      AI: <strong className="text-ink">{incident.aiConfidence}%</strong>
+                    <span className="inline-flex items-center gap-1 text-ink dark:text-paper font-medium">
+                      <Sparkles className="w-3 h-3 text-ink dark:text-paper" />
+                      AI: <strong className="text-ink dark:text-paper">{incident.aiConfidence}%</strong>
                     </span>
-                    <span className="text-paper-2">|</span>
-                    <span className="truncate max-w-[110px] text-mute/80" title={incident.source}>
+                    <span className="text-ink/20 dark:text-paper/20">|</span>
+                    <span className="truncate max-w-[110px] text-ink dark:text-paper" title={incident.source}>
                       {incident.source.split('(')[0]}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 text-mute font-mono text-[10px]">
+                    <span className="inline-flex items-center gap-1 text-ink dark:text-paper font-mono text-[10px]">
                       <Clock className="w-3 h-3" />
                       {incident.timeAgo}
                     </span>
                     {getStatusBadge(incident.status)}
-                    <ChevronRight className="w-3.5 h-3.5 text-mute" />
+                    <ChevronRight className="w-3.5 h-3.5 text-ink dark:text-paper" />
                   </div>
                 </div>
               </div>

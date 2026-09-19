@@ -152,7 +152,7 @@ export default function NgoCommunitiesView() {
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
+      <div className="flex items-center gap-1.5 text-[11px] text-ink dark:text-paper">
         <Users className="w-3.5 h-3.5" />
         <Radio className="w-3.5 h-3.5" />
         Community radio slot every hour at :45 — used to broadcast shelter locations and relief

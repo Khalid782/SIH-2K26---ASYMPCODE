@@ -287,7 +287,7 @@ export default function AITriageConsole({
         <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
           AI Triage Console
         </h2>
-        <span className="text-[11px] text-mute/80 font-mono ml-auto">
+        <span className="text-[11px] text-ink dark:text-paper font-mono ml-auto">
           {geminiStatus === null ? (
             'Severity Engine • checking Gemini…'
           ) : geminiStatus.configured ? (
@@ -305,7 +305,7 @@ export default function AITriageConsole({
       </div>
 
       <div className="bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-xl p-4 space-y-3 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)]">
-        <label className="text-[11px] font-bold uppercase tracking-wider text-mute/80">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper">
           Raw Citizen Report
         </label>
         <textarea
@@ -332,7 +332,7 @@ export default function AITriageConsole({
           {(reportText || analysisResult) && !isAnalyzing && (
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-mute hover:text-paper px-2 py-2"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink dark:text-paper hover:text-ink dark:hover:text-white px-2 py-2"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Clear
@@ -370,13 +370,13 @@ export default function AITriageConsole({
       {analysisResult && (
         <div className="bg-paper/95 dark:bg-ink/90 border border-paper-2/90 dark:border-paper/25 rounded-xl p-4 space-y-4 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)]">
           {!analysisResult.isRelevant ? (
-            <div className="flex items-start gap-2 bg-paper-2/70 border border-paper-2 text-mute text-sm rounded-lg p-3">
+            <div className="flex items-start gap-2 bg-paper-2/70 border border-paper-2 text-ink dark:text-paper text-sm rounded-lg p-3">
               <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-ink dark:text-paper">
                   Not classified as a distress report
                 </p>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-ink dark:text-paper mt-0.5">
                   The engine flagged this as noise, spam, or unrelated chatter. No incident will be
                   created.
                 </p>
@@ -390,7 +390,7 @@ export default function AITriageConsole({
                 >
                   {analysisResult.severity}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-paper-2 text-paper-2 border border-paper-2">
+                <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-paper-2 text-ink dark:text-paper border border-paper-2">
                   {analysisResult.disasterType}
                 </span>
                 {analysisResult.engineUsed === 'Gemini AI' ? (
@@ -399,11 +399,11 @@ export default function AITriageConsole({
                     Gemini AI
                   </span>
                 ) : (
-                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-slate-100 text-ink dark:text-paper border border-slate-200">
                     Rule-Based Fallback
                   </span>
                 )}
-                <span className="text-[11px] text-mute/80 ml-auto">
+                <span className="text-[11px] text-ink dark:text-paper ml-auto">
                   AI Confidence: <strong>{analysisResult.aiConfidence}%</strong>
                 </span>
               </div>
@@ -411,8 +411,8 @@ export default function AITriageConsole({
               {(analysisResult.cleanedReport || analysisResult.fallbackClean) && (
                 <div className="bg-gradient-to-br from-paper-2/80 to-white dark:from-paper-2/40 dark:to-paper/60 border border-paper-2 dark:border-mute rounded-lg p-3">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <FileText className="w-3.5 h-3.5 text-mute" />
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-mute dark:text-paper/70">
+                    <FileText className="w-3.5 h-3.5 text-ink dark:text-paper" />
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper">
                       {analysisResult.engineUsed === 'Gemini AI'
                         ? 'Cleaned by Gemini — readable version'
                         : 'Normalized report (Gemini rewrite unavailable)'}
@@ -421,7 +421,7 @@ export default function AITriageConsole({
                   <p className="text-sm text-ink dark:text-paper leading-relaxed">
                     {analysisResult.cleanedReport || analysisResult.fallbackClean || reportText.trim()}
                   </p>
-                  <p className="text-[11px] text-slate-400 dark:text-mute italic mt-1.5">
+                  <p className="text-[11px] text-ink dark:text-paper italic mt-1.5">
                     Original: &ldquo;{reportText.trim()}&rdquo;
                   </p>
                 </div>
@@ -429,12 +429,12 @@ export default function AITriageConsole({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-mute shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-ink dark:text-paper shrink-0 mt-0.5" />
                   <div>
                     <p className="text-ink dark:text-paper font-medium">
                       {analysisResult.primaryLocation}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-mute">
+                    <p className="text-[11px] text-ink dark:text-paper">
                       Location confidence: {analysisResult.locationConfidence}%
                       {analysisResult.coordinates &&
                         ` · ${analysisResult.coordinates.lat.toFixed(4)}, ${analysisResult.coordinates.lng.toFixed(4)}`}
@@ -442,12 +442,12 @@ export default function AITriageConsole({
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Radio className="w-4 h-4 text-mute shrink-0 mt-0.5" />
+                  <Radio className="w-4 h-4 text-ink dark:text-paper shrink-0 mt-0.5" />
                   <div>
                     <p className="text-ink dark:text-paper font-medium">
                       {analysisResult.recommendedPriority}
                     </p>
-                    <p className="text-[11px] text-slate-500 dark:text-mute">
+                    <p className="text-[11px] text-ink dark:text-paper">
                       Recommended response priority
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export default function AITriageConsole({
 
               {analysisResult.detectedSignals.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-mute/80 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper mb-1.5">
                     Detected Signals
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -474,7 +474,7 @@ export default function AITriageConsole({
 
               {analysisResult.responseNeeded.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-mute/80 mb-1.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper mb-1.5">
                     Response Resources Needed
                   </p>
                   <div className="flex flex-wrap gap-1.5">

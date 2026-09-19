@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
           className="group flex items-center gap-3.5 text-left rounded-xl -ml-1.5 px-1.5 py-1 transition cursor-pointer hover:bg-paper-2/80 dark:hover:bg-ink/60 active:scale-[0.98]"
         >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-paper-2 via-paper to-paper-2 dark:from-paper-2 dark:via-paper dark:to-paper-2 border border-paper-2 dark:border-mute flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_10px_-4px_rgba(17,17,16,0.4)] group-hover:scale-105 group-hover:shadow-[0_6px_16px_-6px_rgba(17,17,16,0.55)] transition-all">
-            <BeaconLogo className="w-5 h-5 text-mute dark:text-mute" />
+            <BeaconLogo className="w-5 h-5 text-ink dark:text-paper" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -38,9 +38,9 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
                 SIH Prototype
               </span>
             </div>
-            <p className="text-xs text-mute/70 dark:text-mute font-medium mt-1 flex items-center gap-1.5">
+            <p className="text-xs text-ink dark:text-paper font-medium mt-1 flex items-center gap-1.5">
               Real-Time Disaster Intelligence Platform
-              <span className="hidden lg:inline-flex items-center gap-1 text-[10px] font-semibold text-mute dark:text-mute opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="hidden lg:inline-flex items-center gap-1 text-[10px] font-semibold text-ink dark:text-paper opacity-0 group-hover:opacity-100 transition-opacity">
                 &middot; Back to Home
               </span>
             </p>
@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
         </div>
 
         {/* Right: Dark Mode, Last Updated & Refresh */}
-        <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-mute/70 dark:text-mute">
+        <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-ink dark:text-paper">
           {/* Dark-mode toggle */}
           <button
             onClick={onToggleDark}
@@ -73,19 +73,19 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
             aria-label="Toggle dark mode"
             className="flex items-center justify-center w-8 h-8 rounded-lg bg-paper-2/80 dark:bg-ink/70 border border-paper-2/70 dark:border-mute text-mute dark:text-paper/70 hover:bg-paper-2 dark:hover:bg-mute transition cursor-pointer active:scale-90 shadow-sm"
           >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {darkMode ? <Sun className="w-4 h-4 text-ink dark:text-paper" /> : <Moon className="w-4 h-4 text-ink dark:text-paper" />}
           </button>
 
           <div className="flex items-center gap-1.5">
-            <span>Last updated:</span>
-            <span className="font-medium text-paper dark:text-paper">{liveClock || lastUpdated}</span>
+            <span className="text-ink dark:text-paper">Last updated:</span>
+            <span className="font-medium text-ink dark:text-paper">{liveClock || lastUpdated}</span>
           </div>
           <button
             onClick={onRefresh}
             title="Refresh feed and data"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-paper dark:bg-ink/70 hover:bg-paper-2 dark:hover:bg-ink/80/70 text-mute dark:text-paper/70 hover:text-paper dark:hover:text-white border border-paper-2 dark:border-mute transition cursor-pointer active:scale-95 text-xs font-medium shadow-[0_1px_2px_rgba(17,17,16,0.08)]"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-paper dark:bg-ink/70 hover:bg-paper-2 dark:hover:bg-ink/80/70 text-ink dark:text-paper hover:text-ink dark:hover:text-white border border-paper-2 dark:border-mute transition cursor-pointer active:scale-95 text-xs font-medium shadow-[0_1px_2px_rgba(17,17,16,0.08)]"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-mute' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-ink dark:text-paper' : ''}`} />
             <span className="hidden sm:inline">Sync</span>
           </button>
         </div>

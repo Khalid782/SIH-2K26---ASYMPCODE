@@ -301,7 +301,7 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper">
               Synthetic Social Media Crisis Feed — Demo Mode
             </h3>
-            <span className="text-[10px] text-mute/80 font-mono ml-auto mr-2">
+            <span className="text-[10px] text-ink dark:text-paper font-mono ml-auto mr-2">
               {SYNTHETIC_REPORTS.length} reports loaded • interval 6–10s
             </span>
             <StatusBadge
@@ -314,7 +314,7 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="rounded-lg border border-paper-2 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-3 py-2">
-            <div className="text-[10px] font-medium uppercase tracking-wider text-mute/80">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-ink dark:text-paper">
               Reports Processed
             </div>
             <div className="text-lg font-bold font-mono text-ink dark:text-paper leading-tight">
@@ -322,7 +322,7 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
             </div>
           </div>
           <div className="rounded-lg border border-paper-2 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-3 py-2">
-            <div className="text-[10px] font-medium uppercase tracking-wider text-mute/80">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-ink dark:text-paper">
               Relevant Incidents Created
             </div>
             <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-300 leading-tight">
@@ -330,18 +330,18 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
             </div>
           </div>
           <div className="rounded-lg border border-paper-2 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-3 py-2">
-            <div className="text-[10px] font-medium uppercase tracking-wider text-mute/80">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-ink dark:text-paper">
               Noise Filtered
             </div>
-            <div className="text-lg font-bold font-mono text-slate-600 dark:text-slate-300 leading-tight">
+            <div className="text-lg font-bold font-mono text-ink dark:text-paper leading-tight">
               {noiseCount}
             </div>
           </div>
           <div className="rounded-lg border border-paper-2 dark:border-paper/20 bg-paper-2/40 dark:bg-ink/50 px-3 py-2">
-            <div className="text-[10px] font-medium uppercase tracking-wider text-mute/80">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-ink dark:text-paper">
               Status
             </div>
-            <div className={`text-sm font-bold leading-tight ${isRunning ? 'text-emerald-600 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-300'}`}>
+            <div className={`text-sm font-bold leading-tight ${isRunning ? 'text-emerald-600 dark:text-emerald-300' : 'text-ink dark:text-paper'}`}>
               {isRunning ? 'Live Feed Running' : 'Paused'}
             </div>
           </div>
@@ -350,17 +350,17 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
         {lastReport && (
           <div className="rounded-lg border border-paper-2 dark:border-paper/20 bg-paper-2/50 dark:bg-ink/40 px-3 py-2">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-mute/80">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-ink dark:text-paper">
                 Last Report
               </span>
-              <span className="text-[10px] font-mono text-mute/80 ml-auto">#{lastReport.id} • {lastReport.channel}</span>
+              <span className="text-[10px] font-mono text-ink dark:text-paper ml-auto">#{lastReport.id} • {lastReport.channel}</span>
               <span className={`text-[10px] font-bold uppercase tracking-wider ${
                 lastReport.tag === 'critical'
                   ? 'text-rose-600 dark:text-rose-400'
                   : lastReport.tag === 'high'
                     ? 'text-orange-600 dark:text-orange-400'
                     : lastReport.tag === 'noise'
-                      ? 'text-slate-500 dark:text-slate-400'
+                      ? 'text-ink dark:text-paper'
                       : lastReport.tag === 'duplicate'
                         ? 'text-sky-600 dark:text-sky-400'
                         : 'text-amber-600 dark:text-amber-400'
@@ -401,7 +401,7 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
           </button>
           <button
             onClick={resetStats}
-            className="inline-flex items-center gap-1.5 text-mute hover:text-ink dark:hover:text-paper text-xs font-medium px-2.5 py-2 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 text-ink dark:text-paper hover:text-ink dark:hover:text-white text-xs font-medium px-2.5 py-2 rounded-lg transition-colors"
           >
             Reset
           </button>
@@ -423,7 +423,7 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
+      <div className="flex items-center gap-1.5 text-[11px] text-ink dark:text-paper">
         <Activity className="w-3.5 h-3.5" />
         <Inbox className="w-3.5 h-3.5" />
         Queue backlog of <strong className="text-ink dark:text-paper">87</strong> messages is being

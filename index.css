@@ -16,7 +16,7 @@
   --color-paper-2: #e8e4da;
   --color-ink: #111110;
   --color-ink-2: #0b0b0a;
-  --color-mute: #6f6b62;
+  --color-mute: #111110;
   /* Single functional accent — emergency signal red */
   --color-signal: #d43a22;
 
@@ -31,6 +31,11 @@
   --color-steel: #101014;
   --color-steel-2: #191921;
   --color-safe: #12a150;
+}
+
+/* All muted text is now pure black (light) / paper (dark) — user requested every #6f6b62 → #111110 */
+.dark {
+  --color-mute: #f1efea;
 }
 
 @layer base {

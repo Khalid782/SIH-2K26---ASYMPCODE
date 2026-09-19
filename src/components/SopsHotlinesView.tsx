@@ -97,7 +97,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-1',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-FLD-01</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-FLD-01</span>,
       'Flood Evacuation Protocol',
       'Red alert / water entry',
       'GHMC + SDRF',
@@ -108,7 +108,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-2',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-RSC-02</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-RSC-02</span>,
       'Water Rescue Operations',
       'Trapped persons',
       'SDRF / NDRF',
@@ -119,7 +119,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-3',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-MED-03</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-MED-03</span>,
       'Medical Boat Evacuation',
       'Medical cases in flood',
       'EMRI 108',
@@ -130,7 +130,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-4',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-ELE-04</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-ELE-04</span>,
       'Electrical Hazard Response',
       'Wires in water',
       'TSSPDCL',
@@ -141,7 +141,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-5',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-SHT-05</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-SHT-05</span>,
       'Shelter & Relief Activation',
       'Evacuation > 100',
       'GHMC Revenue',
@@ -152,7 +152,7 @@ const SOP_ROWS: OpsRow[] = [
   {
     id: 'sop-6',
     cells: [
-      <span key="c" className="font-mono font-semibold text-mute dark:text-paper/70">SOP-COM-06</span>,
+      <span key="c" className="font-mono font-semibold text-ink dark:text-paper">SOP-COM-06</span>,
       'Siren & Community Alert',
       'Dam / nala breach',
       'HMWSSB',
@@ -193,12 +193,12 @@ export default function SopsHotlinesView() {
         rows={SOP_ROWS}
         footer={
           <span className="flex items-center gap-1.5">
-            <LifeBuoy className="w-3.5 h-3.5 text-mute" />
+            <LifeBuoy className="w-3.5 h-3.5 text-ink dark:text-paper" />
             When Gemini triage flags a report, the matching SOP ID is attached to the incident card.
           </span>
         }
       />
-      <div className="flex items-center gap-1.5 text-[11px] text-mute/80 dark:text-mute">
+      <div className="flex items-center gap-1.5 text-[11px] text-ink dark:text-paper">
         <BookOpenCheck className="w-3.5 h-3.5" />
         Full playbook PDFs are available from the GHMC disaster-control room on request.
       </div>
