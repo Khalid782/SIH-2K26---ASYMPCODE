@@ -4,22 +4,28 @@
 // It is designed to fail fast and remain under the Vercel timeout budget.
 // ---------------------------------------------------------------------------
 
+import type { ServerResponse } from 'node:http';
+
+type VercelRequest = { method?: string; body?: unknown };
+type VercelResponse = ServerResponse & {
+  status: (code: number) => VercelResponse;
+  json: (body: unknown) => VercelResponse;
+};
+
 const MODEL_NAME = 'gemini-3.8-flash';
 const TIMEOUT_MS = 9_000;
 
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body, null, 2), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
-
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<any> {
   const startedAt = Date.now();
   const keyConfigured = Boolean(process.env.GEMINI_API_KEY);
+  res.setHeader('Cache-Control', 'no-store');
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  }
 
   if (!keyConfigured) {
-    return json({
+    return res.status(200).json({
       ok: false,
       stage: 'env',
       keyConfigured: false,
@@ -48,7 +54,7 @@ export default async function handler(req: Request): Promise<Response> {
     const ok = response.ok && text.includes('TEST_OK');
     const latencyMs = Date.now() - startedAt;
 
-    return json({
+    return res.status(200).json({
       ok,
       stage: 'gemini-check',
       keyConfigured: true,
@@ -58,7 +64,7 @@ export default async function handler(req: Request): Promise<Response> {
       ...(ok ? {} : { error: 'Gemini diagnostic did not return the expected response.' }),
     });
   } catch (error: any) {
-    return json({
+    return res.status(504).json({
       ok: false,
       stage: 'gemini-check',
       keyConfigured: true,
@@ -66,6 +72,6 @@ export default async function handler(req: Request): Promise<Response> {
       latencyMs: Date.now() - startedAt,
       model: MODEL_NAME,
       error: error?.name === 'TimeoutError' ? `Gemini request timed out after ${TIMEOUT_MS}ms.` : (error?.message || 'Unknown Gemini diagnostic error'),
-    }, 504);
+    });
   }
 }

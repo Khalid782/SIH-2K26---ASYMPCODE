@@ -5,6 +5,14 @@
 // reliability — the schema may cause the API to hang in some environments.
 // ---------------------------------------------------------------------------
 
+import type { ServerResponse } from 'node:http';
+
+type VercelRequest = { method?: string; body?: unknown };
+type VercelResponse = ServerResponse & {
+  status: (code: number) => VercelResponse;
+  json: (body: unknown) => VercelResponse;
+};
+
 const SYSTEM_INSTRUCTION = `You are the CRISISBEACON AI Disaster Triage Engine for the Hyderabad Emergency Operations Center.
 
 Analyze the given citizen disaster report and return a single JSON object (no markdown, no commentary) with exactly these keys:
@@ -31,13 +39,6 @@ HYDERABAD REFERENCE COORDINATES: Tolichowki [17.3986, 78.4069], Mehdipatnam [17.
 
 const CANDIDATE_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash'];
 const MODEL_TIMEOUT_MS = 11_000;
-
-function json(body: unknown, status: number): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
 
 async function callGemini(model: string, apiKey: string, reportText: string): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
@@ -67,28 +68,26 @@ async function callGemini(model: string, apiKey: string, reportText: string): Pr
   return text;
 }
 
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const startTime = Date.now();
+  res.setHeader('Cache-Control', 'no-store');
 
   try {
     if (req.method !== 'POST') {
-      return json({ success: false, error: 'Method not allowed' }, 405);
+      return res.status(405).json({ success: false, error: 'Method not allowed' });
     }
 
-    let body: any;
-    try { body = await req.json(); } catch {
-      return json({ success: false, error: 'Invalid JSON body' }, 400);
-    }
+    const body = req.body as { text?: unknown } | undefined;
 
     const text = body?.text;
     if (!text || typeof text !== 'string' || !text.trim()) {
-      return json({ success: false, error: 'Report text is required' }, 400);
+      return res.status(400).json({ success: false, error: 'Report text is required' });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       console.warn('[triage] GEMINI_API_KEY missing');
-      return json({ success: false, error: 'Gemini API not configured (GEMINI_API_KEY missing)', fallback: true }, 200);
+      return res.status(200).json({ success: false, error: 'Gemini API not configured (GEMINI_API_KEY missing)', fallback: true });
     }
 
     console.log(`[triage] Starting triage, report length=${text.length}`);
@@ -118,13 +117,13 @@ export default async function handler(req: Request): Promise<Response> {
 
     if (!parsedData) {
       console.error('[triage] All models failed:', lastError?.message);
-      return json({ success: false, error: lastError?.message || 'All Gemini models failed', fallback: true, durationMs: Date.now() - startTime }, 200);
+      return res.status(200).json({ success: false, error: lastError?.message || 'All Gemini models failed', fallback: true, durationMs: Date.now() - startTime });
     }
 
     console.log(`[triage] Done in ${Date.now() - startTime}ms using ${usedModel}`);
-    return json({ success: true, engine: 'Gemini AI', model: usedModel, data: parsedData }, 200);
+    return res.status(200).json({ success: true, engine: 'Gemini AI', model: usedModel, data: parsedData });
   } catch (err: any) {
     console.error('[triage] Uncaught:', err?.message || err);
-    return json({ success: false, error: `Server error: ${err?.message || 'unknown'}`, fallback: true, durationMs: Date.now() - startTime }, 200);
+    return res.status(200).json({ success: false, error: `Server error: ${err?.message || 'unknown'}`, fallback: true, durationMs: Date.now() - startTime });
   }
 }
