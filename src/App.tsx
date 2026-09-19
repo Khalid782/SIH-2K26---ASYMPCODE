@@ -30,7 +30,10 @@ export function App() {
     document.documentElement.classList.toggle('dark', darkMode);
     try { localStorage.setItem('cb-dark', String(darkMode)); } catch { /* ok */ }
   }, [darkMode]);
-  const [incidents, setIncidents] = useState<Incident[]>(INITIAL_INCIDENTS);
+  const [incidents, setIncidents] = useState<Incident[]>(supabase ? [] : INITIAL_INCIDENTS);
+  const [incidentsReady, setIncidentsReady] = useState<boolean>(!supabase);
+  const [feedError, setFeedError] = useState<string>('');
+  const [feedAttempt, setFeedAttempt] = useState(0);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [lastUpdated, setLastUpdated] = useState<string>('Just now');
@@ -71,41 +74,8 @@ export function App() {
       return;
     }
 
-    // Fetch initial incidents from Supabase — capped at 30 (DB may still hold old 107 demo rows)
-    const fetchIncidents = async () => {
-      const { data, error } = await client
-        .from('incidents')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(30);
-
-      if (error) {
-        console.error('Error fetching incidents:', error);
-      } else if (data) {
-        if (data.length > 0) setIncidents(mapRowsToIncidents(data));
-        // If DB holds more than 30 rows (legacy demo/simulated inserts), trim the oldest in background
-        // so the count stays at 30 until you connect a real API.
-        try {
-          const { count } = await client.from('incidents').select('id', { count: 'exact', head: true });
-          if (count !== null && count > 30) {
-            const { data: allIds } = await client
-              .from('incidents')
-              .select('id')
-              .order('created_at', { ascending: false });
-            if (allIds && allIds.length > 30) {
-              const toDelete: string[] = (allIds as { id: string }[]).slice(30).map((r) => r.id);
-              const { error: delErr } = await client.from('incidents').delete().in('id', toDelete);
-              if (delErr) console.warn('Auto-trim excess incidents failed (run SQL below manually):', delErr.message);
-              else console.info(`Trimmed ${toDelete.length} excess incidents from Supabase — now 30.`);
-            }
-          }
-        } catch (e) {
-          console.warn('Auto-trim check failed:', e);
-        }
-      }
-    };
-
-    fetchIncidents();
+    // The incident load lives in its own effect below, so a failed read can be retried
+    // without tearing down (and duplicating) the realtime subscription.
 
     // Sync real-time updates across all connected devices (INSERT and UPDATE events)
     const channel = client
@@ -133,6 +103,62 @@ export function App() {
       client.removeChannel(channel);
     };
   }, []);
+
+  // Load every incident. Display filters and pagination must never hide a hazard from
+  // green-zone route screening, so the full set is paged in (1000 at a time).
+  //
+  // Keyed on feedAttempt: one failed read used to pin incidentsReady to false forever, so the
+  // green zone showed nothing and routing stayed dead until a manual page reload. A failure
+  // now schedules its own retry with exponential backoff.
+  useEffect(() => {
+    if (!supabase) return;
+    let cancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchIncidents = async () => {
+      const client = supabase;
+      if (!client) return;
+      const rows: Record<string, any>[] = [];
+
+      for (let offset = 0; ; offset += 1000) {
+        const { data, error } = await client
+          .from('incidents')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(offset, offset + 999);
+
+        if (error) {
+          console.error('Error fetching incidents:', error);
+          if (cancelled) return;
+          const reason = error.message || 'Supabase read failed';
+          setFeedError(reason);
+          setNotification(`Incident feed unavailable (${reason}). Retrying automatically.`);
+          retryTimer = setTimeout(
+            () => {
+              if (!cancelled) setFeedAttempt((n) => n + 1);
+            },
+            Math.min(30_000, 3_000 * 2 ** Math.min(feedAttempt, 4))
+          );
+          return;
+        }
+
+        rows.push(...(data || []));
+        if (!data || data.length < 1000) break;
+      }
+
+      if (cancelled) return;
+      setFeedError('');
+      setIncidents(mapRowsToIncidents(rows));
+      setIncidentsReady(true);
+    };
+
+    fetchIncidents();
+
+    return () => {
+      cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
+  }, [feedAttempt]);
 
   // Handle Manual Refresh Sync
   const handleRefresh = () => {
@@ -274,12 +300,24 @@ export function App() {
     setTimeout(() => {
       setHighlightId((cur) => (cur === newIncident.id ? null : cur));
     }, 5000);
+    // The row is written once, here. (AITriageConsole used to also insert the raw camelCase
+    // incident, which does not match the incidents schema and could never succeed.)
     if (supabase) {
       const { error } = await supabase.from('incidents').insert([mapIncidentToRow(withTimestamp)]);
-      if (error) console.error('Error inserting triage incident into Supabase:', error);
+      if (error) {
+        console.error('Error inserting triage incident into Supabase:', error);
+        showNotification(
+          `Triage ${newIncident.id} added to this session but NOT saved to Supabase: ${error.message}`
+        );
+        return;
+      }
+      showNotification(
+        `Triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} saved to Supabase & marked on map`
+      );
+      return;
     }
     showNotification(
-      `Gemini triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} marked on map & added to feed`
+      `Triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} marked on map (Supabase not configured — session only)`
     );
   };
 
@@ -472,6 +510,9 @@ export function App() {
                   </div>
                   <DisasterMap
                     incidents={filteredIncidents}
+                    allIncidents={incidents}
+                    routingReady={incidentsReady}
+                    feedError={feedError}
                     selectedIncident={selectedIncident}
                     onSelectIncident={setSelectedIncident}
                   />

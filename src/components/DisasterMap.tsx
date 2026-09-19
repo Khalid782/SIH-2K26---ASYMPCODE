@@ -1,10 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import GreenRoutePanel from './GreenRoutePanel';
+import { inHyderabad } from '../utils/region';
 import { Incident, Severity } from '../types';
 import { Layers, MapPin, Maximize2, Navigation, AlertCircle } from 'lucide-react';
 
 interface DisasterMapProps {
   incidents: Incident[];
+  /** Unfiltered incident set — green-zone routing must see every reported hazard. */
+  allIncidents: Incident[];
+  /** False until the incident feed has loaded, so routing never runs on partial data. */
+  routingReady: boolean;
+  /** Why the feed is not ready, shown on the green-zone panel. */
+  feedError?: string;
   selectedIncident: Incident | null;
   onSelectIncident: (incident: Incident) => void;
 }
@@ -25,9 +33,13 @@ const KEY_ZONES = [
 
 export const DisasterMap: React.FC<DisasterMapProps> = ({
   incidents,
+  allIncidents,
+  routingReady,
+  feedError,
   selectedIncident,
   onSelectIncident,
 }) => {
+  const [map, setMap] = useState<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -40,7 +52,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
       center: HYDERABAD_CENTER,
       zoom: DEFAULT_ZOOM,
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
     });
 
     // Add standard OpenStreetMap tiles
@@ -55,6 +67,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
     const markersGroup = L.layerGroup().addTo(map);
     markersLayerRef.current = markersGroup;
     mapInstanceRef.current = map;
+    setMap(map);
 
     // Handle container resize
     const resizeObserver = new ResizeObserver(() => {
@@ -75,7 +88,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
     markersLayerRef.current.clearLayers();
 
-    incidents.forEach((incident) => {
+    incidents.filter((i) => inHyderabad(i.coordinates)).forEach((incident) => {
       const isSelected = selectedIncident?.id === incident.id;
       
       let markerColorBg = '#eab308'; // Low (Yellow)
@@ -160,7 +173,7 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
   // Pan to selected incident if any
   useEffect(() => {
-    if (selectedIncident && mapInstanceRef.current) {
+    if (selectedIncident && inHyderabad(selectedIncident.coordinates) && mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(selectedIncident.coordinates, 15, {
         animate: true,
         duration: 1.2,
@@ -187,7 +200,16 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[450px] lg:h-[540px] xl:h-[600px] bg-sky-100 rounded-xl overflow-hidden border border-sky-100/90 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_14px_30px_-18px_rgba(2,132,199,0.35)] flex flex-col">
+    <div className="space-y-2">
+      {/* Always mounted: if the feed is not ready the panel says so, rather than the whole
+          green zone silently disappearing from the map. */}
+      <GreenRoutePanel
+        map={map}
+        incidents={allIncidents}
+        routingReady={routingReady}
+        feedError={feedError}
+      />
+      <div className="relative w-full h-[450px] lg:h-[540px] xl:h-[600px] bg-sky-100 rounded-xl overflow-hidden border border-sky-100/90 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_14px_30px_-18px_rgba(2,132,199,0.35)] flex flex-col">
       {/* Map Control Bar / Quick Location Jumps */}
       <div className="absolute top-3 left-3 z-[1000] bg-white/90 dark:bg-sky-900/90 backdrop-blur-md text-sky-950 dark:text-sky-100 p-1.5 rounded-lg border border-sky-200/90 dark:border-sky-700 shadow-[0_8px_20px_-10px_rgba(2,132,199,0.45)] flex items-center gap-1.5 max-w-[calc(100%-24px)] overflow-x-auto text-xs">
         <span className="text-[11px] font-semibold text-sky-600 px-1.5 whitespace-nowrap flex items-center gap-1">
@@ -238,8 +260,9 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
         </div>
       </div>
 
-      {/* Actual Leaflet Container */}
-      <div ref={mapContainerRef} className="w-full h-full z-0" />
+        {/* Actual Leaflet Container */}
+        <div ref={mapContainerRef} className="w-full h-full z-0" />
+      </div>
     </div>
   );
 };

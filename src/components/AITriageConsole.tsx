@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Sparkles,
   Loader2,
@@ -116,6 +116,30 @@ export default function AITriageConsole({
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [createdIncidentId, setCreatedIncidentId] = useState<string | null>(null);
+  // Whether the server actually holds a Gemini key. Reported by /api/health so the console
+  // states which engine is live instead of assuming Gemini.
+  const [geminiStatus, setGeminiStatus] = useState<{ configured: boolean; models: string[] } | null>(
+    null
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/health')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !data?.gemini) return;
+        setGeminiStatus({
+          configured: !!data.gemini.configured,
+          models: Array.isArray(data.gemini.models) ? data.gemini.models : [],
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setGeminiStatus({ configured: false, models: [] });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const buildIncident = (result: AnalysisResult, rawText: string): Incident => {
     const newId = `INC-2026-${Math.floor(100 + Math.random() * 900)}`;
@@ -223,6 +247,7 @@ export default function AITriageConsole({
       setAnalysisResult(result);
 
       // 3) If relevant, auto-create the incident on the map + intelligence feed.
+      //    Persistence is handled once, by the parent, through mapIncidentToRow().
       if (result.isRelevant) {
         const newIncident = buildIncident(result, reportText);
         onCreateIncident(newIncident);
@@ -263,7 +288,19 @@ export default function AITriageConsole({
           AI Triage Console
         </h2>
         <span className="text-[11px] text-mute/80 font-mono ml-auto">
-          Severity Engine &bull; NER Parser &bull; Gemini 2.5 Flash
+          {geminiStatus === null ? (
+            'Severity Engine • checking Gemini…'
+          ) : geminiStatus.configured ? (
+            <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
+              <Zap className="w-3 h-3" />
+              Gemini live {geminiStatus.models[0] ? `• ${geminiStatus.models[0]}` : ''}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="w-3 h-3" />
+              Gemini not linked • rule-based engine
+            </span>
+          )}
         </span>
       </div>
 
@@ -302,6 +339,26 @@ export default function AITriageConsole({
             </button>
           )}
         </div>
+        {geminiStatus && !geminiStatus.configured && (
+          <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-200 text-[11px] rounded-lg p-2.5">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            <span>
+              Gemini is not linked, so triage runs on the built-in rule-based engine — no AI
+              report rewriting and no language-model location reasoning. Add{' '}
+              <code className="font-mono font-semibold">GEMINI_API_KEY</code> in Settings →
+              Environment, then reload. Diagnose with{' '}
+              <a
+                href="/api/test-gemini"
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono font-semibold underline"
+              >
+                /api/test-gemini
+              </a>
+              .
+            </span>
+          </div>
+        )}
         {analysisError && (
           <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />

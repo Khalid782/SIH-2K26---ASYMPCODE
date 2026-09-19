@@ -322,6 +322,31 @@ html {
   }
 }
 
+/* Green-zone safe routing: pulsing safe-facility marker.
+   The marching route dashes are advanced in JS (one rAF loop drives both the dashes and
+   the travelling marker), so there is no keyframe for them here. */
+@keyframes marker-pulse-safe {
+  0% {
+    box-shadow: 0 0 0 0 rgba(18, 161, 80, 0.55), 0 0 0 0 rgba(18, 161, 80, 0.3);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(18, 161, 80, 0), 0 0 0 24px rgba(18, 161, 80, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(18, 161, 80, 0), 0 0 0 0 rgba(18, 161, 80, 0);
+  }
+}
+
+.green-zone-pin {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #12a150;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  animation: marker-pulse-safe 2.4s ease-out infinite;
+}
+
 /* ================================================================== */
 /* EMERGENCY COMMAND THEME                                            */
 /* Hazard tape, HUD surfaces, radar, 3D card motion                    */
@@ -565,7 +590,8 @@ html {
   .animate-sweep-line,
   .animate-marquee,
   .animate-marquee-slow,
-  .animate-marquee-fast {
+  .animate-marquee-fast,
+  .green-zone-pin {
     animation: none !important;
   }
 }

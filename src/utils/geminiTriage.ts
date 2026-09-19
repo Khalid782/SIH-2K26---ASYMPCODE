@@ -161,11 +161,33 @@ export interface GeminiTriageOutcome {
   error?: string;
 }
 
+/**
+ * Models tried in order until one answers. Both lists are kept deliberately: the 3.x IDs are
+ * the ones pinned by "Fix Gemini AI triage integration", and the 2.5 family follows so that a
+ * retired or not-yet-available ID degrades to a working model instead of failing the whole
+ * call. Each candidate costs one request, so an unknown ID is cheap — a missing fallback is not.
+ *
+ * Set GEMINI_MODEL to pin a single model and skip the chain entirely.
+ */
 const CANDIDATE_MODELS = [
   'gemini-3.8-flash',
   'gemini-3.7-flash',
   'gemini-3.1-pro-preview',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-2.5-pro',
 ];
+
+/** GEMINI_MODEL pins one model; otherwise the candidate list above is tried in order. */
+export function geminiCandidateModels(): string[] {
+  const pinned = process.env.GEMINI_MODEL?.trim();
+  return pinned ? [pinned] : CANDIDATE_MODELS;
+}
+
+/** True when the server can reach Gemini at all (i.e. GEMINI_API_KEY is set). */
+export function geminiIsConfigured(): boolean {
+  return !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim());
+}
 
 const GEMINI_URL = (model: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -222,7 +244,7 @@ export async function runGeminiTriage(text: string): Promise<GeminiTriageOutcome
   const trimmed = text.trim();
   let lastError: any = null;
 
-  for (const modelName of CANDIDATE_MODELS) {
+  for (const modelName of geminiCandidateModels()) {
     try {
       const outputText = await callGeminiModel(modelName, apiKey, trimmed);
       if (!outputText) {

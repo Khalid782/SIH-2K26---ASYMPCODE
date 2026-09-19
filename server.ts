@@ -4,7 +4,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
-import { runGeminiTriage } from './src/utils/geminiTriage';
+import {
+  runGeminiTriage,
+  geminiIsConfigured,
+  geminiCandidateModels,
+} from './src/utils/geminiTriage';
+import facilitiesHandler from './api/facilities';
+import testGeminiHandler from './api/test-gemini';
 
 dotenv.config();
 
@@ -16,10 +22,53 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json({ limit: '5mb' }));
 
-// Health check route
+/**
+ * `api/*.ts` are written as Vercel-style handlers (a web Request in, a web Response out) so
+ * the same file runs on Vercel and locally. This bridges one into Express for the dev server,
+ * which is why /api/test-gemini used to be reachable in production but 404 locally.
+ */
+function mountWebHandler(
+  route: string,
+  handler: (req: globalThis.Request) => Promise<globalThis.Response>
+): void {
+  app.all(route, async (req: Request, res: Response): Promise<void> => {
+    try {
+      const hasBody = req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH';
+      const webRequest = new globalThis.Request(`http://localhost${req.originalUrl}`, {
+        method: req.method,
+        headers: { 'content-type': 'application/json' },
+        body: hasBody ? JSON.stringify(req.body ?? {}) : undefined,
+      });
+      const webResponse = await handler(webRequest);
+      res.status(webResponse.status);
+      webResponse.headers.forEach((value, key) => res.setHeader(key, value));
+      res.send(await webResponse.text());
+    } catch (error: any) {
+      res.status(500).json({ ok: false, error: error?.message || 'Diagnostic handler failed' });
+    }
+  });
+}
+
+// Health check route — also reports whether Gemini is actually wired up, so the client can
+// show the real engine instead of assuming one.
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', service: 'CRISISBEACON Hybrid Disaster Triage' });
+  res.json({
+    status: 'ok',
+    service: 'CRISISBEACON Hybrid Disaster Triage',
+    gemini: {
+      configured: geminiIsConfigured(),
+      models: geminiCandidateModels(),
+      triageEndpoint: '/api/triage',
+      diagnosticEndpoint: '/api/test-gemini',
+    },
+  });
 });
+
+// Green-zone facility lookup (hospitals + NGO offices from OpenStreetMap)
+app.get('/api/facilities', facilitiesHandler);
+
+// Gemini connectivity diagnostic (GET /api/test-gemini in the browser)
+mountWebHandler('/api/test-gemini', testGeminiHandler);
 
 // Gemini AI Triage Endpoint
 app.post('/api/triage', async (req: Request, res: Response): Promise<void> => {
@@ -59,7 +108,19 @@ app.post('/api/triage', async (req: Request, res: Response): Promise<void> => {
 
 async function startServer() {
   const distPath = path.join(process.cwd(), 'dist');
-  const isProduction = process.env.NODE_ENV === 'production' || (!process.env.NODE_ENV && fs.existsSync(path.join(distPath, 'index.html')));
+  // A build sitting in dist/ must never silently shadow the live source. This used to treat
+  // "NODE_ENV unset AND dist/index.html exists" as production, so the dev server served a
+  // stale bundle and every source edit looked like it had done nothing. Production hosts set
+  // NODE_ENV=production explicitly; anything else gets Vite middleware over the real files.
+  const isProduction = process.env.NODE_ENV === 'production';
+  const distBuiltAt = fs.existsSync(path.join(distPath, 'index.html'))
+    ? fs.statSync(path.join(distPath, 'index.html')).mtime.toISOString()
+    : 'no dist/ build found';
+  console.log(
+    isProduction
+      ? `[crisisbeacon] production mode: serving the prebuilt dist/ bundle (${distBuiltAt})`
+      : `[crisisbeacon] dev mode: serving live source through Vite middleware (dist/ is ignored; newest build ${distBuiltAt})`
+  );
 
   if (!isProduction) {
     try {
