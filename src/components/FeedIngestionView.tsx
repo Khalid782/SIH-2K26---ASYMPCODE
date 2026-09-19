@@ -160,9 +160,8 @@ function buildIncidentFromTriage(
         : 'Monitoring';
 
   const peopleTrapped = result.extractedEntities.peopleTrapped;
-  const waterLevel =
-    result.extractedEntities.waterLevel ||
-    (result.severity === 'Critical' ? '3.5 ft (Rapidly Rising)' : '2.0 ft');
+  // Only the depth the engine actually extracted — never an invented one.
+  const waterLevel = result.extractedEntities.waterLevel || undefined;
 
   return {
     id: newId,
@@ -187,6 +186,7 @@ function buildIncidentFromTriage(
     timeAgo: 'Just now',
     timestamp: ts,
     originalReport: rawText.trim(),
+    cleanedReport: result.cleanedReport || undefined,
     status: 'Pending',
     verificationStatus: 'Pending',
     entitiesExtracted: {
@@ -231,6 +231,31 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
       }
     } catch (err) {
       console.warn('Synthetic feed triage error:', err);
+      setNoiseCount((prev) => prev + 1);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [onCreateIncident, isProcessing]);
+
+  const ingestNow = useCallback(async () => {
+    if (isProcessing) return;
+    const report = getRandomReport();
+    setLastReport(report);
+    setIsProcessing(true);
+
+    try {
+      const triage = await analyzeDisasterReportHybrid(report.text);
+      setProcessedCount((prev) => prev + 1);
+
+      if (triage.isRelevant) {
+        const incident = buildIncidentFromTriage(triage, report.text, report.channel);
+        onCreateIncident(incident);
+        setCreatedCount((prev) => prev + 1);
+      } else {
+        setNoiseCount((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.warn('Synthetic feed ingest error:', err);
       setNoiseCount((prev) => prev + 1);
     } finally {
       setIsProcessing(false);
@@ -397,7 +422,15 @@ export default function FeedIngestionView({ onCreateIncident }: FeedIngestionVie
             className="inline-flex items-center gap-1.5 bg-mute hover:bg-mute/90 text-white text-xs font-semibold px-3.5 py-2 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm"
           >
             <FastForward className="w-3.5 h-3.5" />
-            {isProcessing ? 'Processing…' : 'Inject Next Report'}
+            {isProcessing ? 'Locked…' : 'Inject Next Report'}
+          </button>
+          <button
+            onClick={ingestNow}
+            disabled={isProcessing}
+            className="inline-flex items-center gap-1.5 bg-mute hover:bg-mute/90 text-white text-xs font-semibold px-3.5 py-2 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
+            <Radio className="w-3.5 h-3.5" />
+            {isProcessing ? 'Locked…' : 'Ingest Next Report'}
           </button>
           <button
             onClick={resetStats}

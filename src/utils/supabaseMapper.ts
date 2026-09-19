@@ -1,4 +1,5 @@
-import { Incident, Severity, DisasterType, SourceType, VerificationStatus } from '../types';
+import { Incident, DisasterType, SourceType, VerificationStatus } from '../types';
+import type { Severity } from '../types';
 
 /**
  * Format a Date or ISO string as YYYY-MM-DD HH:mm:ss
@@ -35,14 +36,32 @@ export function mapRowToIncident(row: Record<string, any>): Incident {
   const rawEntities = row.entities_extracted ?? row.entitiesExtracted ?? {};
   const entitiesExtracted = {
     urgency: (row.urgency ?? rawEntities.urgency ?? 'Monitoring') as 'Immediate' | 'Elevated' | 'Monitoring',
-    peopleTrapped: row.people_trapped ?? rawEntities.peopleTrapped ?? undefined,
-    waterLevel: row.water_level ?? rawEntities.waterLevel ?? undefined,
-    affectedArea: row.affected_area ?? rawEntities.affectedArea ?? undefined,
+    peopleTrapped: row.people_trapped ?? (typeof rawEntities.peopleTrapped === 'number' ? rawEntities.peopleTrapped : undefined),
+    waterLevel: row.water_level ?? (typeof rawEntities.waterLevel === 'string' ? rawEntities.waterLevel : undefined),
+    affectedArea: row.affected_area ?? (typeof rawEntities.affectedArea === 'string' ? rawEntities.affectedArea : undefined),
   };
 
   // Timestamp — prefer incident_timestamp, fall back to legacy timestamp/timeAgo
   const timestamp =
     row.incident_timestamp ?? row.timestamp ?? row.timeAgo ?? 'Just now';
+
+  // Supabase may leave ENUM columns as objects on some connectors; coerce back to text.
+  const stringifyEnum = (value: unknown): string | undefined => {
+    if (typeof value === 'string') return value;
+    if (value && typeof value === 'object' && 'name' in value && typeof (value as any).name === 'string') {
+      return (value as any).name;
+    }
+    return undefined;
+  };
+
+  // ENUM columns on some connectors arrive as objects, so coerce them back to strings
+  // before the downstream enum assertions, otherwise a bare object can masquerade as a
+  // valid value and make a row read silently wrong.
+  const rawDisasterType = stringifyEnum(row.disaster_type);
+  const rawSeverity = stringifyEnum(row.severity);
+  const rawSource = stringifyEnum(row.source);
+  const rawStatus = stringifyEnum(row.status);
+  const rawVerificationStatus = stringifyEnum(row.verification_status);
 
   return {
     id: row.id,
@@ -53,8 +72,8 @@ export function mapRowToIncident(row: Record<string, any>): Incident {
     secondaryLocations: row.secondary_locations ?? row.secondaryLocations,
     landmark: row.landmark,
     coordinates,
-    disasterType: (row.disaster_type ?? row.disasterType ?? 'Flood') as DisasterType,
-    severity: (row.severity ?? 'Low') as Severity,
+    disasterType: (rawDisasterType ?? row.disasterType ?? 'Flood') as DisasterType,
+    severity: (rawSeverity ?? row.severity ?? 'Low') as Severity,
     aiConfidence: row.ai_confidence ?? row.aiConfidence ?? 0,
     confidence: row.confidence,
     locationConfidence: row.location_confidence ?? row.locationConfidence,
@@ -63,13 +82,13 @@ export function mapRowToIncident(row: Record<string, any>): Incident {
     responseNeeded: row.response_needed ?? row.responseNeeded,
     recommendedPriority: row.recommended_priority ?? row.recommendedPriority,
     engineUsed: row.engine_used ?? row.engineUsed,
-    source: (row.source ?? 'Social Media') as SourceType,
+    source: (rawSource ?? row.source ?? 'Social Media') as SourceType,
     timeAgo: row.time_ago ?? row.timeAgo ?? 'Just now',
     timestamp,
     originalReport: row.original_report ?? row.originalReport ?? '',
     cleanedReport: row.cleaned_report ?? row.cleanedReport,
-    status: (row.status ?? 'Pending') as VerificationStatus,
-    verificationStatus: row.verification_status ?? row.verificationStatus,
+    status: (rawStatus ?? row.status ?? 'Pending') as VerificationStatus,
+    verificationStatus: rawVerificationStatus ?? row.verificationStatus ?? undefined,
     entitiesExtracted,
     assignedTeam: row.assigned_team ?? row.assignedTeam,
     notes: row.notes,
@@ -87,6 +106,8 @@ export function mapRowsToIncidents(rows: Record<string, any>[]): Incident[] {
  * - Coordinates are split into latitude/longitude
  * - entitiesExtracted is flattened into urgency/people_trapped/water_level/affected_area
  * - Headers use only underscores (no special characters)
+ * - Enum-like fields are written as plain strings so the Supabase typed layers can
+ *   validate them against the live schema at write time.
  */
 export function mapIncidentToRow(incident: Incident): Record<string, any> {
   return {
@@ -96,7 +117,7 @@ export function mapIncidentToRow(incident: Incident): Record<string, any> {
     location: incident.location,
     extracted_location: incident.extractedLocation ?? null,
     primary_location: incident.primaryLocation ?? null,
-    secondary_locations: incident.secondaryLocations ?? [],
+      secondary_locations: incident.secondaryLocations ?? ([] as string[]),
     landmark: incident.landmark ?? null,
     latitude: incident.coordinates?.[0] ?? 0,
     longitude: incident.coordinates?.[1] ?? 0,
@@ -106,10 +127,10 @@ export function mapIncidentToRow(incident: Incident): Record<string, any> {
     ai_confidence: incident.aiConfidence ?? 0,
     confidence: incident.confidence ?? null,
     location_confidence: incident.locationConfidence ?? null,
-    detected_signals: incident.detectedSignals ?? [],
+    detected_signals: incident.detectedSignals ?? ([] as string[]),
     engine_used: incident.engineUsed ?? null,
-    hazards: incident.hazards ?? [],
-    response_needed: incident.responseNeeded ?? [],
+    hazards: incident.hazards ?? [] as string[],
+    response_needed: incident.responseNeeded ?? ([] as string[]),
     recommended_priority: incident.recommendedPriority ?? null,
     time_ago: incident.timeAgo ?? 'Just now',
     original_report: incident.originalReport ?? '',
@@ -121,7 +142,7 @@ export function mapIncidentToRow(incident: Incident): Record<string, any> {
     people_trapped: incident.entitiesExtracted?.peopleTrapped ?? null,
     water_level: incident.entitiesExtracted?.waterLevel ?? null,
     affected_area: incident.entitiesExtracted?.affectedArea ?? null,
-    notes: incident.notes ?? [],
+    notes: incident.notes ?? ([] as string[]),
     report_count: incident.reportCount ?? 1,
   };
 }

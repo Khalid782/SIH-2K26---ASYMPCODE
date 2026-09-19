@@ -12,7 +12,11 @@ import {
   Zap,
 } from 'lucide-react';
 import { Incident, Severity } from '../types';
-import { analyzeDisasterReport, TriageAnalysisResult } from '../utils/triageEngine';
+import {
+  analyzeDisasterReport,
+  translateHinglish,
+  TriageAnalysisResult,
+} from '../utils/triageEngine';
 
 interface AnalysisResult {
   isRelevant: boolean;
@@ -75,10 +79,9 @@ function mapGeminiResult(data: any): AnalysisResult {
 
 function mapRuleBasedResult(text: string): AnalysisResult {
   const r: TriageAnalysisResult = analyzeDisasterReport(text);
-  const fallbackClean = text
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/^[a-z]/, (c) => c.toUpperCase());
+  // English rendering of a code-mixed report, produced by the deterministic
+  // engine so the console reads the same whether or not Gemini answered.
+  const fallbackClean = translateHinglish(text);
 
   return {
     isRelevant: r.isRelevant,
@@ -96,7 +99,7 @@ function mapRuleBasedResult(text: string): AnalysisResult {
     responseNeeded: r.responseNeeded || [],
     recommendedPriority: r.recommendedPriority,
     engineUsed: 'Rule-Based Fallback',
-    cleanedReport: undefined,
+    cleanedReport: r.cleanedReport || undefined,
     fallbackClean,
     extractedEntities: {
       peopleTrapped: r.extractedEntities.peopleTrapped
@@ -154,9 +157,9 @@ export default function AITriageConsole({
           : 'Monitoring';
 
     const peopleTrapped = parseInt(result.extractedEntities.peopleTrapped, 10);
-    const waterLevel =
-      result.extractedEntities.waterLevel ||
-      (result.severity === 'Critical' ? '3.5 ft (Rapidly Rising)' : '2.0 ft');
+    // Only report a depth the report actually stated — an invented water level is
+    // worse than an empty field for everyone reading this row.
+    const waterLevel = result.extractedEntities.waterLevel || undefined;
 
     return {
       id: newId,
@@ -217,6 +220,19 @@ export default function AITriageConsole({
           body: JSON.stringify({ text: reportText.trim() }),
           signal: clientController.signal,
         });
+      } catch (fetchError: any) {
+        // Unreachable endpoint or our own 45s timeout: hand the report to the
+        // deterministic engine instead of leaving the console with nothing.
+        res = new Response(
+          JSON.stringify({
+            fallback: true,
+            error:
+              fetchError?.name === 'AbortError'
+                ? 'AI request timed out — the rule-based engine handled this report.'
+                : 'AI endpoint unreachable — the rule-based engine handled this report.',
+          }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
       } finally {
         clearTimeout(clientTimeout);
       }
@@ -225,19 +241,16 @@ export default function AITriageConsole({
 
       if (payload && payload.success && payload.data) {
         result = mapGeminiResult(payload.data);
-      } else if (payload && payload.fallback) {
+      } else if ((payload && payload.fallback) || !payload || res.status >= 500) {
+        // Gemini unconfigured, overloaded, unreachable or answering with a non-JSON
+        // page: the deterministic engine takes over so the report is still triaged
+        // and the incident still reaches the intelligence feed.
         result = mapRuleBasedResult(reportText.trim());
-
-        // Show the server-side fallback reason as a warning, not a hard error.
         setAnalysisError(
-          payload.error ||
-            'Gemini unavailable — showing rule-based fallback. Add GEMINI_API_KEY to enable AI rewriting.'
-        );
-      } else if (!payload) {
-        throw new Error(
-          'Triage endpoint did not return JSON (HTTP ' +
-            res.status +
-            '). Ensure api/triage is deployed and GEMINI_API_KEY is set.'
+          payload?.error ||
+            (res.status >= 500
+              ? `AI endpoint unavailable (HTTP ${res.status}) — the rule-based engine handled this report.`
+              : 'AI endpoint unavailable — the rule-based engine handled this report.')
         );
       } else {
         throw new Error(payload?.error || 'Triage service returned an unexpected response.');
@@ -343,8 +356,9 @@ export default function AITriageConsole({
           <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-200 text-[11px] rounded-lg p-2.5">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             <span>
-              Gemini is not linked, so triage runs on the built-in rule-based engine — no AI
-              report rewriting and no language-model location reasoning. Add{' '}
+              Gemini is not linked, so triage runs on the built-in rule-based engine. It still
+              classifies, rewrites the report into dispatcher English and extracts entities — but
+              without language-model location reasoning. Add{' '}
               <code className="font-mono font-semibold">GEMINI_API_KEY</code> in Settings →
               Environment, then reload. Diagnose with{' '}
               <a
@@ -415,12 +429,19 @@ export default function AITriageConsole({
                     <p className="text-[11px] font-bold uppercase tracking-wider text-ink dark:text-paper">
                       {analysisResult.engineUsed === 'Gemini AI'
                         ? 'Cleaned by Gemini — readable version'
-                        : 'Normalized report (Gemini rewrite unavailable)'}
+                        : 'Rule-based rewrite — readable dispatcher summary'}
                     </p>
                   </div>
                   <p className="text-sm text-ink dark:text-paper leading-relaxed">
                     {analysisResult.cleanedReport || analysisResult.fallbackClean || reportText.trim()}
                   </p>
+                  {analysisResult.fallbackClean &&
+                    analysisResult.fallbackClean.toLowerCase() !==
+                      reportText.trim().toLowerCase() && (
+                      <p className="text-xs text-ink dark:text-paper mt-1.5">
+                        Citizen wording translated: &ldquo;{analysisResult.fallbackClean}&rdquo;
+                      </p>
+                    )}
                   <p className="text-[11px] text-ink dark:text-paper italic mt-1.5">
                     Original: &ldquo;{reportText.trim()}&rdquo;
                   </p>

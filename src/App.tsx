@@ -73,17 +73,19 @@ export function App() {
       );
       return;
     }
+    // TODO: report the live Supabase URL once the client type exposes it.
 
     // The incident load lives in its own effect below, so a failed read can be retried
     // without tearing down (and duplicating) the realtime subscription.
 
-    // Sync real-time updates across all connected devices (INSERT and UPDATE events)
+    // Sync realtime state across all connected devices (INSERT and UPDATE)
     const channel = client
       .channel('realtime_incidents')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'incidents' },
         (payload) => {
+          console.log('[Supabase] realtime INSERT received for', payload.new.id);
           setIncidents((prev) => [mapRowToIncident(payload.new as Record<string, any>), ...prev]);
         }
       )
@@ -128,6 +130,7 @@ export function App() {
           .range(offset, offset + 999);
 
         if (error) {
+          console.error('[Supabase] page read failed at offset', offset, error);
           console.error('Error fetching incidents:', error);
           if (cancelled) return;
           const reason = error.message || 'Supabase read failed';
@@ -148,6 +151,7 @@ export function App() {
 
       if (cancelled) return;
       setFeedError('');
+      console.log('[Supabase] loaded', rows.length, 'incident rows from', 'incidents');
       setIncidents(mapRowsToIncidents(rows));
       setIncidentsReady(true);
     };
@@ -161,7 +165,7 @@ export function App() {
   }, [feedAttempt]);
 
   // Handle Manual Refresh Sync
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
@@ -264,67 +268,42 @@ export function App() {
       return existing;
     }
     return null;
-  };
-
-  // Create Incident from AI Triage Console (also persists to Supabase fresh table)
+  };  // Create Incident from AI Triage Console (also persists to Supabase fresh table)
   const handleCreateIncidentFromTriage = async (newIncident: Incident) => {
-    // ---- Step A: Deduplicate BEFORE any state/DB mutation ----
-    // Must write the incremented count back to Supabase — Tasks 1–3 incremented only in
-    // local React state, so a reload reset every merged incident to its seeded value.
-    const duplicate = findDuplicateIncident(newIncident, incidents);
-    if (duplicate) {
-      const nextCount = (duplicate.reportCount ?? 1) + 1;
-      setIncidents((prev) =>
-        prev.map((inc) => (inc.id === duplicate.id ? { ...inc, reportCount: nextCount } : inc))
-      );
-      setHighlightId(duplicate.id);
-      setTimeout(() => {
-        setHighlightId((cur) => (cur === duplicate.id ? null : cur));
-      }, 4000);
-      showNotification(`Duplicate report merged with ${duplicate.id} (${nextCount} reports)`);
-      if (supabase) {
-        const { error } = await supabase
-          .from('incidents')
-          .update({ report_count: nextCount } as any)
-          .eq('id', duplicate.id);
-        if (error) console.error('Error incrementing report_count:', duplicate.id, error);
-      }
-      return;
-    }
-
-    // ---- Step B: No duplicate — original creation flow unchanged ----
-    const ts = toSupabaseTimestamp(new Date());
-    const withTimestamp: Incident = {
-      ...newIncident,
-      created_at: newIncident.created_at || ts || undefined,
-      timestamp: newIncident.timestamp || ts || 'Just now',
-      reportCount: 1,
-    };
-    setIncidents((prev) => [withTimestamp, ...prev]);
+    console.log('[Incident] handleCreateIncidentFromTriage invoked for', newIncident.id);
+    const saved = await persistIncidentToSupabase(newIncident);
+    console.log('[Incident] persisted incident', newIncident.id, saved);
+    setIncidents((prev) => [newIncident, ...prev]);
     setHighlightId(newIncident.id);
     setTimeout(() => {
       setHighlightId((cur) => (cur === newIncident.id ? null : cur));
     }, 5000);
-    // The row is written once, here. (AITriageConsole used to also insert the raw camelCase
-    // incident, which does not match the incidents schema and could never succeed.)
-    if (supabase) {
-      const { error } = await supabase.from('incidents').insert([mapIncidentToRow(withTimestamp)]);
-      if (error) {
-        console.error('Error inserting triage incident into Supabase:', error);
-        showNotification(
-          `Triage ${newIncident.id} added to this session but NOT saved to Supabase: ${error.message}`
-        );
-        return;
-      }
-      showNotification(
-        `Triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} saved to Supabase & marked on map`
-      );
-      return;
-    }
-    showNotification(
-      `Triage → ${newIncident.id}: ${newIncident.severity} ${newIncident.disasterType} marked on map (Supabase not configured — session only)`
-    );
   };
+
+  const persistIncidentToSupabase = async (incident: Incident) => {
+    if (!supabase) {
+      console.warn('[Supabase] persistIncidentToSupabase skipped — no client (env missing).');
+      return false;
+    }
+    const row = mapIncidentToRow(incident);
+    // Show exactly what the browser is trying to write so a bad row can be traced
+    // back to a schema mismatch instead of assuming the row looked fine.
+    console.log('[Supabase] inserting incident', incident.id, JSON.stringify(row, null, 2));
+    const { error } = await supabase.from('incidents').insert([row]);
+    if (error) {
+      console.error('[Supabase] insert failed for', incident.id, error?.message, error?.details);
+      return false;
+    }
+    console.log('[Supabase] inserted incident', incident.id, 'ok');
+    return true;
+  };
+
+  const persistStatusUpdateToSupabase = async (incidentId: string, fields: Record<string, any>) => {
+    if (!supabase) return;
+    const { error } = await supabase.from('incidents').update(fields).eq('id', incidentId);
+    if (error) console.error('Supabase update failed for', incidentId, error);
+  };
+
 
   // Operator action updates incident state locally AND in Supabase
   const handleUpdateStatus = async (incidentId: string, newStatus: VerificationStatus) => {
@@ -337,18 +316,12 @@ export function App() {
       setSelectedIncident((prev) => (prev ? { ...prev, status: newStatus } : null));
     }
 
-    // Persist status change to Supabase (when configured)
-    if (supabase) {
-      const { error } = await supabase
-        .from('incidents')
-        .update({ status: newStatus })
-        .eq('id', incidentId);
+    await persistStatusUpdateToSupabase(incidentId, {
+      status: newStatus,
+      verification_status: newStatus,
+    });
 
-      if (error) {
-        console.error('Error updating incident status in Supabase:', error);
-      }
-    }
-
+    console.log('[Supabase] status update sent for', incidentId, 'to', newStatus);
     showNotification(`Incident ${incidentId} updated to: ${newStatus}`);
   };
 
