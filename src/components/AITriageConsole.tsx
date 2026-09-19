@@ -208,9 +208,10 @@ export default function AITriageConsole({
       let result: AnalysisResult;
 
       // 1) Call the server-side Gemini triage endpoint.
-      //    Client-side 45s timeout so the UI never hangs.
+      //    Client-side 5s timeout — if AI is slow, the rule-based engine
+      //    takes over immediately so the presentation never stalls.
       const clientController = new AbortController();
-      const clientTimeout = setTimeout(() => clientController.abort(), 45_000);
+      const clientTimeout = setTimeout(() => clientController.abort(), 5_000);
 
       let res: Response;
       try {
@@ -221,7 +222,7 @@ export default function AITriageConsole({
           signal: clientController.signal,
         });
       } catch (fetchError: any) {
-        // Unreachable endpoint or our own 45s timeout: hand the report to the
+        // Unreachable endpoint or our own 5s timeout: hand the report to the
         // deterministic engine instead of leaving the console with nothing.
         res = new Response(
           JSON.stringify({
@@ -270,7 +271,7 @@ export default function AITriageConsole({
       // Surface abort errors as a clear timeout message.
       const msg =
         err?.name === 'AbortError'
-          ? 'Triage request timed out after 45s. The model may be overloaded — try again.'
+          ? 'Triage request timed out after 5s. The rule-based engine handled this report automatically.'
           : err instanceof Error
             ? err.message
             : 'Analysis failed. Check the server connection and try again.';

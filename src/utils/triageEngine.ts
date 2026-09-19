@@ -667,7 +667,7 @@ export async function analyzeDisasterReportHybrid(text: string): Promise<TriageA
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12-second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout — rule-based fallback kicks in fast
 
     const response = await fetch('/api/triage', {
       method: 'POST',
