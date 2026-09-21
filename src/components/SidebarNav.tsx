@@ -28,7 +28,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
 }) => {
   const navItems = [
     { id: 'dashboard', label: 'Situation Room', icon: LayoutDashboard },
-    { id: 'triage', label: 'AI Triage Console', icon: Sparkles, highlight: true },
+    { id: 'triage', label: 'Triage Console', icon: Sparkles, highlight: true },
     { id: 'map', label: 'Hyderabad GIS Map', icon: Map },
     { id: 'reports', label: 'Feed & Ingestion', icon: Radio },
     { id: 'teams', label: 'SDRF / NDRF Units', icon: Users },

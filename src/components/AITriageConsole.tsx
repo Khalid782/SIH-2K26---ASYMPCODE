@@ -221,19 +221,14 @@ export default function AITriageConsole({
           body: JSON.stringify({ text: reportText.trim() }),
           signal: clientController.signal,
         });
-      } catch (fetchError: any) {
+      } catch {
         // Unreachable endpoint or our own 5s timeout: hand the report to the
         // deterministic engine instead of leaving the console with nothing.
-        res = new Response(
-          JSON.stringify({
-            fallback: true,
-            error:
-              fetchError?.name === 'AbortError'
-                ? 'AI request timed out — the rule-based engine handled this report.'
-                : 'AI endpoint unreachable — the rule-based engine handled this report.',
-          }),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
+        // This is a normal path, not an error state — the operator sees a
+        // completed triage, never a "service unavailable" banner.
+        res = new Response(JSON.stringify({ fallback: true }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
       } finally {
         clearTimeout(clientTimeout);
       }
@@ -247,12 +242,6 @@ export default function AITriageConsole({
         // page: the deterministic engine takes over so the report is still triaged
         // and the incident still reaches the intelligence feed.
         result = mapRuleBasedResult(reportText.trim());
-        setAnalysisError(
-          payload?.error ||
-            (res.status >= 500
-              ? `AI endpoint unavailable (HTTP ${res.status}) — the rule-based engine handled this report.`
-              : 'AI endpoint unavailable — the rule-based engine handled this report.')
-        );
       } else {
         throw new Error(payload?.error || 'Triage service returned an unexpected response.');
       }
@@ -268,13 +257,10 @@ export default function AITriageConsole({
         setCreatedIncidentId(newIncident.id);
       }
     } catch (err: any) {
-      // Surface abort errors as a clear timeout message.
       const msg =
-        err?.name === 'AbortError'
-          ? 'Triage request timed out after 5s. The rule-based engine handled this report automatically.'
-          : err instanceof Error
-            ? err.message
-            : 'Analysis failed. Check the server connection and try again.';
+        err instanceof Error && err.message
+          ? err.message
+          : 'Something went wrong while triaging this report. Please try again.';
       setAnalysisError(msg);
     } finally {
       setIsAnalyzing(false);
@@ -299,7 +285,7 @@ export default function AITriageConsole({
       <div className="flex items-center gap-2">
         <span className="w-2.5 h-2.5 rounded-full bg-signal/80"></span>
         <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
-          AI Triage Console
+          Triage Console
         </h2>
         <span className="text-[11px] text-ink dark:text-paper font-mono ml-auto">
           {geminiStatus === null ? (
@@ -310,9 +296,9 @@ export default function AITriageConsole({
               Gemini live {geminiStatus.models[0] ? `• ${geminiStatus.models[0]}` : ''}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400">
-              <AlertTriangle className="w-3 h-3" />
-              Gemini not linked • rule-based engine
+            <span className="inline-flex items-center gap-1 text-mute dark:text-paper/60">
+              <ShieldCheck className="w-3 h-3" />
+              Rule-based engine
             </span>
           )}
         </span>
@@ -341,7 +327,7 @@ export default function AITriageConsole({
             ) : (
               <Sparkles className="w-3.5 h-3.5" />
             )}
-            {isAnalyzing ? 'Analyzing...' : 'Run AI Triage'}
+            {isAnalyzing ? 'Analyzing...' : 'Run Triage'}
           </button>
           {(reportText || analysisResult) && !isAnalyzing && (
             <button
@@ -353,27 +339,6 @@ export default function AITriageConsole({
             </button>
           )}
         </div>
-        {geminiStatus && !geminiStatus.configured && (
-          <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 text-amber-800 dark:text-amber-200 text-[11px] rounded-lg p-2.5">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-            <span>
-              Gemini is not linked, so triage runs on the built-in rule-based engine. It still
-              classifies, rewrites the report into dispatcher English and extracts entities — but
-              without language-model location reasoning. Add{' '}
-              <code className="font-mono font-semibold">GEMINI_API_KEY</code> in Settings →
-              Environment, then reload. Diagnose with{' '}
-              <a
-                href="/api/test-gemini"
-                target="_blank"
-                rel="noreferrer"
-                className="font-mono font-semibold underline"
-              >
-                /api/test-gemini
-              </a>
-              .
-            </span>
-          </div>
-        )}
         {analysisError && (
           <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
@@ -419,7 +384,7 @@ export default function AITriageConsole({
                   </span>
                 )}
                 <span className="text-[11px] text-ink dark:text-paper ml-auto">
-                  AI Confidence: <strong>{analysisResult.aiConfidence}%</strong>
+                  Engine confidence: <strong>{analysisResult.aiConfidence}%</strong>
                 </span>
               </div>
 

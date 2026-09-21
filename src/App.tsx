@@ -268,7 +268,7 @@ export function App() {
       return existing;
     }
     return null;
-  };  // Create Incident from AI Triage Console (also persists to Supabase fresh table)
+  };  // Create Incident from the Triage Console (also persists to Supabase fresh table)
   const handleCreateIncidentFromTriage = async (newIncident: Incident) => {
     console.log('[Incident] handleCreateIncidentFromTriage invoked for', newIncident.id);
     const saved = await persistIncidentToSupabase(newIncident);

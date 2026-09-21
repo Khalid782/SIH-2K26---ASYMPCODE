@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ lastUpdated, onRefresh, isRefres
           className="group flex items-center gap-3.5 text-left rounded-xl -ml-1.5 px-1.5 py-1 transition cursor-pointer hover:bg-paper-2/80 dark:hover:bg-ink/60 active:scale-[0.98]"
         >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-paper-2 via-paper to-paper-2 dark:from-paper-2 dark:via-paper dark:to-paper-2 border border-paper-2 dark:border-mute flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_10px_-4px_rgba(17,17,16,0.4)] group-hover:scale-105 group-hover:shadow-[0_6px_16px_-6px_rgba(17,17,16,0.55)] transition-all">
-            <BeaconLogo className="w-5 h-5 text-ink dark:text-paper" />
+            <BeaconLogo className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">

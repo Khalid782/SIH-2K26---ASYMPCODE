@@ -594,7 +594,7 @@ export default function LandingPage({ onEnter, darkMode, onToggleDark }: Landing
         <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between px-5 sm:px-8">
           <a href="#top" className="flex items-center gap-2.5">
             <span className="relative grid h-7 w-7 place-items-center rounded-lg border border-alert/40 bg-alert/10 text-alert">
-              <BeaconLogo className="h-4 w-4" />
+              <BeaconLogo className="h-[18px] w-[18px]" />
               <span className="absolute -inset-1 rounded-lg border border-alert/30 animate-siren" />
             </span>
             <span className="font-hazard text-lg font-extrabold uppercase leading-none tracking-[0.02em]">

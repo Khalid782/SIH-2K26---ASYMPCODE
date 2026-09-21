@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="CrisisBeacon">
+  <defs>
+    <linearGradient id="cbLamp" x1="38" y1="0" x2="82" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F4433A" />
+      <stop offset="0.55" stop-color="#E5231B" />
+      <stop offset="1" stop-color="#C81A13" />
+    </linearGradient>
+    <linearGradient id="cbBase" x1="27" y1="0" x2="93" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3E4655" />
+      <stop offset="0.6" stop-color="#2B313D" />
+      <stop offset="1" stop-color="#1A1F28" />
+    </linearGradient>
+    <g id="cbRay">
+      <polygon points="3,-3.6 27,-8.2 27,0.4 3,1.6" fill="#F9B32B" />
+      <polygon points="3,1.6 27,0.4 27,8.2 3,3.6" fill="#EE7C1F" />
+    </g>
+  </defs>
+
+  <g transform="translate(-10 -3)">
+    <use href="#cbRay" transform="translate(82 46) rotate(-34)" />
+    <use href="#cbRay" transform="translate(82 46)" />
+    <use href="#cbRay" transform="translate(82 46) rotate(34)" />
+    <use href="#cbRay" transform="translate(38 46) scale(-1 1) rotate(-34)" />
+    <use href="#cbRay" transform="translate(38 46) scale(-1 1)" />
+    <use href="#cbRay" transform="translate(38 46) scale(-1 1) rotate(34)" />
+
+    <rect x="33" y="68" width="54" height="10" fill="url(#cbBase)" />
+    <rect x="72" y="68" width="15" height="10" fill="#1A1F28" opacity="0.55" />
+    <rect x="27" y="78" width="66" height="10" fill="url(#cbBase)" />
+    <rect x="72" y="78" width="21" height="10" fill="#10141B" opacity="0.6" />
+
+    <path d="M38 70V40a22 22 0 0 1 44 0v30z" fill="url(#cbLamp)" />
+    <rect x="44.5" y="31" width="10" height="33" rx="5" fill="#F9817A" opacity="0.75" />
+  </g>
+</svg>
