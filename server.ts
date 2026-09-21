@@ -23,29 +23,17 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 app.use(express.json({ limit: '5mb' }));
 
 /**
- * `api/*.ts` are written as Vercel-style handlers (a web Request in, a web Response out) so
- * the same file runs on Vercel and locally. This bridges one into Express for the dev server,
- * which is why /api/test-gemini used to be reachable in production but 404 locally.
+ * `api/*.ts` are written as Vercel-style handlers (a Node request in, a Node response out) so
+ * the same file runs unchanged on Vercel and locally. Express's `req`/`res` already satisfy that
+ * shape — `res.status()` and `res.json()` included — so they mount directly, which is why
+ * /api/test-gemini used to be reachable in production but 404 locally.
  */
-function mountWebHandler(
+function mountApiHandler(
   route: string,
-  handler: (req: globalThis.Request) => Promise<globalThis.Response>
+  handler: (req: any, res: any) => unknown
 ): void {
-  app.all(route, async (req: Request, res: Response): Promise<void> => {
-    try {
-      const hasBody = req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH';
-      const webRequest = new globalThis.Request(`http://localhost${req.originalUrl}`, {
-        method: req.method,
-        headers: { 'content-type': 'application/json' },
-        body: hasBody ? JSON.stringify(req.body ?? {}) : undefined,
-      });
-      const webResponse = await handler(webRequest);
-      res.status(webResponse.status);
-      webResponse.headers.forEach((value, key) => res.setHeader(key, value));
-      res.send(await webResponse.text());
-    } catch (error: any) {
-      res.status(500).json({ ok: false, error: error?.message || 'Diagnostic handler failed' });
-    }
+  app.all(route, (req, res, next) => {
+    Promise.resolve(handler(req, res)).catch(next);
   });
 }
 
@@ -68,7 +56,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.get('/api/facilities', facilitiesHandler);
 
 // Gemini connectivity diagnostic (GET /api/test-gemini in the browser)
-mountWebHandler('/api/test-gemini', testGeminiHandler);
+mountApiHandler('/api/test-gemini', testGeminiHandler);
 
 // Gemini AI Triage Endpoint
 app.post('/api/triage', async (req: Request, res: Response): Promise<void> => {
