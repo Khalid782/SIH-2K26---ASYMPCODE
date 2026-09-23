@@ -90,7 +90,9 @@ export const IncomingReports: React.FC<IncomingReportsProps> = ({
   };
 
   return (
-    <div className="bg-paper/95 dark:bg-ink/90 rounded-xl border border-paper-2/90 dark:border-paper/25 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)] flex flex-col h-full max-h-[600px] overflow-hidden">
+    // h-full: the panel tracks the tactical map's row height instead of stopping at a
+    // fixed cap, so the two columns stay level now that the map runs full-height.
+    <div className="bg-paper/95 dark:bg-ink/90 rounded-xl border border-paper-2/90 dark:border-paper/25 shadow-[0_1px_2px_rgba(17,17,16,0.04),0_10px_24px_-18px_rgba(17,17,16,0.3)] flex flex-col h-full min-h-[420px] overflow-hidden">
       {/* Panel Header */}
       <div className="p-3.5 border-b border-paper-2 dark:border-paper/25 bg-gradient-to-r from-paper-2/90 dark:from-paper-2/50 to-white dark:to-paper/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
