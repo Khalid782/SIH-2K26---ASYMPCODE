@@ -200,13 +200,10 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
   };
 
   return (
-    // Full-height stack: the tactical map stretches to fill whatever vertical space the
-    // situation room gives it, and the green-zone routing module keeps its natural height
-    // beneath. min-h floors keep the map usable when the viewport is short.
-    <div className="flex-1 flex flex-col gap-2 min-w-0">
+    <div className="space-y-2">
       {/* Map leads the panel: the tactical view is the top of the stack, and the
           green-zone routing module sits beneath it. */}
-      <div className="relative w-full flex-1 min-h-[450px] lg:min-h-[560px] bg-sky-100 rounded-xl overflow-hidden border border-sky-100/90 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_14px_30px_-18px_rgba(2,132,199,0.35)] flex flex-col">
+      <div className="relative w-full h-[450px] lg:h-[540px] xl:h-[600px] bg-sky-100 rounded-xl overflow-hidden border border-sky-100/90 shadow-[0_1px_2px_rgba(8,47,73,0.04),0_14px_30px_-18px_rgba(2,132,199,0.35)] flex flex-col">
       {/* Map Control Bar / Quick Location Jumps */}
       <div className="absolute top-3 left-3 z-[1000] bg-white/90 dark:bg-sky-900/90 backdrop-blur-md text-sky-950 dark:text-sky-100 p-1.5 rounded-lg border border-sky-200/90 dark:border-sky-700 shadow-[0_8px_20px_-10px_rgba(2,132,199,0.45)] flex items-center gap-1.5 max-w-[calc(100%-24px)] overflow-x-auto text-xs">
         <span className="text-[11px] font-semibold text-sky-600 px-1.5 whitespace-nowrap flex items-center gap-1">
@@ -263,14 +260,12 @@ export const DisasterMap: React.FC<DisasterMapProps> = ({
 
       {/* Green-zone safe routing beneath the map. Always mounted: if the feed is not ready
           the panel says so, rather than the whole green zone silently disappearing. */}
-      <div className="shrink-0">
-        <GreenRoutePanel
-          map={map}
-          incidents={allIncidents}
-          routingReady={routingReady}
-          feedError={feedError}
-        />
-      </div>
+      <GreenRoutePanel
+        map={map}
+        incidents={allIncidents}
+        routingReady={routingReady}
+        feedError={feedError}
+      />
     </div>
   );
 };

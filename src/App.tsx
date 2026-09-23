@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { SummaryCards } from './components/SummaryCards';
 import { FilterBar } from './components/FilterBar';
 import { DisasterMap } from './components/DisasterMap';
+import { IncomingReports } from './components/IncomingReports';
 import { IncidentDetailModal } from './components/IncidentDetailModal';
 import { DashboardTicker } from './components/DashboardTicker';
 import { SidebarNav } from './components/SidebarNav';
@@ -430,8 +431,7 @@ export function App() {
         />
 
         {/* Dashboard Center Canvas */}
-        {/* Flex column so the dashboard's map row can claim the leftover viewport height. */}
-        <main className="hud-grid flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 flex flex-col max-w-7xl mx-auto w-full">
+        <main className="hud-grid flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-6 space-y-4 max-w-7xl mx-auto w-full">
           {activeTab === 'triage' ? (
             <AITriageConsole
               onCreateIncident={handleCreateIncidentFromTriage}
@@ -468,13 +468,10 @@ export function App() {
                 totalCount={incidents.length}
               />
 
-              {/* Full-width tactical map. The side Intelligence Feeds column was removed, so
-                  the map now owns the whole canvas width and the leftover viewport height
-                  (flex-1); leaving the default min-height alone stops the row from squeezing
-                  the map's floor on short viewports. */}
-              <div className="flex-1 flex flex-col min-w-0">
-                {/* Main Disaster Map — full width, no side panel */}
-                <div className="flex-1 flex flex-col min-w-0">
+              {/* Map + Incoming Reports Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                {/* Main Disaster Map */}
+                <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="relative flex h-2.5 w-2.5">
@@ -499,6 +496,26 @@ export function App() {
                   />
                 </div>
 
+                {/* Incoming Reports Scrollable Feed */}
+                <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-hazard"></span>
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper">
+                        Intelligence Feeds
+                      </h2>
+                    </div>
+                    <span className="text-[11px] text-ink dark:text-paper">
+                      Click to inspect & action
+                    </span>
+                  </div>
+                  <IncomingReports
+                    incidents={filteredIncidents}
+                    selectedIncident={selectedIncident}
+                    onSelectIncident={setSelectedIncident}
+                    highlightId={highlightId}
+                  />
+                </div>
               </div>
             </>
           )}
